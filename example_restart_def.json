@@ -1,0 +1,4 @@
+{
+    "atac.bams[0]" : "rep1.bam",
+    "atac.tas" : [null, "rep2.tagAlign.gz"]
+}
