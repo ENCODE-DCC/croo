@@ -1,0 +1,484 @@
+{
+  "chip.bwa": {
+    "bam": {
+      "path": "align/rep${i+1}/${basename}"
+    },
+    "flagstat_qc": {
+      "path": "qc/rep${i+1}/${basename}"
+    }
+  },
+  "chip.filter": {
+    "nodup_bam": {
+      "path": "align/rep${i+1}/${basename}"
+    },
+    "flagstat_qc": {
+      "path": "qc/rep${i+1}/${basename}"
+    },
+    "dup_qc": {
+      "path": "qc/rep${i+1}/${basename}"
+    },
+    "pbc_qc": {
+      "path": "qc/rep${i+1}/${basename}"
+    },
+    "mito_dup_log": {
+      "path": "qc/rep${i+1}/${basename}"
+    }
+  },
+  "chip.bam2ta": {
+    "ta": {
+      "path": "align/rep${i+1}/${basename}"
+    }
+  },
+  "chip.spr": {
+    "ta_pr1": {
+      "path": "align/rep${i+1}/pr1/${basename}"
+    },
+    "ta_pr2": {
+      "path": "align/rep${i+1}/pr2/${basename}"
+    }
+  },
+  "chip.pool_ta": {
+    "ta_pooled": {
+      "path": "align/pooled_rep/${basename}"
+    }
+  },
+  "chip.pool_ta_pr1": {
+    "ta_pooled": {
+      "path": "align/pooled_rep/pr1/${basename}"
+    }
+  },
+  "chip.pool_ta_pr2": {
+    "ta_pooled": {
+      "path": "align/pooled_rep/pr2/${basename}"
+    }
+  },
+  "chip.xcor": {
+    "plot_png": {
+      "path": "qc/rep${i+1}/${basename}"
+    },
+    "score": {
+      "path": "qc/rep${i+1}/${basename}"
+    },
+    "fraglen": {
+      "path": "qc/rep${i+1}/${basename}"
+    }
+  },
+  "chip.macs2": {
+    "npeak": {
+      "path": "peak/macs2/rep${i+1}/${basename}"
+    },
+    "bfilt_npeak": {
+      "path": "peak/macs2/rep${i+1}/${basename}"
+    },
+    "bfilt_npeak_bb": {
+      "path": "peak/macs2/rep${i+1}/${basename}"
+    },
+    "bfilt_npeak_hammock": {
+      "path": "peak/macs2/rep${i+1}/${basename}"
+    },
+    "frip_qc": {
+      "path": "qc/rep${i+1}/${basename}"
+    },
+    "sig_pval" : {
+      "path": "signal/rep${i+1}/${basename}"
+    },
+    "sig_fc" : {
+      "path": "signal/rep${i+1}/${basename}"
+    }
+  },
+  "chip.macs2_pr1": {
+    "npeak": {
+      "path": "peak/macs2/rep${i+1}/pr1/${basename}"
+    },
+    "bfilt_npeak": {
+      "path": "peak/macs2/rep${i+1}/pr1/${basename}"
+    },
+    "bfilt_npeak_bb": {
+      "path": "peak/macs2/rep${i+1}/pr1/${basename}"
+    },
+    "bfilt_npeak_hammock": {
+      "path": "peak/macs2/rep${i+1}/pr1/${basename}"
+    },
+    "frip_qc": {
+      "path": "qc/rep${i+1}/pr1/${basename}"
+    }
+  },
+  "chip.macs2_pr2": {
+    "npeak": {
+      "path": "peak/macs2/rep${i+1}/pr2/${basename}"
+    },
+    "bfilt_npeak": {
+      "path": "peak/macs2/rep${i+1}/pr2/${basename}"
+    },
+    "bfilt_npeak_bb": {
+      "path": "peak/macs2/rep${i+1}/pr2/${basename}"
+    },
+    "bfilt_npeak_hammock": {
+      "path": "peak/macs2/rep${i+1}/pr2/${basename}"
+    },
+    "frip_qc": {
+      "path": "qc/rep${i+1}/pr2/${basename}"
+    }
+  },
+  "chip.macs2_pooled": {
+    "npeak": {
+      "path": "peak/macs2/pooled_rep/${basename}"
+    },
+    "bfilt_npeak": {
+      "path": "peak/macs2/pooled_rep/${basename}"
+    },
+    "bfilt_npeak_bb": {
+      "path": "peak/macs2/pooled_rep/${basename}"
+    },
+    "bfilt_npeak_hammock": {
+      "path": "peak/macs2/pooled_rep/${basename}"
+    },
+    "frip_qc": {
+      "path": "qc/pooled_rep/${basename}"
+    },
+    "sig_pval" : {
+      "path": "signal/pooled_rep/${basename}"
+    },
+    "sig_fc" : {
+      "path": "signal/pooled_rep/${basename}"
+    }
+  },
+  "chip.macs2_ppr1": {
+    "npeak": {
+      "path": "peak/macs2/pooled_rep/pr1/${basename}"
+    },
+    "bfilt_npeak": {
+      "path": "peak/macs2/pooled_rep/pr1/${basename}"
+    },
+    "bfilt_npeak_bb": {
+      "path": "peak/macs2/pooled_rep/pr1/${basename}"
+    },
+    "bfilt_npeak_hammock": {
+      "path": "peak/macs2/pooled_rep/pr1/${basename}"
+    },
+    "frip_qc": {
+      "path": "qc/pooled_rep/pr1/${basename}"
+    }
+  },
+  "chip.macs2_ppr2": {
+    "npeak": {
+      "path": "peak/macs2/pooled_rep/pr2/${basename}"
+    },
+    "bfilt_npeak": {
+      "path": "peak/macs2/pooled_rep/pr2/${basename}"
+    },
+    "bfilt_npeak_bb": {
+      "path": "peak/macs2/pooled_rep/pr2/${basename}"
+    },
+    "bfilt_npeak_hammock": {
+      "path": "peak/macs2/pooled_rep/pr2/${basename}"
+    },
+    "frip_qc": {
+      "path": "qc/pooled_rep/pr2/${basename}"
+    }
+  },
+  "chip.spp": {
+    "rpeak": {
+      "path": "peak/spp/rep${i+1}/${basename}"
+    },
+    "bfilt_rpeak": {
+      "path": "peak/spp/rep${i+1}/${basename}"
+    },
+    "bfilt_rpeak_bb": {
+      "path": "peak/spp/rep${i+1}/${basename}"
+    },
+    "bfilt_rpeak_hammock": {
+      "path": "peak/spp/rep${i+1}/${basename}"
+    },
+    "frip_qc": {
+      "path": "qc/rep${i+1}/${basename}"
+    }
+  },
+  "chip.spp_pr1": {
+    "rpeak": {
+      "path": "peak/spp/rep${i+1}/pr1/${basename}"
+    },
+    "bfilt_rpeak": {
+      "path": "peak/spp/rep${i+1}/pr1/${basename}"
+    },
+    "bfilt_rpeak_bb": {
+      "path": "peak/spp/rep${i+1}/pr1/${basename}"
+    },
+    "bfilt_rpeak_hammock": {
+      "path": "peak/spp/rep${i+1}/pr1/${basename}"
+    },
+    "frip_qc": {
+      "path": "qc/rep${i+1}/pr1/${basename}"
+    }
+  },
+  "chip.spp_pr2": {
+    "rpeak": {
+      "path": "peak/spp/rep${i+1}/pr2/${basename}"
+    },
+    "bfilt_rpeak": {
+      "path": "peak/spp/rep${i+1}/pr2/${basename}"
+    },
+    "bfilt_rpeak_bb": {
+      "path": "peak/spp/rep${i+1}/pr2/${basename}"
+    },
+    "bfilt_rpeak_hammock": {
+      "path": "peak/spp/rep${i+1}/pr2/${basename}"
+    },
+    "frip_qc": {
+      "path": "qc/rep${i+1}/pr2/${basename}"
+    }
+  },
+  "chip.spp_pooled": {
+    "rpeak": {
+      "path": "peak/spp/pooled_rep/${basename}"
+    },
+    "bfilt_rpeak": {
+      "path": "peak/spp/pooled_rep/${basename}"
+    },
+    "bfilt_rpeak_bb": {
+      "path": "peak/spp/pooled_rep/${basename}"
+    },
+    "bfilt_rpeak_hammock": {
+      "path": "peak/spp/pooled_rep/${basename}"
+    },
+    "frip_qc": {
+      "path": "qc/pooled_rep/${basename}"
+    }
+  },
+  "chip.spp_ppr1": {
+    "rpeak": {
+      "path": "peak/spp/pooled_rep/pr1/${basename}"
+    },
+    "bfilt_rpeak": {
+      "path": "peak/spp/pooled_rep/pr1/${basename}"
+    },
+    "bfilt_rpeak_bb": {
+      "path": "peak/spp/pooled_rep/pr1/${basename}"
+    },
+    "bfilt_rpeak_hammock": {
+      "path": "peak/spp/pooled_rep/pr1/${basename}"
+    },
+    "frip_qc": {
+      "path": "qc/pooled_rep/pr1/${basename}"
+    }
+  },
+  "chip.spp_ppr2": {
+    "rpeak": {
+      "path": "peak/spp/pooled_rep/pr2/${basename}"
+    },
+    "bfilt_rpeak": {
+      "path": "peak/spp/pooled_rep/pr2/${basename}"
+    },
+    "bfilt_rpeak_bb": {
+      "path": "peak/spp/pooled_rep/pr2/${basename}"
+    },
+    "bfilt_rpeak_hammock": {
+      "path": "peak/spp/pooled_rep/pr2/${basename}"
+    },
+    "frip_qc": {
+      "path": "qc/pooled_rep/pr2/${basename}"
+    }
+  },
+  "chip.macs2_signal_track": {
+    "pval_bw": {
+      "path": "signal/rep${i+1}/${basename}"
+    },
+    "fc_bw": {
+      "path": "signal/rep${i+1}/${basename}"
+    }
+  },
+  "chip.macs2_signal_track_pooled": {
+    "pval_bw": {
+      "path": "signal/pooled_rep/${basename}"
+    },
+    "fc_bw": {
+      "path": "signal/pooled_rep/${basename}"
+    }
+  },
+  "chip.count_signal_track": {
+    "pos_bw": {
+      "path": "signal/rep${i+1}/${basename}"
+    },
+    "neg_bw": {
+      "path": "signal/rep${i+1}/${basename}"
+    }
+  },
+  "chip.count_signal_track_pooled": {
+    "pos_bw": {
+      "path": "signal/pooled_rep/${basename}"
+    },
+    "neg_bw": {
+      "path": "signal/pooled_rep/${basename}"
+    }
+  },
+  "chip.idr": {
+    "bfilt_idr_peak": {
+      "path": "peak/idr/${basename.split('.')[0]}/${basename}"
+    },
+    "bfilt_idr_peak_bb": {
+      "path": "peak/idr/${basename.split('.')[0]}/${basename}"
+    },
+    "bfilt_idr_peak_hammock": {
+      "path": "peak/idr/${basename.split('.')[0]}/${basename}"
+    },
+    "idr_unthresholded_peak": {
+      "path": "peak/idr/${basename.split('.')[0]}/${basename}"
+    },
+    "idr_plot": {
+      "path": "qc/idr/${basename.split('.')[0]}/${basename}"
+    },
+    "idr_log": {
+      "path": "qc/idr/${basename.split('.')[0]}/${basename}"
+    },
+    "frip_qc": {
+      "path": "qc/idr/${basename.split('.')[0]}/${basename}"
+    }
+  },
+  "chip.idr_ppr": {
+    "bfilt_idr_peak": {
+      "path": "peak/idr/${basename.split('.')[0]}/${basename}"
+    },
+    "bfilt_idr_peak_bb": {
+      "path": "peak/idr/${basename.split('.')[0]}/${basename}"
+    },
+    "bfilt_idr_peak_hammock": {
+      "path": "peak/idr/${basename.split('.')[0]}/${basename}"
+    },
+    "idr_unthresholded_peak": {
+      "path": "peak/idr/${basename.split('.')[0]}/${basename}"
+    },
+    "idr_plot": {
+      "path": "qc/idr/${basename.split('.')[0]}/${basename}"
+    },
+    "idr_log": {
+      "path": "qc/idr/${basename.split('.')[0]}/${basename}"
+    },
+    "frip_qc": {
+      "path": "qc/idr/${basename.split('.')[0]}/${basename}"
+    }
+  },
+  "chip.idr_pr": {
+    "bfilt_idr_peak": {
+      "path": "peak/idr/${basename.split('.')[0]}/${basename}"
+    },
+    "bfilt_idr_peak_bb": {
+      "path": "peak/idr/${basename.split('.')[0]}/${basename}"
+    },
+    "bfilt_idr_peak_hammock": {
+      "path": "peak/idr/${basename.split('.')[0]}/${basename}"
+    },
+    "idr_unthresholded_peak": {
+      "path": "peak/idr/${basename.split('.')[0]}/${basename}"
+    },
+    "idr_plot": {
+      "path": "qc/idr/${basename.split('.')[0]}/${basename}"
+    },
+    "idr_log": {
+      "path": "qc/idr/${basename.split('.')[0]}/${basename}"
+    },
+    "frip_qc": {
+      "path": "qc/idr/${basename.split('.')[0]}/${basename}"
+    }
+  },
+  "chip.overlap": {
+    "bfilt_overlap_peak": {
+      "path": "peak/overlap/${basename.split('.')[0]}/${basename}"
+    },
+    "bfilt_overlap_peak_bb": {
+      "path": "peak/overlap/${basename.split('.')[0]}/${basename}"
+    },
+    "bfilt_overlap_peak_hammock": {
+      "path": "peak/overlap/${basename.split('.')[0]}/${basename}"
+    },
+    "frip_qc": {
+      "path": "qc/overlap/${basename.split('.')[0]}/${basename}"
+    }
+  },
+  "chip.overlap_ppr": {
+    "bfilt_overlap_peak": {
+      "path": "peak/overlap/${basename.split('.')[0]}/${basename}"
+    },
+    "bfilt_overlap_peak_bb": {
+      "path": "peak/overlap/${basename.split('.')[0]}/${basename}"
+    },
+    "bfilt_overlap_peak_hammock": {
+      "path": "peak/overlap/${basename.split('.')[0]}/${basename}"
+    },
+    "frip_qc": {
+      "path": "qc/overlap/${basename.split('.')[0]}/${basename}"
+    }
+  },
+  "chip.overlap_pr": {
+    "bfilt_overlap_peak": {
+      "path": "peak/overlap/${basename.split('.')[0]}/${basename}"
+    },
+    "bfilt_overlap_peak_bb": {
+      "path": "peak/overlap/${basename.split('.')[0]}/${basename}"
+    },
+    "bfilt_overlap_peak_hammock": {
+      "path": "peak/overlap/${basename.split('.')[0]}/${basename}"
+    },
+    "frip_qc": {
+      "path": "qc/overlap/${basename.split('.')[0]}/${basename}"
+    }
+  },
+  "chip.reproducibility_idr": {
+    "optimal_peak": {
+      "path": "peak/idr/reproducibility/optimal_peak/${basename}"
+    },
+    "optimal_peak_bb": {
+      "path": "peak/idr/reproducibility/optimal_peak/${basename}"
+    },
+    "optimal_peak_hammock": {
+      "path": "peak/idr/reproducibility/optimal_peak/${basename}"
+    },
+    "conservative_peak": {
+      "path": "peak/idr/reproducibility/conservative_peak/${basename}"
+    },
+    "conservative_peak_bb": {
+      "path": "peak/idr/reproducibility/conservative_peak/${basename}"
+    },
+    "conservative_peak_hammock": {
+      "path": "peak/idr/reproducibility/conservative_peak/${basename}"
+    },
+    "reproducibility_qc": {
+      "path": "qc/idr/reproducibility/${basename}"
+    }
+  },
+  "chip.reproducibility_overlap": {
+    "optimal_peak": {
+      "path": "peak/overlap/reproducibility/optimal_peak/${basename}"
+    },
+    "optimal_peak_bb": {
+      "path": "peak/overlap/reproducibility/optimal_peak/${basename}"
+    },
+    "optimal_peak_hammock": {
+      "path": "peak/overlap/reproducibility/optimal_peak/${basename}"
+    },
+    "conservative_peak": {
+      "path": "peak/overlap/reproducibility/conservative_peak/${basename}"
+    },
+    "conservative_peak_bb": {
+      "path": "peak/overlap/reproducibility/conservative_peak/${basename}"
+    },
+    "conservative_peak_hammock": {
+      "path": "peak/overlap/reproducibility/conservative_peak/${basename}"
+    },
+    "reproducibility_qc": {
+      "path": "qc/overlap/reproducibility/${basename}"
+    }
+  },
+  "chip.fingerprint": {
+    "plot": {
+      "path": "qc/fingerprint/${basename}"
+    }
+  },
+  "chip.qc_report": {
+    "report": {
+      "path": "qc/${basename}"
+    },
+    "qc_json": {
+      "path": "qc/${basename}"
+    }
+  }
+}
