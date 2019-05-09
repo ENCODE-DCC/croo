@@ -38,9 +38,10 @@ def parse_coo_arguments():
         'directory. '
         '"copy" makes a copy of Cromwell\'s original outputs')
     p.add_argument(
-        '--out-dir', default='.', help='Output directory/bucket')
+        '--out-dir', default='.', help='Output directory/bucket '
+                                       '(local or remote)')
     p.add_argument(
-        '--tmp-dir', help='Temporary local directory')
+        '--tmp-dir', help='LOCAL temporary directory')
     p.add_argument(
         '--use-gsutil-over-aws-s3', action='store_true',
         help='Use gsutil instead of aws s3 CLI even for S3 buckets.')
@@ -60,12 +61,6 @@ def parse_coo_arguments():
     # convert to dict
     args_d = vars(args)
 
-    # extra init for directories
-    args_d['out_dir'] = os.path.expanduser(args_d['out_dir'])    
-
-    if args_d.get('tmp_dir') is None:
-        args_d['tmp_dir'] = os.path.join(args_d['out_dir'], '.coo_tmp')
-
     return args_d
 
 
@@ -77,7 +72,7 @@ class CromwellOutputOrganizer(object):
     """
 
     def __init__(self, out_def_json, soft_link=True):
-        """Initializes COO with output definition JSON
+        """Initialize COO with output definition JSON
         """
         if isinstance(out_def_json, dict):
             self._out_def_json = out_def_json
@@ -99,15 +94,14 @@ class CromwellOutputOrganizer(object):
                 m = json.loads(fp.read())
 
         cm = CromwellMetadata(m)
-
         task_graph = cm.get_task_graph()
 
         for task_name, out_vars in self._out_def_json.items():
             for out_var_name, out_var in out_vars.items(): 
                 path = out_var.get('path')
-                desc = out_var.get('desc')
-                table_item = out_var.get('table_item')
-                graph_node = out_var.get('graph_node')
+                # desc = out_var.get('desc')
+                # table_item = out_var.get('table_item')
+                # graph_node = out_var.get('graph_node')
 
                 for _, task in task_graph.get_nodes():
                     if task_name != task['task_name']:
@@ -116,7 +110,6 @@ class CromwellOutputOrganizer(object):
                     out_files = task['out_files']
 
                     for k, full_path in out_files:
-                        # print(k, out_var_name, full_path)
                         if k != out_var_name:
                             continue
                         target_rel_path = \
@@ -127,11 +120,11 @@ class CromwellOutputOrganizer(object):
                         CromwellerURI(full_path).copy(
                             target_uri=target_uri,
                             soft_link=self._soft_link)
-                        
 
     @staticmethod
     def __interpret_inline_exp(s, full_path=None, shard_idx=None):
         """Interpret inline expression in output defition JSON
+        e.g. s can be "align/rep${i1}/${basename}"
 
         Args:
             full_path: full absolute path for output file
@@ -142,15 +135,13 @@ class CromwellOutputOrganizer(object):
                             scatter id 1 in subsubworkflow
 
         Supported expressions:
-            ${i0} : 0-based index for the first scatter loop
-            ${i1} : 1-based index for the first scatter loop
-            ${j0} : 0-based index for the second nested-scatter loop
-            ${j1} : 1-based index for the second nested-scatter loop
-            ${k0} : 0-based index for the third nested-nested-scatter loop
-            ${k1} : 1-based index for the second nested-nested-scatter loop
+            ${i0} : 0-based index for a main scatter loop
+            ${i1} : 1-based index for a main scatter loop
+            ${j0} : 0-based index for a nested scatter loop
+            ${j1} : 1-based index for a nested scatter loop
+            ${k0} : 0-based index for a double-nested scatter loop
+            ${k1} : 1-based index for a double-nested scatter loop
             ${basename} : basename of file
-
-        e.g. "align/rep${i1}/${basename}"
         """
         result = s
         if shard_idx is not None:
@@ -178,18 +169,30 @@ class CromwellOutputOrganizer(object):
         return result
 
 
-def main():
-    # parse arguments
-    #   note that args is a dict
-    args = parse_coo_arguments()
+def init_dirs_args(args):
+    """More initialization for out/tmp directories since tmp 
+    directory is important for inter-storage transfe using
+    CromwellerURI
+    """
+    if args['out_dir'].startswith(('http://', 'https://')):
+        raise ValueError('URL is not allowed for --out-dir')
+    elif args['out_dir'].startswith(('gs://', 's3://')):
+        if args.get('tmp_dir') is None:
+            args['tmp_dir'] = os.path.join(os.getcwd(), '.coo_tmp')
+    else:
+        args['out_dir'] = os.path.abspath(os.path.expanduser(args['out_dir']))
+        os.makedirs(args['out_dir'], exist_ok=True)
+
+        if args.get('tmp_dir') is None:
+            args['tmp_dir'] = os.path.join(args['out_dir'], '.coo_tmp')
 
     # make temp dir
-    os.makedirs(args.get('tmp_dir'), exist_ok=True)
+    os.makedirs(args['tmp_dir'], exist_ok=True)
 
     # init cromweller uri to transfer files across various storages
     #   e.g. gs:// to s3://, http:// to local, ...
     init_cromweller_uri(
-        tmp_dir=args.get('tmp_dir'),
+        tmp_dir=args['tmp_dir'],
         tmp_s3_bucket=None,
         tmp_gcs_bucket=None,
         http_user=args.get('http_user'),
@@ -197,27 +200,22 @@ def main():
         use_gsutil_over_aws_s3=args.get('use_gsutil_over_aws_s3'),
         verbose=True)
 
-    # init cromweller: taking all args at init step
+def main():
+    # parse arguments. note that args is a dict
+    args = parse_coo_arguments()
+
+    init_dirs_args(args)
+
     co = CromwellOutputOrganizer(
-        out_def_json=args.get('out_def_json'),
-        soft_link=args.get('link')=='link')
+        out_def_json=args['out_def_json'],
+        soft_link=args['method'] == 'link')
 
     co.organize_output(
-        metadata_json=args.get('metadata_json'),
-        out_dir=args.get('out_dir'))
+        metadata_json=args['metadata_json'],
+        out_dir=args['out_dir'])
 
     return 0
 
+
 if __name__ == '__main__':
     main()
-
-
-"""
-DEV NOTE:
-i: shardIdx
-basename
-task
-
-
-
-"""
