@@ -188,8 +188,14 @@ class CromwellerURI(object):
             return self._uri
 
         if CromwellerURI.VERBOSE:
-            print('[CromwellerURI] copying from '
+            if soft_link and self._uri_type == URI_LOCAL \
+                    and uri_type == URI_LOCAL:
+                method = 'symlinking'
+            else:
+                method = 'copying'
+            print('[CromwellerURI] {method} from '
                   '{src} to {target}, src: {uri}'.format(
+                    method=method,
                     src=self._uri_type, target=uri_type, uri=self._uri))
 
         if uri_type == URI_URL:
@@ -252,6 +258,8 @@ class CromwellerURI(object):
             os.makedirs(os.path.dirname(path), exist_ok=True)
             if self._uri_type == URI_LOCAL:
                 if soft_link:
+                    if CromwellerURI.VERBOSE:
+                        method = 'symlinking'
                     try:
                         os.symlink(self._uri, path)
                     except OSError as e:
@@ -259,6 +267,8 @@ class CromwellerURI(object):
                             os.remove(path)
                             os.symlink(self._uri, path)
                 else:
+                    if CromwellerURI.VERBOSE:
+                        method = 'copying'
                     shutil.copy2(self._uri, path)
 
             elif self._uri_type == URI_URL:
@@ -285,9 +295,8 @@ class CromwellerURI(object):
             raise NotImplementedError('uri_types: {}, {}'.format(
                 self._uri_type, uri_type))
         if CromwellerURI.VERBOSE:
-            print('[CromwellerURI] copying done, target: {target}'.format(
-                    target=path)) 
-        # assert(CromwellerURI.__file_exists(path))
+            print('[CromwellerURI] {method} done, target: {target}'.format(
+                    method=method, target=path))
         return path
 
     def get_file_contents(self):
