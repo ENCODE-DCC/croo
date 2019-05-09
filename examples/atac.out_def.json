@@ -1,0 +1,32 @@
+{
+  "atac.bowtie2": {
+    "bam": {
+      "path": "align/rep${i1}/${basename}"
+    },
+    "align_log": {
+      "path": "qc/rep${i1}/${basename}"
+    },
+    "flagstat_qc": {
+      "path": "qc/rep${i1}/${basename}"
+    },
+    "read_len_log": {
+      "path": "qc/rep${i1}/${basename}"
+    }
+  },
+  "atac.xcor": {
+    "plot_png": {
+      "path": "qc/rep${i1}/${basename}"
+    },
+    "score": {
+      "path": "qc/rep${i1}/${basename}"
+    }
+  },
+  "atac.reproducibility_overlap": {
+    "optimal_peak": {
+      "path": "peak/overlap/reproducibility/optimal_peak/${basename}"
+    },
+    "conservative_peak": {
+      "path": "peak/overlap/reproducibility/conservative_peak/${basename}"
+    }
+  }
+}
