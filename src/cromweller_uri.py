@@ -161,7 +161,7 @@ class CromwellerURI(object):
         return self.copy(target_uri_type=uri_type)
 
     def copy(self, target_uri_type=None, target_uri=None, soft_link=False):
-        """Make a copy of self on a "target_uri_type" tmp_dir or 
+        """Make a copy of self on a "target_uri_type" tmp_dir or
         tmp_bucket. Or copy self to "target_uri".
 
         Args:

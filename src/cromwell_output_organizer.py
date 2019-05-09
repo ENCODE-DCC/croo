@@ -97,7 +97,7 @@ class CromwellOutputOrganizer(object):
         task_graph = cm.get_task_graph()
 
         for task_name, out_vars in self._out_def_json.items():
-            for out_var_name, out_var in out_vars.items(): 
+            for out_var_name, out_var in out_vars.items():
                 path = out_var.get('path')
                 # desc = out_var.get('desc')
                 # table_item = out_var.get('table_item')
@@ -116,7 +116,7 @@ class CromwellOutputOrganizer(object):
                             CromwellOutputOrganizer.__interpret_inline_exp(
                                 path, full_path, shard_idx)
                         target_uri = os.path.join(out_dir, target_rel_path)
-                        
+
                         CromwellerURI(full_path).copy(
                             target_uri=target_uri,
                             soft_link=self._soft_link)
@@ -147,30 +147,30 @@ class CromwellOutputOrganizer(object):
         if shard_idx is not None:
             i0 = str(shard_idx[0])
             i1 = str(shard_idx[0]+1)
-            result = result.replace('${i0}',i0)
-            result = result.replace('${i1}',i1)
+            result = result.replace('${i0}', i0)
+            result = result.replace('${i1}', i1)
 
-            if len(shard_idx)>1:            
-                j0 = str(shard_idx[1]) 
+            if len(shard_idx) > 1:
+                j0 = str(shard_idx[1])
                 j1 = str(shard_idx[1]+1)
-                result = result.replace('${j0}',j0)
-                result = result.replace('${j1}',j1)
+                result = result.replace('${j0}', j0)
+                result = result.replace('${j1}', j1)
 
-            if len(shard_idx)>2:
+            if len(shard_idx) > 2:
                 k0 = str(shard_idx[2])
                 k1 = str(shard_idx[2]+1)
-                result = result.replace('${k0}',k0)
-                result = result.replace('${k1}',k1)
+                result = result.replace('${k0}', k0)
+                result = result.replace('${k1}', k1)
 
         if full_path is not None:
             basename = os.path.basename(full_path)
-            result = result.replace('${basename}',basename)
+            result = result.replace('${basename}', basename)
 
         return result
 
 
 def init_dirs_args(args):
-    """More initialization for out/tmp directories since tmp 
+    """More initialization for out/tmp directories since tmp
     directory is important for inter-storage transfe using
     CromwellerURI
     """
@@ -199,6 +199,7 @@ def init_dirs_args(args):
         http_password=args.get('http_password'),
         use_gsutil_over_aws_s3=args.get('use_gsutil_over_aws_s3'),
         verbose=True)
+
 
 def main():
     # parse arguments. note that args is a dict

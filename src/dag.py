@@ -73,7 +73,7 @@ class DAG(object):
         """Find a list of nodes by matching condition function.
 
         Returns:
-            [(h, n)] where h is a hash of a matched node n 
+            [(h, n)] where h is a hash of a matched node n
         """
         result = []
         for h, n in self._nodes.items():
@@ -85,7 +85,7 @@ class DAG(object):
         """Get a list of all nodes
 
         Returns:
-            [(h, n)] where h is a hash of a matched node n 
+            [(h, n)] where h is a hash of a matched node n
         """
         return self._nodes.items()
 
