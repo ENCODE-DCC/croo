@@ -4,7 +4,7 @@ COO is a Python package for organizing outputs from [Cromwell](https://github.co
 
 ## Introduction
 
-COO takes in `metadata.json` generated from Cromwell and parses it to get information about all outputs. Then it makes a copy (or a soft link) of each output file as described in an output definition JSON file specified by `--out-def-json`.
+COO takes in `metadata.json` which is generated from Cromwell and parses it to get information about all outputs. Then it makes a copy (or a soft link) of each output file as described in an output definition JSON file specified by `--out-def-json`.
 
 ## Features
 
@@ -13,46 +13,32 @@ COO takes in `metadata.json` generated from Cromwell and parses it to get inform
   	$ coo gs://some/where/metadata.json --out-def-json s3://over/here/atac.out_def.json --out-dir gs://your/final/out/bucket
   	```
 
-* **Soft-linking** (local storage only): COO defaults to make soft links instead of copying if all output files defined in a metadata JSON is on local file system and also the output directory specifed by `--out-dir` is local. If you want to force to make copies of all outputs then use `--method copy`.
+* **Soft-linking** (local storage only): COO defaults to make soft links instead of copying for local-to-local file transfer (local output file defined in a metadata JSON vs. local output directory specifed by `--out-dir`). In order to force copying instead of soft-linking regardless of a storage type then use `--method copy`. Local-to-cloud and cloud-to-local file transfer always uses `copy` method.
 
 
 ## Output definition JSON file
 
-Output definition JSON file must be provided for corresponding WDL file.
+An output definition JSON file must be provided for a corresponding WDL file.
 
-For the following example, `bowtie2` is a task called in a `scatter {}` block iterated over biological repliates so that the output variable `bam` is an `Array[File]` in a workflow level. Therefore, we need an index for the `scatter {}` iteration to have access to each file that `bam` points to. Inline expressions like `${i0}` (0-based) or `${i1}` (1-based) allows access to such index. `${basename}` refers to the basename of the original output file.
+For the following example of [ENCODE ATAC-Seq pipeline](https://github.com/ENCODE-DCC/atac-seq-pipeline), `atac.bowtie2` is a task called in a `scatter {}` block iterating over biological replicates so that the type of an output variable `atac.bowtie2.bam` in a workflow level is `Array[File]`. Therefore, we need an index for the `scatter {}` iteration to have access to each file that `bam` points to. An inline expression like `${i}` (0-based) allows access to such index. `${basename}` refers to the basename of the original output file. BAM and flagstat log from `atac.bowtie2` will be transferred to different locations `align/repX/` and `qc/repX/`, respectively. `atac.qc_report` is a final task of a workflow gathering all QC logs so it's not called in a `scatter {}` block. There shouldn't be any scatter indices like `i0`, `i1`, `j0` and `j1`.
 
 Example:
 ```json
 {
   "atac.bowtie2": {
     "bam": {
-      "path": "align/rep${i1}/${basename}",
-    },
-    "align_log": {
-      "path": "qc/rep${i1}/${basename}",
+      "path": "align/rep${i+1}/${basename}",
     },
     "flagstat_qc": {
-      "path": "qc/rep${i1}/${basename}",
-    },
-    "read_len_log": {
-      "path": "qc/rep${i1}/${basename}",
+      "path": "qc/rep${i+1}/${basename}",
     }
   },
-  "atac.xcor": {
-    "plot_png": {
-      "path": "qc/rep${i1}/${basename}",
+  "atac.qc_report": {
+    "report": {
+      "path": "qc/final_qc_report.html"
     },
-    "score": {
-      "path": "qc/rep${i1}/${basename}",
-    }
-  },
-  "atac.reproducibility_overlap": {
-    "optimal_peak": {
-      "path": "peak/overlap/reproducibility/optimal_peak/${basename}"
-    },
-    "conservative_peak": {
-      "path": "peak/overlap/reproducibility/conservative_peak/${basename}"
+    "qc_json": {
+      "path": "qc/final_qc.json"
     }
   }
 }
@@ -75,29 +61,30 @@ More generally for subworkflows a definition JSON file looks like the following:
 }
 ```
 
-> **WARNING**: Unfortunately, COO does not currently support `Array[File]` output per task. It only works for `File` type.
+> **WARNING**: Unfortunately, for an output variable `[OUT_VAR_NAME_IN_TASK]` in a task COO does not currently support `Array[File]` type. It only supports `File` type.
     ```
     task t1 {
+        command {
+            ...
+        }
         output {
             Array[File] out_list  # NOT SUPPORTED
-            File out  # WORKING
+            File out  # SUPPORTED
         }
     }
     ```
 
-It supports up to double-nested scatters (implemented by using nested subworkflows) with index `i`, `j` and `k`.
+`{ "path" : "[OUT_REL_PATH_DEF]" }` defines a final output destination. It's a file path **RELATIVE** to the output directory species as `--out-dir`. The following inline expressions are allowe for `[OUT_REL_PATH_DEF]`. You can use basic Python expressions inside `${}`. For example, `${basename.split(".")[0]}` should be helpful to get the prefix of a file like `some_prefix.fastqs.gz`.
 
-`[OUT_REL_PATH_DEF]` defines a final output destination. It's a file path relative to the output directory species as `--out-dir`. The following inline expressions are allowed.
-
-| Expression       |                                                |
-|------------------|------------------------------------------------|
-| `${basename}`    | Basename of file                               | 
-| `${i0}`          | 0-based index for a main scatter loop          |
-| `${i1}`          | 1-based index for a main scatter loop          |
-| `${j0}`          | 0-based index for a nested scatter loop        |
-| `${j1}`          | 1-based index for a nested scatter loop        |
-| `${k0}`          | 0-based index for a double-nested scatter loop |
-| `${k1}`          | 1-based index for a double-nested scatter loop |
+| Built-in variable | Type       | Description                                      |
+|-------------------|------------|--------------------------------------------------|
+| `basename`        | str        | Basename of file                                 | 
+| `dirname`         | str        | Dirname of file                                  | 
+| `full_path`       | str        | Full path of file                                | 
+| `i`               | int        | 0-based index for main scatter loop              |
+| `j`               | int        | 0-based index for nested scatter loop            |
+| `k`               | int        | 0-based index for double-nested scatter loop     |
+| `shard_idx`       | tuple(int) | tuple of indices for each dim.: (i, j, k, ...)   |
 
 ## Install
 
@@ -110,7 +97,7 @@ $ echo "export PATH=\"\$PATH:$PWD/cromwell_output_organizer\"" >> ~/.bashrc
 
 ## Inter-storage file transfer
 
-If you want to use auto-transfer between local/cloud storages, configure for corresponding cloud CLI for a target storage. (`gsutil` or `aws`). Refer to [here](#requirements) for details.
+In order to use auto-transfer between local/cloud storages, you need to configure for corresponding cloud CLI (`gsutil` or `aws`) for a target storage. Refer to [here](#requirements) for details.
 
 > **WARNING**: COO does not ensure a fail-safe file transfer when it's interrupted by user or system. Also, there can be race conditions if multiple users try to access/copy files. This will be later addressed in the future release. Until then DO NOT interrupt COO until you see the following `copying done` message.
 
@@ -163,13 +150,13 @@ optional arguments:
 	$ sudo yum install python3 epel-release wget curl
 	```
 
-* [gsutil](https://cloud.google.com/storage/docs/gsutil_install): Run the followings to configure gsutil:
+* [gsutil](https://cloud.google.com/storage/docs/gsutil_install): Run the followings to configure for gsutil:
 	```bash
 	$ gcloud auth login --no-launch-browser
 	$ gcloud auth application-default --no-launch-browser
 	```
 
-* [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-linux.html): Run the followings to configure AWS CLI:
+* [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-linux.html): Run the followings to configure for AWS CLI:
 	```bash
 	$ aws configure
 	```

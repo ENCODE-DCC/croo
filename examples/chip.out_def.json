@@ -1,19 +1,13 @@
 {
-  "atac.bowtie2": {
+  "chip.bwa": {
     "bam": {
       "path": "align/rep${i+1}/${basename}"
     },
-    "align_log": {
-      "path": "qc/rep${i+1}/${basename}"
-    },
     "flagstat_qc": {
-      "path": "qc/rep${i+1}/${basename}"
-    },
-    "read_len_log": {
       "path": "qc/rep${i+1}/${basename}"
     }
   },
-  "atac.filter": {
+  "chip.filter": {
     "nodup_bam": {
       "path": "align/rep${i+1}/${basename}"
     },
@@ -30,12 +24,12 @@
       "path": "qc/rep${i+1}/${basename}"
     }
   },
-  "atac.bam2ta": {
+  "chip.bam2ta": {
     "ta": {
       "path": "align/rep${i+1}/${basename}"
     }
   },
-  "atac.spr": {
+  "chip.spr": {
     "ta_pr1": {
       "path": "align/rep${i+1}/pr1/${basename}"
     },
@@ -43,22 +37,22 @@
       "path": "align/rep${i+1}/pr2/${basename}"
     }
   },
-  "atac.pool_ta": {
+  "chip.pool_ta": {
     "ta_pooled": {
       "path": "align/pooled_rep/${basename}"
     }
   },
-  "atac.pool_ta_pr1": {
+  "chip.pool_ta_pr1": {
     "ta_pooled": {
       "path": "align/pooled_rep/pr1/${basename}"
     }
   },
-  "atac.pool_ta_pr2": {
+  "chip.pool_ta_pr2": {
     "ta_pooled": {
       "path": "align/pooled_rep/pr2/${basename}"
     }
   },
-  "atac.xcor": {
+  "chip.xcor": {
     "plot_png": {
       "path": "qc/rep${i+1}/${basename}"
     },
@@ -69,7 +63,7 @@
       "path": "qc/rep${i+1}/${basename}"
     }
   },
-  "atac.macs2": {
+  "chip.macs2": {
     "npeak": {
       "path": "peak/macs2/rep${i+1}/${basename}"
     },
@@ -84,9 +78,15 @@
     },
     "frip_qc": {
       "path": "qc/rep${i+1}/${basename}"
+    },
+    "sig_pval" : {
+      "path": "signal/rep${i+1}/${basename}"
+    },
+    "sig_fc" : {
+      "path": "signal/rep${i+1}/${basename}"
     }
   },
-  "atac.macs2_pr1": {
+  "chip.macs2_pr1": {
     "npeak": {
       "path": "peak/macs2/rep${i+1}/pr1/${basename}"
     },
@@ -103,7 +103,7 @@
       "path": "qc/rep${i+1}/pr1/${basename}"
     }
   },
-  "atac.macs2_pr2": {
+  "chip.macs2_pr2": {
     "npeak": {
       "path": "peak/macs2/rep${i+1}/pr2/${basename}"
     },
@@ -120,7 +120,7 @@
       "path": "qc/rep${i+1}/pr2/${basename}"
     }
   },
-  "atac.macs2_pooled": {
+  "chip.macs2_pooled": {
     "npeak": {
       "path": "peak/macs2/pooled_rep/${basename}"
     },
@@ -135,9 +135,15 @@
     },
     "frip_qc": {
       "path": "qc/pooled_rep/${basename}"
+    },
+    "sig_pval" : {
+      "path": "signal/pooled_rep/${basename}"
+    },
+    "sig_fc" : {
+      "path": "signal/pooled_rep/${basename}"
     }
   },
-  "atac.macs2_ppr1": {
+  "chip.macs2_ppr1": {
     "npeak": {
       "path": "peak/macs2/pooled_rep/pr1/${basename}"
     },
@@ -154,7 +160,7 @@
       "path": "qc/pooled_rep/pr1/${basename}"
     }
   },
-  "atac.macs2_ppr2": {
+  "chip.macs2_ppr2": {
     "npeak": {
       "path": "peak/macs2/pooled_rep/pr2/${basename}"
     },
@@ -171,7 +177,109 @@
       "path": "qc/pooled_rep/pr2/${basename}"
     }
   },
-  "atac.macs2_signal_track": {
+  "chip.spp": {
+    "rpeak": {
+      "path": "peak/spp/rep${i+1}/${basename}"
+    },
+    "bfilt_rpeak": {
+      "path": "peak/spp/rep${i+1}/${basename}"
+    },
+    "bfilt_rpeak_bb": {
+      "path": "peak/spp/rep${i+1}/${basename}"
+    },
+    "bfilt_rpeak_hammock": {
+      "path": "peak/spp/rep${i+1}/${basename}"
+    },
+    "frip_qc": {
+      "path": "qc/rep${i+1}/${basename}"
+    }
+  },
+  "chip.spp_pr1": {
+    "rpeak": {
+      "path": "peak/spp/rep${i+1}/pr1/${basename}"
+    },
+    "bfilt_rpeak": {
+      "path": "peak/spp/rep${i+1}/pr1/${basename}"
+    },
+    "bfilt_rpeak_bb": {
+      "path": "peak/spp/rep${i+1}/pr1/${basename}"
+    },
+    "bfilt_rpeak_hammock": {
+      "path": "peak/spp/rep${i+1}/pr1/${basename}"
+    },
+    "frip_qc": {
+      "path": "qc/rep${i+1}/pr1/${basename}"
+    }
+  },
+  "chip.spp_pr2": {
+    "rpeak": {
+      "path": "peak/spp/rep${i+1}/pr2/${basename}"
+    },
+    "bfilt_rpeak": {
+      "path": "peak/spp/rep${i+1}/pr2/${basename}"
+    },
+    "bfilt_rpeak_bb": {
+      "path": "peak/spp/rep${i+1}/pr2/${basename}"
+    },
+    "bfilt_rpeak_hammock": {
+      "path": "peak/spp/rep${i+1}/pr2/${basename}"
+    },
+    "frip_qc": {
+      "path": "qc/rep${i+1}/pr2/${basename}"
+    }
+  },
+  "chip.spp_pooled": {
+    "rpeak": {
+      "path": "peak/spp/pooled_rep/${basename}"
+    },
+    "bfilt_rpeak": {
+      "path": "peak/spp/pooled_rep/${basename}"
+    },
+    "bfilt_rpeak_bb": {
+      "path": "peak/spp/pooled_rep/${basename}"
+    },
+    "bfilt_rpeak_hammock": {
+      "path": "peak/spp/pooled_rep/${basename}"
+    },
+    "frip_qc": {
+      "path": "qc/pooled_rep/${basename}"
+    }
+  },
+  "chip.spp_ppr1": {
+    "rpeak": {
+      "path": "peak/spp/pooled_rep/pr1/${basename}"
+    },
+    "bfilt_rpeak": {
+      "path": "peak/spp/pooled_rep/pr1/${basename}"
+    },
+    "bfilt_rpeak_bb": {
+      "path": "peak/spp/pooled_rep/pr1/${basename}"
+    },
+    "bfilt_rpeak_hammock": {
+      "path": "peak/spp/pooled_rep/pr1/${basename}"
+    },
+    "frip_qc": {
+      "path": "qc/pooled_rep/pr1/${basename}"
+    }
+  },
+  "chip.spp_ppr2": {
+    "rpeak": {
+      "path": "peak/spp/pooled_rep/pr2/${basename}"
+    },
+    "bfilt_rpeak": {
+      "path": "peak/spp/pooled_rep/pr2/${basename}"
+    },
+    "bfilt_rpeak_bb": {
+      "path": "peak/spp/pooled_rep/pr2/${basename}"
+    },
+    "bfilt_rpeak_hammock": {
+      "path": "peak/spp/pooled_rep/pr2/${basename}"
+    },
+    "frip_qc": {
+      "path": "qc/pooled_rep/pr2/${basename}"
+    }
+  },
+  "chip.macs2_signal_track": {
     "pval_bw": {
       "path": "signal/rep${i+1}/${basename}"
     },
@@ -179,7 +287,7 @@
       "path": "signal/rep${i+1}/${basename}"
     }
   },
-  "atac.macs2_signal_track_pooled": {
+  "chip.macs2_signal_track_pooled": {
     "pval_bw": {
       "path": "signal/pooled_rep/${basename}"
     },
@@ -187,7 +295,7 @@
       "path": "signal/pooled_rep/${basename}"
     }
   },
-  "atac.count_signal_track": {
+  "chip.count_signal_track": {
     "pos_bw": {
       "path": "signal/rep${i+1}/${basename}"
     },
@@ -195,7 +303,7 @@
       "path": "signal/rep${i+1}/${basename}"
     }
   },
-  "atac.count_signal_track_pooled": {
+  "chip.count_signal_track_pooled": {
     "pos_bw": {
       "path": "signal/pooled_rep/${basename}"
     },
@@ -203,7 +311,7 @@
       "path": "signal/pooled_rep/${basename}"
     }
   },
-  "atac.idr": {
+  "chip.idr": {
     "bfilt_idr_peak": {
       "path": "peak/idr/${basename.split('.')[0]}/${basename}"
     },
@@ -226,7 +334,7 @@
       "path": "qc/idr/${basename.split('.')[0]}/${basename}"
     }
   },
-  "atac.idr_ppr": {
+  "chip.idr_ppr": {
     "bfilt_idr_peak": {
       "path": "peak/idr/${basename.split('.')[0]}/${basename}"
     },
@@ -249,7 +357,7 @@
       "path": "qc/idr/${basename.split('.')[0]}/${basename}"
     }
   },
-  "atac.idr_pr": {
+  "chip.idr_pr": {
     "bfilt_idr_peak": {
       "path": "peak/idr/${basename.split('.')[0]}/${basename}"
     },
@@ -272,7 +380,7 @@
       "path": "qc/idr/${basename.split('.')[0]}/${basename}"
     }
   },
-  "atac.overlap": {
+  "chip.overlap": {
     "bfilt_overlap_peak": {
       "path": "peak/overlap/${basename.split('.')[0]}/${basename}"
     },
@@ -286,7 +394,7 @@
       "path": "qc/overlap/${basename.split('.')[0]}/${basename}"
     }
   },
-  "atac.overlap_ppr": {
+  "chip.overlap_ppr": {
     "bfilt_overlap_peak": {
       "path": "peak/overlap/${basename.split('.')[0]}/${basename}"
     },
@@ -300,7 +408,7 @@
       "path": "qc/overlap/${basename.split('.')[0]}/${basename}"
     }
   },
-  "atac.overlap_pr": {
+  "chip.overlap_pr": {
     "bfilt_overlap_peak": {
       "path": "peak/overlap/${basename.split('.')[0]}/${basename}"
     },
@@ -314,7 +422,7 @@
       "path": "qc/overlap/${basename.split('.')[0]}/${basename}"
     }
   },
-  "atac.reproducibility_idr": {
+  "chip.reproducibility_idr": {
     "optimal_peak": {
       "path": "peak/idr/reproducibility/optimal_peak/${basename}"
     },
@@ -337,7 +445,7 @@
       "path": "qc/idr/reproducibility/${basename}"
     }
   },
-  "atac.reproducibility_overlap": {
+  "chip.reproducibility_overlap": {
     "optimal_peak": {
       "path": "peak/overlap/reproducibility/optimal_peak/${basename}"
     },
@@ -360,15 +468,12 @@
       "path": "qc/overlap/reproducibility/${basename}"
     }
   },
-  "atac.ataqc": {
-    "html": {
-      "path": "qc/rep${i+1}/ataqc/${basename}"
-    },
-    "txt": {
-      "path": "qc/rep${i+1}/ataqc/${basename}"
+  "chip.fingerprint": {
+    "plot": {
+      "path": "qc/fingerprint/${basename}"
     }
   },
-  "atac.qc_report": {
+  "chip.qc_report": {
     "report": {
       "path": "qc/${basename}"
     },

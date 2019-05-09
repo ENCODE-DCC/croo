@@ -9,59 +9,12 @@ Author:
 import os
 import sys
 import json
-import argparse
+import re
+from cromwell_output_organizer_args import parse_coo_arguments
 from cromweller_uri import init_cromweller_uri, CromwellerURI
 from cromwell_metadata import CromwellMetadata
 
 __version__ = "v0.1.0"
-
-
-def parse_coo_arguments():
-    """Argument parser for Cromwell Output Organizer (COO)
-    """
-    p = argparse.ArgumentParser()
-    p.add_argument(
-        'metadata_json',
-        help='Path, URL or URI for metadata.json for a workflow '
-             'Example: /scratch/sample1/metadata.json, '
-             'gs://some/where/metadata.json, '
-             'http://hello.com/world/metadata.json')
-    p.add_argument(
-        '--out-def-json', required=True,
-        help='Output definition JSON file for a WDL file corresponding to '
-             'the specified metadata.json file')
-    p.add_argument(
-        '--method', choices=('link', 'copy'), default='link',
-        help='Method to localize files on output directory/bucket. '
-        '"link" means a soft-linking and it\'s for local directory only. '
-        'Original output files will be kept in Cromwell\'s output '
-        'directory. '
-        '"copy" makes a copy of Cromwell\'s original outputs')
-    p.add_argument(
-        '--out-dir', default='.', help='Output directory/bucket '
-                                       '(local or remote)')
-    p.add_argument(
-        '--tmp-dir', help='LOCAL temporary directory')
-    p.add_argument(
-        '--use-gsutil-over-aws-s3', action='store_true',
-        help='Use gsutil instead of aws s3 CLI even for S3 buckets.')
-    p.add_argument(
-        '--http-user',
-        help='Username to download data from private URLs')
-    p.add_argument(
-        '--http-password',
-        help='Password to download data from private URLs')
-
-    if len(sys.argv[1:]) == 0:
-        p.print_help()
-        p.exit()
-    # parse all args
-    args = p.parse_args()
-
-    # convert to dict
-    args_d = vars(args)
-
-    return args_d
 
 
 class CromwellOutputOrganizer(object):
@@ -70,6 +23,7 @@ class CromwellOutputOrganizer(object):
     It parses Cromwell's metadata.json to get all information about outputs
     and organize outputs as specified in output definition JSON
     """
+    RE_PATTERN_INLINE_EXP = r'\$\{(.*?)\}'
 
     def __init__(self, out_def_json, soft_link=True):
         """Initialize COO with output definition JSON
@@ -106,8 +60,8 @@ class CromwellOutputOrganizer(object):
                 for _, task in task_graph.get_nodes():
                     if task_name != task['task_name']:
                         continue
-                    shard_idx = task['shard_idx']
                     out_files = task['out_files']
+                    shard_idx = task['shard_idx']
 
                     for k, full_path in out_files:
                         if k != out_var_name:
@@ -135,36 +89,36 @@ class CromwellOutputOrganizer(object):
                             scatter id 1 in subsubworkflow
 
         Supported expressions:
-            ${i0} : 0-based index for a main scatter loop
-            ${i1} : 1-based index for a main scatter loop
-            ${j0} : 0-based index for a nested scatter loop
-            ${j1} : 1-based index for a nested scatter loop
-            ${k0} : 0-based index for a double-nested scatter loop
-            ${k1} : 1-based index for a double-nested scatter loop
-            ${basename} : basename of file
+            ${i} (int) : 0-based index for a main scatter loop
+            ${j} (int) : 0-based index for a nested scatter loop
+            ${k} (int) : 0-based index for a double-nested scatter loop
+            ${basename} (str) : basename of file
+            ${dirname} (str)  : dirname of file
+            ${full_path} (str) : full_path of file (can be path, gs://, s3://)
+            ${shard_idx} : tuple of (i, j, k, ...) with dynamic length
         """
         result = s
-        if shard_idx is not None:
-            i0 = str(shard_idx[0])
-            i1 = str(shard_idx[0]+1)
-            result = result.replace('${i0}', i0)
-            result = result.replace('${i1}', i1)
 
-            if len(shard_idx) > 1:
-                j0 = str(shard_idx[1])
-                j1 = str(shard_idx[1]+1)
-                result = result.replace('${j0}', j0)
-                result = result.replace('${j1}', j1)
+        if shard_idx[0] > -1:
+            i = shard_idx[0]
+        else:
+            i = None
+        if len(shard_idx) > 1 and shard_idx[1] > -1:
+            j = shard_idx[1]
+        else:
+            j = None
+        if len(shard_idx) > 2 and shard_idx[2] > -1:
+            k = shard_idx[2]
+        else:
+            k = None
+        basename = os.path.basename(full_path)
+        dirname = os.path.dirname(full_path)
 
-            if len(shard_idx) > 2:
-                k0 = str(shard_idx[2])
-                k1 = str(shard_idx[2]+1)
-                result = result.replace('${k0}', k0)
-                result = result.replace('${k1}', k1)
-
-        if full_path is not None:
-            basename = os.path.basename(full_path)
-            result = result.replace('${basename}', basename)
+        while True:
+            m = re.search(CromwellOutputOrganizer.RE_PATTERN_INLINE_EXP, result)
+            if m is None:
+                break
+            result = result.replace(m.group(0), str(eval(m.group(1))), 1)
 
         return result
 
@@ -200,11 +154,11 @@ def init_dirs_args(args):
         use_gsutil_over_aws_s3=args.get('use_gsutil_over_aws_s3'),
         verbose=True)
 
-
 def main():
     # parse arguments. note that args is a dict
     args = parse_coo_arguments()
 
+    # init out/tmp dirs and CromwellerURI for inter-storage transfer
     init_dirs_args(args)
 
     co = CromwellOutputOrganizer(
