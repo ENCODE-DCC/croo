@@ -1,0 +1,14 @@
+#!/usr/bin/env python3
+
+try:
+    import croo
+except:
+    import sys, os
+    script_path = os.path.dirname(os.path.realpath(__file__))
+    sys.path.append(os.path.join(script_path, '../'))
+    import croo
+
+from croo.croo import main
+
+main()
+

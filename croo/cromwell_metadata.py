@@ -7,9 +7,10 @@ Author:
 """
 
 import json
-from dag import DAG
+import caper
+from caper.caper_uri import CaperURI
 from collections import OrderedDict
-from cromweller_uri import CromwellerURI
+from .dag import DAG
 
 
 class CromwellMetadata(object):
@@ -77,10 +78,10 @@ class CromwellMetadata(object):
 
                 in_files = [
                     (k, v) for k, v in c['inputs'].items()
-                    if isinstance(v, str) and CromwellerURI(v).is_valid_uri()]
+                    if isinstance(v, str) and CaperURI(v).is_valid_uri()]
                 out_files = [
                     (k, v) for k, v in c['outputs'].items()
-                    if isinstance(v, str) and CromwellerURI(v).is_valid_uri()]
+                    if isinstance(v, str) and CaperURI(v).is_valid_uri()]
                 t = {
                     'task_name': parent_wf_name + wf_name + '.' + task_alias,
                     'shard_idx': parent_wf_shard_idx + (shard_idx,),
@@ -92,7 +93,7 @@ class CromwellMetadata(object):
 
     @staticmethod
     def is_parent(t1, t2):
-        """Checks if task t1 is a parent of task n2.
+        """Checks if task t1 is a parent of task t2.
         Finds parent task by the intersection of child's in_files
         and parent's out_files. Checks link between two call objects.
 
@@ -116,13 +117,13 @@ class CromwellMetadata(object):
 def main():
     import sys
     import os
-    from cromweller_uri import init_cromweller_uri
+    from caper_uri import init_caper_uri
 
     if len(sys.argv) < 2:
         print('Usage: python cromwell_metadata.py [METADATA_JSON_FILE]')
         sys.exit(1)
 
-    init_cromweller_uri(os.path.join(os.getcwd(), 'cromwell_metadata_tmp'))
+    init_caper_uri(os.path.join(os.getcwd(), 'cromwell_metadata_tmp'))
 
     m_json_file = sys.argv[1]
     CromwellMetadata(m_json_file, debug=True)

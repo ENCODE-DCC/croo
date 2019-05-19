@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""CromwellOutputOrganizer (COO): Cromwell output organizer based on
-Cromwell's metadata.json.
+"""CRomwellOutputOrganizer (croo): Cromwell output organizer
+command line arguments helper
 
 Author:
     Jin Lee (leepc12@gmail.com) at ENCODE-DCC
@@ -10,7 +10,7 @@ import argparse
 import sys
 
 
-def parse_coo_arguments():
+def parse_croo_arguments():
     """Argument parser for Cromwell Output Organizer (COO)
     """
     p = argparse.ArgumentParser()
