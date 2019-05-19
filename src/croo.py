@@ -12,12 +12,12 @@ import json
 import re
 import caper
 from caper.caper_uri import init_caper_uri, CaperURI
-from .cromwell_output_organizer_args import parse_croo_arguments
+from .croo_args import parse_croo_arguments
 from .cromwell_metadata import CromwellMetadata
 
 
 class CromwellOutputOrganizer(object):
-    """Cromwell output organizer (COO)
+    """Cromwell output organizer (croo)
 
     It parses Cromwell's metadata.json to get all information about outputs
     and organize outputs as specified in output definition JSON
@@ -25,7 +25,7 @@ class CromwellOutputOrganizer(object):
     RE_PATTERN_INLINE_EXP = r'\$\{(.*?)\}'
 
     def __init__(self, out_def_json, soft_link=True):
-        """Initialize COO with output definition JSON
+        """Initialize croo with output definition JSON
         """
         if isinstance(out_def_json, dict):
             self._out_def_json = out_def_json
