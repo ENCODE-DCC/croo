@@ -1,19 +1,19 @@
-# Cromweller Output Organizer (COO)
+# Cromweller Output Organizer (CROO)
 
-COO is a Python package for organizing outputs from [Cromwell](https://github.com/broadinstitute/cromwell/).
+Croo is a Python package for organizing outputs from [Cromwell](https://github.com/broadinstitute/cromwell/).
 
 ## Introduction
 
-COO takes in `metadata.json` which is generated from Cromwell and parses it to get information about all outputs. Then it makes a copy (or a soft link) of each output file as described in an output definition JSON file specified by `--out-def-json`.
+Croo takes in `metadata.json` which is generated from Cromwell and parses it to get information about all outputs. Then it makes a copy (or a soft link) of each output file as described in an output definition JSON file specified by `--out-def-json`.
 
 ## Features
 
 * **Automatic file transfer between local/cloud storages**: For example, the following command line works. You can define URIs instead of local path for any command line arguments. The following command line reads from remote metadata JSON file (`gs://some/where/metadata.json`) and output definition JSON file (`s3://over/here/atac.out_def.json`) and write organized outputs to `gs://your/final/out/bucket`.
   	```bash
-  	$ coo gs://some/where/metadata.json --out-def-json s3://over/here/atac.out_def.json --out-dir gs://your/final/out/bucket
+  	$ croo gs://some/where/metadata.json --out-def-json s3://over/here/atac.out_def.json --out-dir gs://your/final/out/bucket
   	```
 
-* **Soft-linking** (local storage only): COO defaults to make soft links instead of copying for local-to-local file transfer (local output file defined in a metadata JSON vs. local output directory specifed by `--out-dir`). In order to force copying instead of soft-linking regardless of a storage type then use `--method copy`. Local-to-cloud and cloud-to-local file transfer always uses `copy` method.
+* **Soft-linking** (local storage only): Croo defaults to make soft links instead of copying for local-to-local file transfer (local output file defined in a metadata JSON vs. local output directory specifed by `--out-dir`). In order to force copying instead of soft-linking regardless of a storage type then use `--method copy`. Local-to-cloud and cloud-to-local file transfer always uses `copy` method.
 
 
 ## Output definition JSON file
@@ -61,7 +61,7 @@ More generally for subworkflows a definition JSON file looks like the following:
 }
 ```
 
-> **WARNING**: Unfortunately, for an output variable `[OUT_VAR_NAME_IN_TASK]` in a task COO does not currently support `Array[File]` type. It only supports `File` type.
+> **WARNING**: Unfortunately, for an output variable `[OUT_VAR_NAME_IN_TASK]` in a task Croo does not currently support `Array[File]` type. It only supports `File` type.
     ```
     task t1 {
         command {
@@ -88,7 +88,7 @@ More generally for subworkflows a definition JSON file looks like the following:
 
 ## Install
 
-We will add PIP installation later. Until then `git clone` it and manually add `coo` to your environment variable `PATH` in your BASH startup scripts (`~/.bashrc`). Make sure that you have `python3` >=3.3 installed on your system.
+We will add PIP installation later. Until then `git clone` it and manually add `croo` to your environment variable `PATH` in your BASH startup scripts (`~/.bashrc`). Make sure that you have `python3` >=3.3 installed on your system.
 
 ```bash
 $ git clone https://github.com/ENCODE-DCC/cromwell_output_organizer
@@ -99,13 +99,13 @@ $ echo "export PATH=\"\$PATH:$PWD/cromwell_output_organizer\"" >> ~/.bashrc
 
 In order to use auto-transfer between local/cloud storages, you need to configure for corresponding cloud CLI (`gsutil` or `aws`) for a target storage. Refer to [here](#requirements) for details.
 
-> **WARNING**: COO does not ensure a fail-safe file transfer when it's interrupted by user or system. Also, there can be race conditions if multiple users try to access/copy files. This will be later addressed in the future release. Until then DO NOT interrupt COO until you see the following `copying done` message.
+> **WARNING**: Croo does not ensure a fail-safe file transfer when it's interrupted by user or system. Also, there can be race conditions if multiple users try to access/copy files. This will be later addressed in the future release. Until then DO NOT interrupt Croo until you see the following `copying done` message.
 
 
 ## Usage
 
 ```bash
-usage: coo [-h] --out-def-json OUT_DEF_JSON [--method {link,copy}]
+usage: croo [-h] --out-def-json OUT_DEF_JSON [--method {link,copy}]
            [--out-dir OUT_DIR] [--tmp-dir TMP_DIR] [--use-gsutil-over-aws-s3]
            [--http-user HTTP_USER] [--http-password HTTP_PASSWORD]
            metadata_json
