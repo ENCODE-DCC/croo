@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""CromwellOutputOrganizer (COO): Cromwell output organizer based on
+"""CRomwellOutputOrganizer (croo): Cromwell output organizer based on
 Cromwell's metadata.json.
 
 Author:
@@ -10,11 +10,10 @@ import os
 import sys
 import json
 import re
-from cromwell_output_organizer_args import parse_coo_arguments
-from cromweller_uri import init_cromweller_uri, CromwellerURI
-from cromwell_metadata import CromwellMetadata
-
-__version__ = "v0.1.0"
+import caper
+from caper.caper_uri import init_caper_uri, CaperURI
+from .cromwell_output_organizer_args import parse_croo_arguments
+from .cromwell_metadata import CromwellMetadata
 
 
 class CromwellOutputOrganizer(object):
@@ -31,7 +30,7 @@ class CromwellOutputOrganizer(object):
         if isinstance(out_def_json, dict):
             self._out_def_json = out_def_json
         else:
-            f = CromwellerURI(out_def_json).get_local_file()
+            f = CaperURI(out_def_json).get_local_file()
             with open(f, 'r') as fp:
                 self._out_def_json = json.loads(fp.read())
 
@@ -43,7 +42,7 @@ class CromwellOutputOrganizer(object):
         if isinstance(metadata_json, dict):
             m = metadata_json
         else:
-            f = CromwellerURI(metadata_json).get_local_file()
+            f = CaperURI(metadata_json).get_local_file()
             with open(f, 'r') as fp:
                 m = json.loads(fp.read())
 
@@ -71,7 +70,7 @@ class CromwellOutputOrganizer(object):
                                 path, full_path, shard_idx)
                         target_uri = os.path.join(out_dir, target_rel_path)
 
-                        CromwellerURI(full_path).copy(
+                        CaperURI(full_path).copy(
                             target_uri=target_uri,
                             soft_link=self._soft_link)
 
@@ -126,26 +125,26 @@ class CromwellOutputOrganizer(object):
 def init_dirs_args(args):
     """More initialization for out/tmp directories since tmp
     directory is important for inter-storage transfe using
-    CromwellerURI
+    CaperURI
     """
     if args['out_dir'].startswith(('http://', 'https://')):
         raise ValueError('URL is not allowed for --out-dir')
     elif args['out_dir'].startswith(('gs://', 's3://')):
         if args.get('tmp_dir') is None:
-            args['tmp_dir'] = os.path.join(os.getcwd(), '.coo_tmp')
+            args['tmp_dir'] = os.path.join(os.getcwd(), '.croo_tmp')
     else:
         args['out_dir'] = os.path.abspath(os.path.expanduser(args['out_dir']))
         os.makedirs(args['out_dir'], exist_ok=True)
 
         if args.get('tmp_dir') is None:
-            args['tmp_dir'] = os.path.join(args['out_dir'], '.coo_tmp')
+            args['tmp_dir'] = os.path.join(args['out_dir'], '.croo_tmp')
 
     # make temp dir
     os.makedirs(args['tmp_dir'], exist_ok=True)
 
-    # init cromweller uri to transfer files across various storages
+    # init caper uri to transfer files across various storages
     #   e.g. gs:// to s3://, http:// to local, ...
-    init_cromweller_uri(
+    init_caper_uri(
         tmp_dir=args['tmp_dir'],
         tmp_s3_bucket=None,
         tmp_gcs_bucket=None,
@@ -156,9 +155,9 @@ def init_dirs_args(args):
 
 def main():
     # parse arguments. note that args is a dict
-    args = parse_coo_arguments()
+    args = parse_croo_arguments()
 
-    # init out/tmp dirs and CromwellerURI for inter-storage transfer
+    # init out/tmp dirs and CaperURI for inter-storage transfer
     init_dirs_args(args)
 
     co = CromwellOutputOrganizer(
