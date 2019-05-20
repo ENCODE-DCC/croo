@@ -1,4 +1,4 @@
-# Cromweller Output Organizer (CROO)
+# Cromweller Output Organizer (Croo)
 
 Croo is a Python package for organizing outputs from [Cromwell](https://github.com/broadinstitute/cromwell/).
 
@@ -22,23 +22,29 @@ An output definition JSON file must be provided for a corresponding WDL file.
 
 For the following example of [ENCODE ATAC-Seq pipeline](https://github.com/ENCODE-DCC/atac-seq-pipeline), `atac.bowtie2` is a task called in a `scatter {}` block iterating over biological replicates so that the type of an output variable `atac.bowtie2.bam` in a workflow level is `Array[File]`. Therefore, we need an index for the `scatter {}` iteration to have access to each file that `bam` points to. An inline expression like `${i}` (0-based) allows access to such index. `${basename}` refers to the basename of the original output file. BAM and flagstat log from `atac.bowtie2` will be transferred to different locations `align/repX/` and `qc/repX/`, respectively. `atac.qc_report` is a final task of a workflow gathering all QC logs so it's not called in a `scatter {}` block. There shouldn't be any scatter indices like `i0`, `i1`, `j0` and `j1`.
 
+Croo also generates a final HTML report `croo.report.html` on `--out-dir`. This HTML report includes a file table summarizing all output files in a tree structure (split by `/`).
+
 Example:
 ```json
 {
   "atac.bowtie2": {
     "bam": {
       "path": "align/rep${i+1}/${basename}",
+      "table": "Alignment/Replicate ${i+1}/Raw BAM from bowtie2"
     },
     "flagstat_qc": {
       "path": "qc/rep${i+1}/${basename}",
+      "table": "QC and logs/Replicate ${i+1}/Samtools flagstat for Raw BAM"
     }
   },
   "atac.qc_report": {
     "report": {
-      "path": "qc/final_qc_report.html"
+      "path": "qc/final_qc_report.html",
+      "table": "QC and logs/Final QC HTML report"
     },
     "qc_json": {
-      "path": "qc/final_qc.json"
+      "path": "qc/final_qc.json",
+      "table": "QC and logs/Final QC JSON file"
     }
   }
 }
@@ -49,13 +55,15 @@ More generally for subworkflows a definition JSON file looks like the following:
 {
   "[WORKFLOW_NAME].[TASK_NAME_OR_ALIAS]" : {
     "[OUT_VAR_NAME_IN_TASK]" : {
-      "path": "[OUT_REL_PATH_DEF]"
+      "path": "[OUT_REL_PATH_DEF]",
+      "table": "[FILE_TABLE_TREE_ITEM]"
     }
   },
 
   "[WORKFLOW_NAME].[SUBWORKFLOW_NAME_OR_ALIAS].[SUBSUBWORKFLOW_NAME_OR_ALIAS].[TASK_NAME_OR_ALIAS]" : {
     "[OUT_VAR_NAME_IN_TASK]" : {
-      "path": "[OUT_REL_PATH_DEF]"
+      "path": "[OUT_REL_PATH_DEF]",
+      "table": "[FILE_TABLE_TREE_ITEM]"
     }
   }
 }
@@ -74,7 +82,7 @@ More generally for subworkflows a definition JSON file looks like the following:
     }
     ```
 
-`{ "path" : "[OUT_REL_PATH_DEF]" }` defines a final output destination. It's a file path **RELATIVE** to the output directory species as `--out-dir`. The following inline expressions are allowe for `[OUT_REL_PATH_DEF]`. You can use basic Python expressions inside `${}`. For example, `${basename.split(".")[0]}` should be helpful to get the prefix of a file like `some_prefix.fastqs.gz`.
+`{ "path" : "[OUT_REL_PATH_DEF]", "table": "[FILE_TABLE_TREE_ITEM]" }` defines a final output destination and file table tree item. `[OUT_REL_PATH_DEF]` is a file path **RELATIVE** to the output directory species as `--out-dir`. The following inline expressions are allowed for `[OUT_REL_PATH_DEF]` and `[FILE_TABLE_TREE_ITEM]`. You can use basic Python expressions inside `${}`. For example, `${basename.split(".")[0]}` should be helpful to get the prefix of a file like `some_prefix.fastqs.gz`.
 
 | Built-in variable | Type       | Description                                      |
 |-------------------|------------|--------------------------------------------------|
@@ -88,11 +96,16 @@ More generally for subworkflows a definition JSON file looks like the following:
 
 ## Install
 
-We will add PIP installation later. Until then `git clone` it and manually add `croo` to your environment variable `PATH` in your BASH startup scripts (`~/.bashrc`). Make sure that you have `python3` >=3.3 installed on your system.
+Install it through PIP.
+```bash
+$ pip install croo
+```
+
+Or `git clone` it and manually add `croo` to your environment variable `PATH` in your BASH startup scripts (`~/.bashrc`). Make sure that you have `python3` >=3.3 installed on your system.
 
 ```bash
-$ git clone https://github.com/ENCODE-DCC/cromwell_output_organizer
-$ echo "export PATH=\"\$PATH:$PWD/cromwell_output_organizer\"" >> ~/.bashrc
+$ git clone https://github.com/ENCODE-DCC/croo
+$ echo "export PATH=\"\$PATH:$PWD/croo/bin\"" >> ~/.bashrc
 ```
 
 ## Inter-storage file transfer
