@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""CRomwellOutputOrganizer (croo): Cromwell output organizer based on
+"""Croo (croo): Cromwell output organizer based on
 Cromwell's metadata.json.
 
 Author:
@@ -13,18 +13,20 @@ import re
 import caper
 from caper.caper_uri import init_caper_uri, CaperURI
 from .croo_args import parse_croo_arguments
+from .croo_html_report import CrooHtmlReport
 from .cromwell_metadata import CromwellMetadata
 
 
-class CromwellOutputOrganizer(object):
+class Croo(object):
     """Cromwell output organizer (croo)
 
     It parses Cromwell's metadata.json to get all information about outputs
     and organize outputs as specified in output definition JSON
     """
     RE_PATTERN_INLINE_EXP = r'\$\{(.*?)\}'
+    REPORT_HTML = 'croo.report.html'
 
-    def __init__(self, out_def_json, soft_link=True):
+    def __init__(self, out_def_json, metadata_json, out_dir, soft_link=True):
         """Initialize croo with output definition JSON
         """
         if isinstance(out_def_json, dict):
@@ -34,29 +36,33 @@ class CromwellOutputOrganizer(object):
             with open(f, 'r') as fp:
                 self._out_def_json = json.loads(fp.read())
 
-        self._soft_link = soft_link
-
-    def organize_output(self, metadata_json, out_dir):
-        """Organize outputs
-        """
         if isinstance(metadata_json, dict):
-            m = metadata_json
+            self._metadata = metadata_json
         else:
             f = CaperURI(metadata_json).get_local_file()
             with open(f, 'r') as fp:
-                m = json.loads(fp.read())
+                self._metadata = json.loads(fp.read())
 
-        cm = CromwellMetadata(m)
-        task_graph = cm.get_task_graph()
+        self._out_dir = out_dir
+        self._cm = CromwellMetadata(self._metadata)
+        self._task_graph = self._cm.get_task_graph()
+
+        self._soft_link = soft_link
+
+    def organize_output(self):
+        """Organize outputs
+        """
+        report = CrooHtmlReport()
 
         for task_name, out_vars in self._out_def_json.items():
             for out_var_name, out_var in out_vars.items():
                 path = out_var.get('path')
-                # desc = out_var.get('desc')
-                # table_item = out_var.get('table_item')
-                # graph_node = out_var.get('graph_node')
 
-                for _, task in task_graph.get_nodes():
+                # graph_node = out_var.get('graph_node')
+                table_item = out_var.get('table')
+                # desc = out_var.get('desc')
+
+                for _, task in self._task_graph.get_nodes():
                     if task_name != task['task_name']:
                         continue
                     out_files = task['out_files']
@@ -65,14 +71,33 @@ class CromwellOutputOrganizer(object):
                     for k, full_path in out_files:
                         if k != out_var_name:
                             continue
-                        target_rel_path = \
-                            CromwellOutputOrganizer.__interpret_inline_exp(
+                       
+                        if path is not None:
+                            interpreted_path = Croo.__interpret_inline_exp(
                                 path, full_path, shard_idx)
-                        target_uri = os.path.join(out_dir, target_rel_path)
 
-                        CaperURI(full_path).copy(
-                            target_uri=target_uri,
-                            soft_link=self._soft_link)
+                            # write to output directory
+                            target_uri = os.path.join(self._out_dir,
+                                                      interpreted_path)
+
+                            CaperURI(full_path).copy(
+                                target_uri=target_uri,
+                                soft_link=self._soft_link)
+                        else:
+                            target_uri = full_path
+
+                        if table_item is not None:
+                            interpreted_table_item = Croo.__interpret_inline_exp(
+                                table_item, full_path, shard_idx)
+                            # add to file table
+                            report.add_to_file_table(target_uri,
+                                                     interpreted_table_item)
+
+
+        # write to html report
+        uri_report = os.path.join(self._out_dir, Croo.REPORT_HTML)
+        contents = report.get_html_str()
+        CaperURI(uri_report).write_str_to_file(contents)
 
     @staticmethod
     def __interpret_inline_exp(s, full_path=None, shard_idx=None):
@@ -114,7 +139,7 @@ class CromwellOutputOrganizer(object):
         dirname = os.path.dirname(full_path)
 
         while True:
-            m = re.search(CromwellOutputOrganizer.RE_PATTERN_INLINE_EXP, result)
+            m = re.search(Croo.RE_PATTERN_INLINE_EXP, result)
             if m is None:
                 break
             result = result.replace(m.group(0), str(eval(m.group(1))), 1)
@@ -124,7 +149,7 @@ class CromwellOutputOrganizer(object):
 
 def init_dirs_args(args):
     """More initialization for out/tmp directories since tmp
-    directory is important for inter-storage transfe using
+    directory is important for inter-storage transfer using
     CaperURI
     """
     if args['out_dir'].startswith(('http://', 'https://')):
@@ -160,13 +185,13 @@ def main():
     # init out/tmp dirs and CaperURI for inter-storage transfer
     init_dirs_args(args)
 
-    co = CromwellOutputOrganizer(
+    co = Croo(
         out_def_json=args['out_def_json'],
+        metadata_json=args['metadata_json'],
+        out_dir=args['out_dir'],
         soft_link=args['method'] == 'link')
 
-    co.organize_output(
-        metadata_json=args['metadata_json'],
-        out_dir=args['out_dir'])
+    co.organize_output()
 
     return 0
 
