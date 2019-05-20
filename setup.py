@@ -7,6 +7,7 @@ setuptools.setup(
     name='croo',
     version='v0.1.1',
     scripts=['bin/croo'],
+    python_requires='>3.4.1',
     author='Jin Lee',
     author_email='leepc12@gmail.com',
     description='CRomwell Output Organizer',
