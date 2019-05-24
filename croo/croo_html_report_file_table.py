@@ -4,6 +4,8 @@
     Jin Lee (leepc12@gmail.com) at ENCODE-DCC
 """
 
+from caper.caper_uri import CaperURI, URI_LOCAL, URI_URL
+
 
 class CrooHtmlReportFileTable(object):
     HEAD = """
@@ -24,7 +26,7 @@ class CrooHtmlReportFileTable(object):
     </script>    
     """    
     BODY = """
-    <div id='dirs_and_files'><b>Directories and files</b>
+    <div id='file-table'><b>File table</b>
     <table id='filetable'>
       <caption>
         <a href='#' onclick="jQuery('#filetable').treetable('expandAll');\
@@ -42,8 +44,10 @@ return false;">
     </div>
     """
 
-    def __init__(self):
+    def __init__(self, html_root, use_rel_path_in_link=False):
         self._items = []
+        self._html_root = html_root
+        self._use_rel_path_in_link = use_rel_path_in_link
 
     def add(self, full_path, table_item):
         self._items.append((full_path, table_item))
@@ -85,7 +89,7 @@ return false;">
                     data_tt_parent_id = '/'.join(dir_items[:i]).replace(' ', '-')
 
                 if i == len(dir_items) - 1:
-                    path = full_path
+                    path = self.get_html_link(full_path)
                 else:
                     path = ''
 
@@ -114,3 +118,18 @@ return false;">
                 label=label, path=path)
 
         return table_contents
+
+    def get_html_link(self, full_path):
+        if self._use_rel_path_in_link:
+            rel_path = full_path.replace(self._html_root, '', 1)
+            return '<a href="{rel_path}">{full_path}</a>'.format(
+                rel_path=rel_path,
+                full_path=full_path)
+        else:
+            cu = CaperURI(full_path)
+            if cu.uri_type != URI_LOCAL:
+                return '<a href="{url}">{full_path}</a>'.format(
+                    url=cu.get_file(uri_type=URI_URL),
+                    full_path=full_path)
+            else:
+                return full_path

@@ -26,10 +26,16 @@ jquery.min.js"></script>
     </html>
     """.format(head_contents=HEAD, body_contents=BODY)
 
-    def __init__(self):
-        self._tracks = CrooHtmlReportTracks()
-        self._task_graph = CrooHtmlReportTaskGraph()
-        self._file_table = CrooHtmlReportFileTable()
+    def __init__(self, html_root, use_rel_path_in_link=False):
+        html_root = html_root.rstrip('/')+'/'
+        self._tracks = CrooHtmlReportTracks(
+            html_root=html_root)
+        self._task_graph = CrooHtmlReportTaskGraph(
+            html_root=html_root, use_rel_path_in_link=use_rel_path_in_link)
+        self._file_table = CrooHtmlReportFileTable(
+            html_root=html_root, use_rel_path_in_link=use_rel_path_in_link)
+        self._html_root = html_root
+        self._use_rel_path_in_link = use_rel_path_in_link
 
     def add_to_file_table(self, full_path, table_item):
         self._file_table.add(full_path, table_item)

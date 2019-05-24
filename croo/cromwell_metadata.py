@@ -6,6 +6,7 @@ Author:
     Jin Lee (leepc12@gmail.com) at ENCODE-DCC
 """
 
+import re
 import json
 import caper
 from caper.caper_uri import CaperURI
@@ -29,6 +30,9 @@ class CromwellMetadata(object):
         'out_files': None  # tuple of (var_name, file_path_or_uri)
     }
 
+    RE_PATTERN_WDL_COMMENT_OUT_DEF_JSON = \
+        r'^\s*\#\s*CROO\s+out_def\s(.+)'
+
     def __init__(self, metadata_json, debug=False):
         self._metadata_json = metadata_json
 
@@ -36,7 +40,9 @@ class CromwellMetadata(object):
         self._input_json = json.loads(
             self._metadata_json['submittedFiles']['inputs'],
             object_pairs_hook=OrderedDict)
-
+        # WDL contents
+        self._wdl_str = self._metadata_json['submittedFiles']['workflow']
+        self._out_def_json_file = self.__find_out_def_from_wdl()
         # workflow ID
         self._workflow_id = self._metadata_json['id']
 
@@ -50,8 +56,14 @@ class CromwellMetadata(object):
         if self._debug:
             print(self._dag)
 
+    def get_workflow_id(self):
+        return self._workflow_id
+
     def get_task_graph(self):
         return self._dag
+
+    def get_out_def_json_file(self):
+        return self._out_def_json_file
 
     def __parse_calls(self, calls, parent_wf_name='',
                       wf_alias=None, parent_wf_shard_idx=()):
@@ -90,6 +102,21 @@ class CromwellMetadata(object):
                     'out_files': out_files
                 }
                 self._dag.add_node(t)
+
+    def __find_out_def_from_wdl(self):
+        r = self.__find_val_from_wdl(
+            CromwellMetadata.RE_PATTERN_WDL_COMMENT_OUT_DEF_JSON)
+        return r[0] if len(r) > 0 else None
+
+    def __find_val_from_wdl(self, regex_val):
+        result = []
+        for line in self._wdl_str.split('\n'):
+            r = re.findall(regex_val, line)
+            if len(r) > 0:
+                ret = r[0].strip()
+                if len(ret) > 0:
+                    result.append(ret)
+        return result
 
     @staticmethod
     def is_parent(t1, t2):

@@ -19,8 +19,8 @@ legacy/js/embed.js"></script>
     """
     BODY = """
     """
-    def __init__(self):
-        pass
+    def __init__(self, html_root=None):
+        self._html_root = html_root
 
     def get_html_head_str(self):
         return CrooHtmlReportTracks.HEAD

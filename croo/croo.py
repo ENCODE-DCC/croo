@@ -11,7 +11,7 @@ import sys
 import json
 import re
 import caper
-from caper.caper_uri import init_caper_uri, CaperURI
+from caper.caper_uri import init_caper_uri, CaperURI, URI_LOCAL
 from .croo_args import parse_croo_arguments
 from .croo_html_report import CrooHtmlReport
 from .cromwell_metadata import CromwellMetadata
@@ -24,35 +24,52 @@ class Croo(object):
     and organize outputs as specified in output definition JSON
     """
     RE_PATTERN_INLINE_EXP = r'\$\{(.*?)\}'
-    REPORT_HTML = 'croo.report.html'
+    REPORT_HTML = 'croo.report.{workflow_id}.html'
 
-    def __init__(self, out_def_json, metadata_json, out_dir, soft_link=True):
+    def __init__(self, metadata_json, out_def_json, out_dir,
+                 soft_link=True, use_rel_path_in_link=False):
         """Initialize croo with output definition JSON
         """
-        if isinstance(out_def_json, dict):
-            self._out_def_json = out_def_json
-        else:
-            f = CaperURI(out_def_json).get_local_file()
-            with open(f, 'r') as fp:
-                self._out_def_json = json.loads(fp.read())
-
         if isinstance(metadata_json, dict):
             self._metadata = metadata_json
         else:
             f = CaperURI(metadata_json).get_local_file()
             with open(f, 'r') as fp:
                 self._metadata = json.loads(fp.read())
-
         self._out_dir = out_dir
         self._cm = CromwellMetadata(self._metadata)
-        self._task_graph = self._cm.get_task_graph()
+        self._use_rel_path_in_link = use_rel_path_in_link
 
+        if isinstance(out_def_json, dict):
+            self._out_def_json = out_def_json
+        else:
+            if out_def_json is None:
+                out_def_json_file_from_wdl = self._cm.get_out_def_json_file()
+                if out_def_json_file_from_wdl is None:
+                    raise ValueError('out_def JSON file is not defined. '
+                                     'Define --out-def-json in cmd line arg or '
+                                     'add "#CROO out_def [URL_OR_CLOUD_URI]" '
+                                     'to your WDL')
+                out_def_json = out_def_json_file_from_wdl
+            f = CaperURI(out_def_json).get_local_file()
+            with open(f, 'r') as fp:
+                self._out_def_json = json.loads(fp.read())
+
+        self._task_graph = self._cm.get_task_graph()
         self._soft_link = soft_link
 
     def organize_output(self):
         """Organize outputs
         """
-        report = CrooHtmlReport()
+        # prepare for a local/remote report html
+        uri_report = os.path.join(self._out_dir,
+                                  Croo.REPORT_HTML.format(
+                                    workflow_id=self._cm.get_workflow_id()))
+        cu_report = CaperURI(uri_report)
+        
+        report = CrooHtmlReport(
+            html_root=os.path.dirname(cu_report.get_uri()),
+            use_rel_path_in_link=self._use_rel_path_in_link)
 
         for task_name, out_vars in self._out_def_json.items():
             for out_var_name, out_var in out_vars.items():
@@ -95,9 +112,8 @@ class Croo(object):
 
 
         # write to html report
-        uri_report = os.path.join(self._out_dir, Croo.REPORT_HTML)
         contents = report.get_html_str()
-        CaperURI(uri_report).write_str_to_file(contents)
+        cu_report.write_str_to_file(contents)
 
     @staticmethod
     def __interpret_inline_exp(s, full_path=None, shard_idx=None):
@@ -186,9 +202,10 @@ def main():
     init_dirs_args(args)
 
     co = Croo(
-        out_def_json=args['out_def_json'],
         metadata_json=args['metadata_json'],
+        out_def_json=args['out_def_json'],
         out_dir=args['out_dir'],
+        use_rel_path_in_link=args['use_rel_path_in_link'],
         soft_link=args['method'] == 'link')
 
     co.organize_output()

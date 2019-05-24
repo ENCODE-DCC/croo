@@ -11,8 +11,9 @@ class CrooHtmlReportTaskGraph(object):
     """
     BODY = """
      """
-    def __init__(self):
-        pass
+    def __init__(self, html_root, use_rel_path_in_link=False):
+        self._html_root = html_root
+        self._use_rel_path_in_link = use_rel_path_in_link
 
     def get_html_head_str(self):
         return CrooHtmlReportTaskGraph.HEAD
