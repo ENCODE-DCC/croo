@@ -21,7 +21,7 @@ def parse_croo_arguments():
              'gs://some/where/metadata.json, '
              'http://hello.com/world/metadata.json')
     p.add_argument(
-        '--out-def-json', required=True,
+        '--out-def-json',
         help='Output definition JSON file for a WDL file corresponding to '
              'the specified metadata.json file')
     p.add_argument(
@@ -31,6 +31,14 @@ def parse_croo_arguments():
         'Original output files will be kept in Cromwell\'s output '
         'directory. '
         '"copy" makes a copy of Cromwell\'s original outputs')
+    p.add_argument(
+        '--use-rel-path-in-link', action='store_true',
+        help='Use relative path in link in file table in HTML report. '
+             'If your output directory is a cloud bucket (GCS, AWS), then '
+             'it is recommended not to activate this flag unless you have '
+             'correctly set up file hosting on a cloud bucket. '
+             'This will be useful if your output directory is local but '
+             'hosted by a web server (e.g. Apache2)')
     p.add_argument(
         '--out-dir', default='.', help='Output directory/bucket '
                                        '(local or remote)')
