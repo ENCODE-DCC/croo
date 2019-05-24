@@ -5,7 +5,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='croo',
-    version='v0.1.2',
+    version='v0.1.3',
     scripts=['bin/croo'],
     python_requires='>3.4.1',
     author='Jin Lee',
