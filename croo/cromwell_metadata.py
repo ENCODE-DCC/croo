@@ -88,12 +88,20 @@ class CromwellMetadata(object):
                         parent_wf_shard_idx=(shard_idx,))
                     continue
 
-                in_files = [
-                    (k, v) for k, v in c['inputs'].items()
-                    if isinstance(v, str) and CaperURI(v).is_valid_uri()]
-                out_files = [
-                    (k, v) for k, v in c['outputs'].items()
-                    if isinstance(v, str) and CaperURI(v).is_valid_uri()]
+                if 'inputs' in c:
+                    in_files = [
+                        (k, v) for k, v in c['inputs'].items()
+                        if isinstance(v, str) and CaperURI(v).is_valid_uri()]
+                else:
+                    in_files = []
+
+                if 'outputs' in c:
+                    out_files = [
+                        (k, v) for k, v in c['outputs'].items()
+                        if isinstance(v, str) and CaperURI(v).is_valid_uri()]
+                else:
+                    out_files = []
+
                 t = {
                     'task_name': parent_wf_name + wf_name + '.' + task_alias,
                     'shard_idx': parent_wf_shard_idx + (shard_idx,),

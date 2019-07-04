@@ -36,6 +36,14 @@ class Croo(object):
             f = CaperURI(metadata_json).get_local_file()
             with open(f, 'r') as fp:
                 self._metadata = json.loads(fp.read())
+            if isinstance(self._metadata, list):
+                if len(self._metadata) > 1:
+                    print('[Croo] Warning: multiple metadata JSON objects '
+                          'found in metadata JSON file. Taking the first '
+                          'one...')
+                elif len(self._metadata) == 0:
+                    raise Exception('metadata JSON file is empty')
+                self._metadata = self._metadata[0]
         self._out_dir = out_dir
         self._cm = CromwellMetadata(self._metadata)
         self._use_rel_path_in_link = use_rel_path_in_link
