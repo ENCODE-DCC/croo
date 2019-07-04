@@ -1,11 +1,12 @@
 import setuptools
+from croo import croo_args
 
 with open('README.md', 'r') as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name='croo',
-    version='v0.1.3',
+    version=croo_args.__version__,
     scripts=['bin/croo'],
     python_requires='>3.4.1',
     author='Jin Lee',
