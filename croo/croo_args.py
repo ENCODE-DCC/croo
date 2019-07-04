@@ -10,6 +10,8 @@ import argparse
 import sys
 
 
+__version__ = '0.1.5'
+
 def parse_croo_arguments():
     """Argument parser for Cromwell Output Organizer (COO)
     """
@@ -53,12 +55,22 @@ def parse_croo_arguments():
     p.add_argument(
         '--http-password',
         help='Password to download data from private URLs')
+    p.add_argument('-v', '--version', action='store_true',
+                   help='Show version')
+
+    if '-v' in sys.argv or '--version' in sys.argv:
+        print(__version__)
+        p.exit()
 
     if len(sys.argv[1:]) == 0:
         p.print_help()
         p.exit()
     # parse all args
     args = p.parse_args()
+
+    if args.version is not None and args.version:
+        print(__version__)
+        p.exit()
 
     # convert to dict
     args_d = vars(args)
