@@ -104,8 +104,8 @@ class Croo(object):
                             # write to output directory
                             target_uri = os.path.join(self._out_dir,
                                                       interpreted_path)
-
-                            CaperURI(full_path).copy(
+                            # if soft_link, target_uri changes to original source
+                            target_uri = CaperURI(full_path).copy(
                                 target_uri=target_uri,
                                 soft_link=self._soft_link)
                         else:
