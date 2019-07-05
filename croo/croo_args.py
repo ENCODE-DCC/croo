@@ -10,7 +10,7 @@ import argparse
 import sys
 
 
-__version__ = '0.1.6'
+__version__ = '0.1.7'
 
 def parse_croo_arguments():
     """Argument parser for Cromwell Output Organizer (COO)
