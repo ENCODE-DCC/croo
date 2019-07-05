@@ -78,7 +78,7 @@ return false;">
             for i, label in enumerate(dir_items):
                 data_tt_id = '/'.join(dir_items[:i+1]).replace(' ', '-')
 
-                if data_tt_id in data_tt_id_cache:
+                if data_tt_id in data_tt_id_cache and i < len(dir_items) - 1:
                     continue
                 else:
                     data_tt_id_cache.add(data_tt_id)
