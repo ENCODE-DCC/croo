@@ -153,19 +153,6 @@ More generally for subworkflows a definition JSON file looks like the following:
 }
 ```
 
-> **WARNING**: Unfortunately, for an output variable `[OUT_VAR_NAME_IN_TASK]` in a task Croo does not currently support `Array[File]` type. It only supports `File` type.
-    ```
-    task t1 {
-        command {
-            ...
-        }
-        output {
-            Array[File] out_list  # NOT SUPPORTED
-            File out  # SUPPORTED
-        }
-    }
-    ```
-
 `{ "path" : "[OUT_REL_PATH_DEF]", "table": "[FILE_TABLE_TREE_ITEM]" }` defines a final output destination and file table tree item. `[OUT_REL_PATH_DEF]` is a file path **RELATIVE** to the output directory species as `--out-dir`. The following inline expressions are allowed for `[OUT_REL_PATH_DEF]` and `[FILE_TABLE_TREE_ITEM]`. You can use basic Python expressions inside `${}`. For example, `${basename.split(".")[0]}` should be helpful to get the prefix of a file like `some_prefix.fastqs.gz`.
 
 | Built-in variable | Type       | Description                                      |
