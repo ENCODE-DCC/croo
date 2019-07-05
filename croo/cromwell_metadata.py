@@ -88,17 +88,32 @@ class CromwellMetadata(object):
                         parent_wf_shard_idx=(shard_idx,))
                     continue
 
+                def find_files_in_dict(d):
+                    files = []
+                    for k, v in d.items():
+                        maybe_files = []
+                        if isinstance(v, list):
+                            for v_ in v:
+                                if isinstance(v_, str):
+                                    maybe_files.append(v_)
+                        elif isinstance(v, dict):
+                            for _, v_ in v.items():
+                                if isinstance(v_, str):
+                                    maybe_files.append(v_)
+                        elif isinstance(v, str):
+                            maybe_files.append(v)
+                    for f in maybe_files:
+                        if CaperURI(f).is_valid_uri():
+                            files.append((k, f))
+                    return files
+
                 if 'inputs' in c:
-                    in_files = [
-                        (k, v) for k, v in c['inputs'].items()
-                        if isinstance(v, str) and CaperURI(v).is_valid_uri()]
+                    in_files = find_files_in_dict(c['inputs'])
                 else:
                     in_files = []
 
                 if 'outputs' in c:
-                    out_files = [
-                        (k, v) for k, v in c['outputs'].items()
-                        if isinstance(v, str) and CaperURI(v).is_valid_uri()]
+                    out_files = find_files_in_dict(c['outputs'])
                 else:
                     out_files = []
 
