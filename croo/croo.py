@@ -74,7 +74,7 @@ class Croo(object):
                                   Croo.REPORT_HTML.format(
                                     workflow_id=self._cm.get_workflow_id()))
         cu_report = CaperURI(uri_report)
-        
+
         report = CrooHtmlReport(
             html_root=os.path.dirname(cu_report.get_uri()),
             use_rel_path_in_link=self._use_rel_path_in_link)
@@ -96,7 +96,7 @@ class Croo(object):
                     for k, full_path in out_files:
                         if k != out_var_name:
                             continue
-                       
+
                         if path is not None:
                             interpreted_path = Croo.__interpret_inline_exp(
                                 path, full_path, shard_idx)
@@ -124,7 +124,7 @@ class Croo(object):
         cu_report.write_str_to_file(contents)
 
     @staticmethod
-    def __interpret_inline_exp(s, full_path=None, shard_idx=None):
+    def __interpret_inline_exp(s, full_path, shard_idx):
         """Interpret inline expression in output defition JSON
         e.g. s can be "align/rep${i1}/${basename}"
 
