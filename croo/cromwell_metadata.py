@@ -90,8 +90,8 @@ class CromwellMetadata(object):
 
                 def find_files_in_dict(d):
                     files = []
+                    maybe_files = []
                     for k, v in d.items():
-                        maybe_files = []
                         if isinstance(v, list):
                             for v_ in v:
                                 if isinstance(v_, str):
