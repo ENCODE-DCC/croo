@@ -90,8 +90,8 @@ class CromwellMetadata(object):
 
                 def find_files_in_dict(d):
                     files = []
-                    maybe_files = []
                     for k, v in d.items():
+                        maybe_files = []
                         if isinstance(v, list):
                             for v_ in v:
                                 if isinstance(v_, str):
@@ -102,9 +102,9 @@ class CromwellMetadata(object):
                                     maybe_files.append(v_)
                         elif isinstance(v, str):
                             maybe_files.append(v)
-                    for f in maybe_files:
-                        if CaperURI(f).is_valid_uri():
-                            files.append((k, f))
+                        for f in maybe_files:
+                            if CaperURI(f).is_valid_uri():
+                                files.append((k, f))
                     return files
 
                 if 'inputs' in c:
