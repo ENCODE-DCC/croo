@@ -37,12 +37,20 @@ class CromwellMetadata(object):
         self._metadata_json = metadata_json
 
         # input JSON
-        self._input_json = json.loads(
-            self._metadata_json['submittedFiles']['inputs'],
-            object_pairs_hook=OrderedDict)
-        # WDL contents
-        self._wdl_str = self._metadata_json['submittedFiles']['workflow']
-        self._out_def_json_file = self.__find_out_def_from_wdl()
+        if 'submittedFiles' in self._metadata_json:
+            self._input_json = json.loads(
+                self._metadata_json['submittedFiles']['inputs'],
+                object_pairs_hook=OrderedDict)
+            # WDL contents
+            self._wdl_str = self._metadata_json['submittedFiles']['workflow']
+            self._out_def_json_file = self.__find_out_def_from_wdl()
+        else:
+            # Would work also with sub-workflow metadata that does not
+            # contain 'submittedFiles'
+            self._input_json = None
+            # WDL contents
+            self._wdl_str = None
+            self._out_def_json_file = None
         # workflow ID
         self._workflow_id = self._metadata_json['id']
 
