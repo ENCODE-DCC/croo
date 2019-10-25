@@ -125,13 +125,13 @@ optional arguments:
 
 Croo makes a link/copy (controlled by `--method copy/link`, `link` by default) of each file on Cromwell's original output directory.
 
-> **IMPORTANT**: Linking is possible only if those two directories have the same storage types. For example, local vs. local and `gs://` vs. `gs://`). Otherwise Croo will always make copies.
+  > **IMPORTANT**: Linking is possible only if those two directories have the same storage types. For example, local vs. local and `gs://` vs. `gs://`). Otherwise Croo will always make copies.
 
 Clickable HTML links and USCS genome browser tracks on the HTML report always point to files on THE ORGANIZED DIRECTORY (`--out-dir`).
 
 For example, your original outputs are on `gs://` and you organize it on your local storage then those clickable links and genome browser tracks will not work unless you set up a web server hosting those files and define a proper mapping from a local path to a URL. See [this section](#ucsc-browser-tracks) for details.
 
-> **IMPORTANT**: We recommmend to organize outputs on the same storage type. For example, organize outputs on `gs://` for original Cromwell outputs on `gs://`. `croo ... --out-dir gs://some/where/organized`.
+  > **IMPORTANT**: We recommmend to organize outputs on the same storage type. For example, organize outputs on `gs://` for original Cromwell outputs on `gs://`. `croo ... --out-dir gs://some/where/organized`.
 
 ## File table
 
@@ -146,17 +146,21 @@ Croo creates UCSC genome browser tracks. Define `--ucsc-genome-db` for your geno
 UCSC browsers can only take a **PUBLIC** URL for big genomic data file (e.g. `.bigWig`, `.bigBed`, `.bam`, ...). 
 
 1) Local: If you have organized outputs on your local stroage then you should have a web server (e.g. Apache2) to host files to be visualized. Also you need to define a mapping from local path to URL. Make a TSV file for `--tsv-mapping-path-to-url`. Such 2-col TSV file which looks like the following (`LOCAL_PATH_PREFIX [TAB] URL_PREFIX`):
-```
-/your/local/storage http://your.server/somewhere
-/your/lab/storage http://your.server/lab/directory
-```
-Any filename prefixed with `col-1` will be replace with `col-2`. `col-1` is usually your local output directory specified by `--out-dir` or a working directory.
+
+  ```
+  /your/local/storage http://your.server/somewhere
+  /your/lab/storage http://your.server/lab/directory
+  ```
+  
+  Any filename prefixed with `col-1` will be replace with `col-2`. `col-1` is usually your local output directory specified by `--out-dir` or a working directory.
 
 2) GCS: If your bucket is public then simply add `--public-gcs` and skip this step. You can make a presinged URL for any file on your private GCS bucket. You need to have a service account on your Google Cloud project and provide a private key file `--gcp-private-key` for the service account. See [this](https://cloud.google.com/storage/docs/access-control/signing-urls-with-helpers) to make a new service account and get a key file from it.
-> **WARNING**: This presigned URL is PUBLIC and will expire in `--duration-presigned-url-gcs` seconds (604800 sec = 1 week by default).
+
+  > **WARNING**: This presigned URL is PUBLIC and will expire in `--duration-presigned-url-gcs` seconds (604800 sec = 1 week by default).
 
 3) AWS: If your bucket is public then simply skip this step. You can make a presinged URL for any file on your private S3 bucket.
-> **WARNING**: This presigned URL is public and will expire in `--duration-presigned-url-s3` seconds (604800 sec = 1 week by default).
+
+  > **WARNING**: This presigned URL is public and will expire in `--duration-presigned-url-s3` seconds (604800 sec = 1 week by default).
 
 It also makes a USCS track hub text file (`croo.ucsc_tracks.[WORKFLOW_ID].txt`).
 
@@ -219,7 +223,7 @@ More generally for subworkflows a definition JSON file looks like the following:
   "[WORKFLOW_NAME].[TASK_NAME_OR_ALIAS]" : {
     "[OUT_VAR_NAME_IN_TASK]" : {
       "path": "[OUT_REL_PATH_DEF]",
-      "table": "[FILE_TABLE_TREE_ITEM]"
+      "table": "[FILE_TABLE_TREE_ITEM]",
       "ucsc_track": "[UCSC_TRACK_FORMAT]"
     }
   },
@@ -227,7 +231,7 @@ More generally for subworkflows a definition JSON file looks like the following:
   "[WORKFLOW_NAME].[SUBWORKFLOW_NAME_OR_ALIAS].[SUBSUBWORKFLOW_NAME_OR_ALIAS].[TASK_NAME_OR_ALIAS]" : {
     "[OUT_VAR_NAME_IN_TASK]" : {
       "path": "[OUT_REL_PATH_DEF]",
-      "table": "[FILE_TABLE_TREE_ITEM]"
+      "table": "[FILE_TABLE_TREE_ITEM]",
       "ucsc_track": "[UCSC_TRACK_FORMAT]"
     }
   }
