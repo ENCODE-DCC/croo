@@ -12,6 +12,7 @@ import json
 import re
 import caper
 from caper.caper_uri import init_caper_uri, CaperURI, URI_LOCAL
+
 from .croo_args import parse_croo_arguments
 from .croo_html_report import CrooHtmlReport
 from .cromwell_metadata import CromwellMetadata
@@ -24,10 +25,11 @@ class Croo(object):
     and organize outputs as specified in output definition JSON
     """
     RE_PATTERN_INLINE_EXP = r'\$\{(.*?)\}'
-    REPORT_HTML = 'croo.report.{workflow_id}.html'
 
     def __init__(self, metadata_json, out_def_json, out_dir,
-                 soft_link=True, use_rel_path_in_link=False):
+                 soft_link=True,
+                 ucsc_genome_db=None,
+                 ucsc_genome_pos=None):
         """Initialize croo with output definition JSON
         """
         if isinstance(metadata_json, dict):
@@ -46,7 +48,8 @@ class Croo(object):
                 self._metadata = self._metadata[0]
         self._out_dir = out_dir
         self._cm = CromwellMetadata(self._metadata)
-        self._use_rel_path_in_link = use_rel_path_in_link
+        self._ucsc_genome_db = ucsc_genome_db
+        self._ucsc_genome_pos = ucsc_genome_pos
 
         if isinstance(out_def_json, dict):
             self._out_def_json = out_def_json
@@ -69,23 +72,17 @@ class Croo(object):
     def organize_output(self):
         """Organize outputs
         """
-        # prepare for a local/remote report html
-        uri_report = os.path.join(self._out_dir,
-                                  Croo.REPORT_HTML.format(
-                                    workflow_id=self._cm.get_workflow_id()))
-        cu_report = CaperURI(uri_report)
-
         report = CrooHtmlReport(
-            html_root=os.path.dirname(cu_report.get_uri()),
-            use_rel_path_in_link=self._use_rel_path_in_link)
+            out_dir=self._out_dir,
+            workflow_id=self._cm.get_workflow_id(),
+            ucsc_genome_db=self._ucsc_genome_db,
+            ucsc_genome_pos=self._ucsc_genome_pos)
 
         for task_name, out_vars in self._out_def_json.items():
             for out_var_name, out_var in out_vars.items():
                 path = out_var.get('path')
-
-                # graph_node = out_var.get('graph_node')
                 table_item = out_var.get('table')
-                # desc = out_var.get('desc')
+                ucsc_track = out_var.get('ucsc_track')
 
                 for _, task in self._task_graph.get_nodes():
                     if task_name != task['task_name']:
@@ -111,17 +108,24 @@ class Croo(object):
                         else:
                             target_uri = full_path
 
+                        # get presigned URLs if possible
+                        target_url = CaperURI(target_uri).get_url()
+
                         if table_item is not None:
                             interpreted_table_item = Croo.__interpret_inline_exp(
                                 table_item, full_path, shard_idx)
                             # add to file table
                             report.add_to_file_table(target_uri,
+                                                     target_url,
                                                      interpreted_table_item)
-
+                        if ucsc_track is not None and target_url is not None:
+                            interpreted_ucsc_track = Croo.__interpret_inline_exp(
+                                ucsc_track, full_path, shard_idx)
+                            report.add_to_ucsc_track(target_url,
+                                                     interpreted_ucsc_track)
 
         # write to html report
-        contents = report.get_html_str()
-        cu_report.write_str_to_file(contents)
+        report.save_to_file()
 
     @staticmethod
     def __interpret_inline_exp(s, full_path, shard_idx):
@@ -191,6 +195,15 @@ def init_dirs_args(args):
     # make temp dir
     os.makedirs(args['tmp_dir'], exist_ok=True)
 
+    mapping_path_to_url = {}
+    if args.get('tsv_mapping_path_to_url') is not None:
+        f = os.path.expanduser(args.get('tsv_mapping_path_to_url'))
+        with open(f, 'r') as fp:
+            lines = fp.read().strip('\n').split('\n')
+            for line in lines:
+                k, v = line.split('\t')
+                mapping_path_to_url[k] = v
+
     # init caper uri to transfer files across various storages
     #   e.g. gs:// to s3://, http:// to local, ...
     init_caper_uri(
@@ -200,6 +213,13 @@ def init_dirs_args(args):
         http_user=args.get('http_user'),
         http_password=args.get('http_password'),
         use_gsutil_over_aws_s3=args.get('use_gsutil_over_aws_s3'),
+        use_presigned_url_s3=args.get('use_presigned_url_s3'),
+        use_presigned_url_gcs=args.get('use_presigned_url_gcs'),
+        gcp_private_key_file=args.get('gcp_private_key'),
+        public_gcs=args.get('public_gcs'),
+        duration_sec_presigned_url_s3=args.get('duration_presigned_url_s3'),
+        duration_sec_presigned_url_gcs=args.get('duration_presigned_url_gcs'),
+        mapping_path_to_url=mapping_path_to_url,
         verbose=True)
 
 def main():
@@ -213,7 +233,8 @@ def main():
         metadata_json=args['metadata_json'],
         out_def_json=args['out_def_json'],
         out_dir=args['out_dir'],
-        use_rel_path_in_link=args['use_rel_path_in_link'],
+        ucsc_genome_db=args['ucsc_genome_db'],
+        ucsc_genome_pos=args['ucsc_genome_pos'],
         soft_link=args['method'] == 'link')
 
     co.organize_output()
