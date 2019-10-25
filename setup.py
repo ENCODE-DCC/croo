@@ -1,12 +1,12 @@
 import setuptools
-from croo import croo_args
+import croo
 
 with open('README.md', 'r') as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name='croo',
-    version=croo_args.__version__,
+    version=croo.__version__,
     scripts=['bin/croo'],
     python_requires='>3.4.1',
     author='Jin Lee',
@@ -21,5 +21,5 @@ setuptools.setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: POSIX :: Linux',
     ],
-    install_requires=['caper']
+    install_requires=['caper>=0.5.0']
 )

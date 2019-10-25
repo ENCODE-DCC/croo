@@ -4,6 +4,7 @@
     Jin Lee (leepc12@gmail.com) at ENCODE-DCC
 """
 
+import os
 from caper.caper_uri import CaperURI, URI_LOCAL, URI_URL
 
 
@@ -43,14 +44,15 @@ return false;">
     </table>
     </div>
     """
+    FILETABLE_TSV = 'croo.filetable.{workflow_id}.tsv'
 
-    def __init__(self, html_root, use_rel_path_in_link=False):
+    def __init__(self, out_dir, workflow_id):
         self._items = []
-        self._html_root = html_root
-        self._use_rel_path_in_link = use_rel_path_in_link
+        self._out_dir = out_dir
+        self._workflow_id = workflow_id
 
-    def add(self, full_path, table_item):
-        self._items.append((full_path, table_item))
+    def add(self, full_path, url, table_item):
+        self._items.append((full_path, url, table_item))
 
     def get_html_head_str(self):
         return CrooHtmlReportFileTable.HEAD
@@ -62,17 +64,19 @@ return false;">
 
     def __make_table_contents(self):
         """
-        Each item has (full_path, table_item)
+        Each item has (full_path, url, table_item)
         table_item defines a hierarchy in a tree
         e.g. a/b/c with full_path=/scratch/hello.world
+            and url=http://scratch.com/hello.world
         Tree    Path
         a
         +-b
-          +-c   /scratch/hello.world
+          +-c   /scratch/hello.world (url as href)
         """
+        # parse table_item string
         all_items = []
         data_tt_id_cache = set()
-        for full_path, table_item in self._items:
+        for full_path, url, table_item in self._items:
             dir_items = table_item.split('/')
             # print(dir_items)
             for i, label in enumerate(dir_items):
@@ -89,7 +93,12 @@ return false;">
                     data_tt_parent_id = '/'.join(dir_items[:i]).replace(' ', '-')
 
                 if i == len(dir_items) - 1:
-                    path = self.get_html_link(full_path)
+                    if url is None:
+                        path = full_path
+                    else:
+                        path = '<a href="{url}" target="_blank">{full_path}</a>'.format(
+                            url=url,
+                            full_path=full_path)
                 else:
                     path = ''
 
@@ -117,19 +126,13 @@ return false;">
             table_contents += "<td>{label}</td><td>{path}</td></tr>\n".format(
                 label=label, path=path)
 
+        # save to TSV file
+        contents = ''
+        for full_path, url, table_item in self._items:
+            contents += '{}\t{}\t{}\n'.format(table_item, full_path, url)
+        uri_filetable = os.path.join(
+            self._out_dir,
+            CrooHtmlReportFileTable.FILETABLE_TSV.format(
+                workflow_id=self._workflow_id))
+        CaperURI(uri_filetable).write_str_to_file(contents)
         return table_contents
-
-    def get_html_link(self, full_path):
-        if self._use_rel_path_in_link:
-            rel_path = full_path.replace(self._html_root, '', 1)
-            return '<a href="{rel_path}">{full_path}</a>'.format(
-                rel_path=rel_path,
-                full_path=full_path)
-        else:
-            cu = CaperURI(full_path)
-            if cu.uri_type != URI_LOCAL:
-                return '<a href="{url}">{full_path}</a>'.format(
-                    url=cu.get_file(uri_type=URI_URL),
-                    full_path=full_path)
-            else:
-                return full_path

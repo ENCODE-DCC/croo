@@ -1,16 +1,42 @@
 {
+  "atac.jsd": {
+    "plot": {
+      "path": "qc/${basename}",
+      "table": "QC and logs/Jensen-Shannon distance plot"
+    }
+  },
+  "atac.frac_mito": {
+    "frac_mito_qc": {
+      "path": "qc/${basename}",
+      "table": "QC and logs/Fraction of mitochondrial reads in raw BAM"
+    }
+  },
   "atac.bowtie2": {
     "bam": {
       "path": "align/rep${i+1}/${basename}",
       "table": "Alignment/Replicate ${i+1}/Raw BAM from bowtie2"
     },
-    "align_log": {
+    "flagstat_qc": {
       "path": "qc/rep${i+1}/${basename}",
-      "table": "QC and logs/Replicate ${i+1}/Alignment log from bowtie2"
+      "table": "QC and logs/Replicate ${i+1}/Samtools flagstat for Raw BAM"
+    },
+    "read_len_log": {
+      "path": "qc/rep${i+1}/${basename}",
+      "table": "QC and logs/Replicate ${i+1}/Read length"
+    }
+  },
+  "atac.align": {
+    "bam": {
+      "path": "align/rep${i+1}/${basename}",
+      "table": "Alignment/Replicate ${i+1}/Raw BAM from aligner"
     },
     "flagstat_qc": {
       "path": "qc/rep${i+1}/${basename}",
       "table": "QC and logs/Replicate ${i+1}/Samtools flagstat for Raw BAM"
+    },
+    "samstat_qc": {
+      "path": "qc/rep${i+1}/${basename}",
+      "table": "QC and logs/Replicate ${i+1}/SAMstats log for Raw BAM"
     },
     "read_len_log": {
       "path": "qc/rep${i+1}/${basename}",
@@ -33,6 +59,10 @@
     "pbc_qc": {
       "path": "qc/rep${i+1}/${basename}",
       "table": "QC and logs/Replicate ${i+1}/PBC QC for filtered BAM"
+    },
+    "lib_complexity_qc": {
+      "path": "qc/rep${i+1}/${basename}",
+      "table": "QC and logs/Replicate ${i+1}/Library complexity QC for filtered BAM"
     },
     "mito_dup_log": {
       "path": "qc/rep${i+1}/${basename}",
@@ -219,10 +249,143 @@
       "table": "QC and logs/Pooled replicate/Pseudoreplicate 2/Fraction of MACS2 peaks in reads"
     }
   },
+  "atac.call_peak": {
+    "npeak": {
+      "path": "peak/rep${i+1}/${basename}",
+      "table": "Peak/Replicate ${i+1}/Raw narrowpeak"
+    },
+    "bfilt_npeak": {
+      "path": "peak/rep${i+1}/${basename}",
+      "table": "Peak/Replicate ${i+1}/Blacklist-filtered narrowpeak"
+    },
+    "bfilt_npeak_bb": {
+      "path": "peak/rep${i+1}/${basename}",
+      "table": "Peak/Replicate ${i+1}/Blacklist-filtered narrowpeak (BigBed)"
+    },
+    "bfilt_npeak_hammock": {
+      "path": "peak/rep${i+1}/${basename}",
+      "table": "Peak/Replicate ${i+1}/Blacklist-filtered narrowpeak (hammock)"
+    },
+    "frip_qc": {
+      "path": "qc/rep${i+1}/${basename}",
+      "table": "QC and logs/Replicate ${i+1}/Fraction of peaks in reads"
+    }
+  },
+  "atac.call_peak_pr1": {
+    "npeak": {
+      "path": "peak/rep${i+1}/pseudorep1/${basename}",
+      "table": "Peak/Replicate ${i+1}/Pseudoreplicate 1/Raw narrowpeak"
+    },
+    "bfilt_npeak": {
+      "path": "peak/rep${i+1}/pseudorep1/${basename}",
+      "table": "Peak/Replicate ${i+1}/Pseudoreplicate 1/Blacklist-filtered narrowpeak"
+    },
+    "bfilt_npeak_bb": {
+      "path": "peak/rep${i+1}/pseudorep1/${basename}",
+      "table": "Peak/Replicate ${i+1}/Pseudoreplicate 1/Blacklist-filtered narrowpeak (BigBed)"
+    },
+    "bfilt_npeak_hammock": {
+      "path": "peak/rep${i+1}/pseudorep1/${basename}",
+      "table": "Peak/Replicate ${i+1}/Pseudoreplicate 1/Blacklist-filtered narrowpeak (hammock)"
+    },
+    "frip_qc": {
+      "path": "qc/rep${i+1}/pseudorep1/${basename}",
+      "table": "QC and logs/Replicate ${i+1}/Pseudoreplicate 1/Fraction of peaks in reads"
+    }
+  },
+  "atac.call_peak_pr2": {
+    "npeak": {
+      "path": "peak/rep${i+1}/pseudorep2/${basename}",
+      "table": "Peak/Replicate ${i+1}/Pseudoreplicate 2/Raw narrowpeak"
+    },
+    "bfilt_npeak": {
+      "path": "peak/rep${i+1}/pseudorep2/${basename}",
+      "table": "Peak/Replicate ${i+1}/Pseudoreplicate 2/Blacklist-filtered narrowpeak"
+    },
+    "bfilt_npeak_bb": {
+      "path": "peak/rep${i+1}/pseudorep2/${basename}",
+      "table": "Peak/Replicate ${i+1}/Pseudoreplicate 2/Blacklist-filtered narrowpeak (BigBed)"
+    },
+    "bfilt_npeak_hammock": {
+      "path": "peak/rep${i+1}/pseudorep2/${basename}",
+      "table": "Peak/Replicate ${i+1}/Pseudoreplicate 2/Blacklist-filtered narrowpeak (hammock)"
+    },
+    "frip_qc": {
+      "path": "qc/rep${i+1}/pseudorep2/${basename}",
+      "table": "QC and logs/Replicate ${i+1}/Pseudoreplicate 2/Fraction of peaks in reads"
+    }
+  },
+  "atac.call_peak_pooled": {
+    "npeak": {
+      "path": "peak/pooled-rep/${basename}",
+      "table": "Peak/Pooled replicate/Raw narrowpeak"
+    },
+    "bfilt_npeak": {
+      "path": "peak/pooled-rep/${basename}",
+      "table": "Peak/Pooled replicate/Blacklist-filtered narrowpeak"
+    },
+    "bfilt_npeak_bb": {
+      "path": "peak/pooled-rep/${basename}",
+      "table": "Peak/Pooled replicate/Blacklist-filtered narrowpeak (BigBed)"
+    },
+    "bfilt_npeak_hammock": {
+      "path": "peak/pooled-rep/${basename}",
+      "table": "Peak/Pooled replicate/Blacklist-filtered narrowpeak (hammock)"
+    },
+    "frip_qc": {
+      "path": "qc/pooled-rep/${basename}",
+      "table": "QC and logs/Pooled replicate/Fraction of peaks in reads"
+    }
+  },
+  "atac.call_peak_ppr1": {
+    "npeak": {
+      "path": "peak/pooled-rep/pseudorep1/${basename}",
+      "table": "Peak/Pooled replicate/Pseudoreplicate 1/Raw narrowpeak"
+    },
+    "bfilt_npeak": {
+      "path": "peak/pooled-rep/pseudorep1/${basename}",
+      "table": "Peak/Pooled replicate/Pseudoreplicate 1/Blacklist-filtered narrowpeak"
+    },
+    "bfilt_npeak_bb": {
+      "path": "peak/pooled-rep/pseudorep1/${basename}",
+      "table": "Peak/Pooled replicate/Pseudoreplicate 1/Blacklist-filtered narrowpeak (BigBed)"
+    },
+    "bfilt_npeak_hammock": {
+      "path": "peak/pooled-rep/pseudorep1/${basename}",
+      "table": "Peak/Pooled replicate/Pseudoreplicate 1/Blacklist-filtered narrowpeak (hammock)"
+    },
+    "frip_qc": {
+      "path": "qc/pooled-rep/pseudorep1/${basename}",
+      "table": "QC and logs/Pooled replicate/Pseudoreplicate 1/Fraction of peaks in reads"
+    }
+  },
+  "atac.call_peak_ppr2": {
+    "npeak": {
+      "path": "peak/pooled-rep/pseudorep2/${basename}",
+      "table": "Peak/Pooled replicate/Pseudoreplicate 2/Raw narrowpeak"
+    },
+    "bfilt_npeak": {
+      "path": "peak/pooled-rep/pseudorep2/${basename}",
+      "table": "Peak/Pooled replicate/Pseudoreplicate 2/Blacklist-filtered narrowpeak"
+    },
+    "bfilt_npeak_bb": {
+      "path": "peak/pooled-rep/pseudorep2/${basename}",
+      "table": "Peak/Pooled replicate/Pseudoreplicate 2/Blacklist-filtered narrowpeak (BigBed)"
+    },
+    "bfilt_npeak_hammock": {
+      "path": "peak/pooled-rep/pseudorep2/${basename}",
+      "table": "Peak/Pooled replicate/Pseudoreplicate 2/Blacklist-filtered narrowpeak (hammock)"
+    },
+    "frip_qc": {
+      "path": "qc/pooled-rep/pseudorep2/${basename}",
+      "table": "QC and logs/Pooled replicate/Pseudoreplicate 2/Fraction of peaks in reads"
+    }
+  },
   "atac.macs2_signal_track": {
     "pval_bw": {
       "path": "signal/rep${i+1}/${basename}",
-      "table": "Signal/Replicate ${i+1}/MACS2 signal track (p-val)"
+      "table": "Signal/Replicate ${i+1}/MACS2 signal track (p-val)",
+      "ucsc_track": "track type=bigWig name=\"MACS2 p-val (rep${i+1})\" priority=${i+1} smoothingWindow=off maxHeightPixels=80:60:40 color=255,0,0 autoScale=off viewLimits=0:40 visibility=full"
     },
     "fc_bw": {
       "path": "signal/rep${i+1}/${basename}",
@@ -232,7 +395,8 @@
   "atac.macs2_signal_track_pooled": {
     "pval_bw": {
       "path": "signal/pooled-rep/${basename}",
-      "table": "Signal/Pooled replicate/MACS2 signal track (p-val)"
+      "table": "Signal/Pooled replicate/MACS2 signal track (p-val)",
+      "ucsc_track": "track type=bigWig name=\"MACS2 p-val (pooled)\" priority=0 smoothingWindow=off maxHeightPixels=80:60:40 color=255,0,0 autoScale=off viewLimits=0:40 visibility=full"
     },
     "fc_bw": {
       "path": "signal/pooled-rep/${basename}",
@@ -261,31 +425,31 @@
   },
   "atac.idr": {
     "bfilt_idr_peak": {
-      "path": "peak/${basename.split('.')[0].replace('_','_vs_').replace('-','_vs_')}/${basename}",
-      "table": "Peak/${basename.split('.')[0].replace('_',' vs. ').replace('-',' vs. ').capitalize()}/Blacklist-filtered IDR peak"
+      "path": "peak/${basename.split('.')[0].replace('_vs_','_').replace('_','_vs_').replace('-','_vs_')}/${basename}",
+      "table": "Peak/${basename.split('.')[0].replace('_vs_','_').replace('_',' vs. ').replace('-',' vs. ').capitalize()}/Blacklist-filtered IDR peak"
     },
     "bfilt_idr_peak_bb": {
-      "path": "peak/${basename.split('.')[0].replace('_','_vs_').replace('-','_vs_')}/${basename}",
-      "table": "Peak/${basename.split('.')[0].replace('_',' vs. ').replace('-',' vs. ').capitalize()}/Blacklist-filtered IDR peak (BigBed)"
+      "path": "peak/${basename.split('.')[0].replace('_vs_','_').replace('_','_vs_').replace('-','_vs_')}/${basename}",
+      "table": "Peak/${basename.split('.')[0].replace('_vs_','_').replace('_',' vs. ').replace('-',' vs. ').capitalize()}/Blacklist-filtered IDR peak (BigBed)"
     },
     "bfilt_idr_peak_hammock": {
-      "path": "peak/${basename.split('.')[0].replace('_','_vs_').replace('-','_vs_')}/${basename}",
-      "table": "Peak/${basename.split('.')[0].replace('_',' vs. ').replace('-',' vs. ').capitalize()}/Blacklist-filtered IDR peak (hammock)"
+      "path": "peak/${basename.split('.')[0].replace('_vs_','_').replace('_','_vs_').replace('-','_vs_')}/${basename}",
+      "table": "Peak/${basename.split('.')[0].replace('_vs_','_').replace('_',' vs. ').replace('-',' vs. ').capitalize()}/Blacklist-filtered IDR peak (hammock)"
     },
     "idr_unthresholded_peak": {
-      "path": "peak/${basename.split('.')[0].replace('_','_vs_').replace('-','_vs_')}/${basename}",
-      "table": "Peak/${basename.split('.')[0].replace('_',' vs. ').replace('-',' vs. ').capitalize()}/Unthresholded raw IDR peak"
+      "path": "peak/${basename.split('.')[0].replace('_vs_','_').replace('_','_vs_').replace('-','_vs_')}/${basename}",
+      "table": "Peak/${basename.split('.')[0].replace('_vs_','_').replace('_',' vs. ').replace('-',' vs. ').capitalize()}/Unthresholded raw IDR peak"
     },
     "idr_plot": {
-      "path": "qc/${basename.split('.')[0].replace('_','_vs_').replace('-','_vs_')}/${basename}",
+      "path": "qc/${basename.split('.')[0].replace('_vs_','_').replace('_','_vs_').replace('-','_vs_')}/${basename}",
       "table": "QC and logs/${basename.split('.')[0].replace('_',' vs. ').replace('-',' vs. ').capitalize()}/IDR plot"
     },
     "idr_log": {
-      "path": "qc/${basename.split('.')[0].replace('_','_vs_').replace('-','_vs_')}/${basename}",
+      "path": "qc/${basename.split('.')[0].replace('_vs_','_').replace('_','_vs_').replace('-','_vs_')}/${basename}",
       "table": "QC and logs/${basename.split('.')[0].replace('_',' vs. ').replace('-',' vs. ').capitalize()}/IDR log"
     },
     "frip_qc": {
-      "path": "qc/${basename.split('.')[0].replace('_','_vs_').replace('-','_vs_')}/${basename}",
+      "path": "qc/${basename.split('.')[0].replace('_vs_','_').replace('_','_vs_').replace('-','_vs_')}/${basename}",
       "table": "QC and logs/${basename.split('.')[0].replace('_',' vs. ').replace('-',' vs. ').capitalize()}/Fraction of IDR peaks in reads"
     }
   },
@@ -351,19 +515,19 @@
   },
   "atac.overlap": {
     "bfilt_overlap_peak": {
-      "path": "peak/${basename.split('.')[0].replace('_','_vs_').replace('-','_vs_')}/${basename}",
-      "table": "Peak/${basename.split('.')[0].replace('_',' vs. ').replace('-',' vs. ').capitalize()}/Blacklist-filtered overlap peak"
+      "path": "peak/${basename.split('.')[0].replace('_vs_','_').replace('_','_vs_').replace('-','_vs_')}/${basename}",
+      "table": "Peak/${basename.split('.')[0].replace('_vs_','_').replace('_',' vs. ').replace('-',' vs. ').capitalize()}/Blacklist-filtered overlap peak"
     },
     "bfilt_overlap_peak_bb": {
-      "path": "peak/${basename.split('.')[0].replace('_','_vs_').replace('-','_vs_')}/${basename}",
-      "table": "Peak/${basename.split('.')[0].replace('_',' vs. ').replace('-',' vs. ').capitalize()}/Blacklist-filtered overlap peak (BigBed)"
+      "path": "peak/${basename.split('.')[0].replace('_vs_','_').replace('_','_vs_').replace('-','_vs_')}/${basename}",
+      "table": "Peak/${basename.split('.')[0].replace('_vs_','_').replace('_',' vs. ').replace('-',' vs. ').capitalize()}/Blacklist-filtered overlap peak (BigBed)"
     },
     "bfilt_overlap_peak_hammock": {
-      "path": "peak/${basename.split('.')[0].replace('_','_vs_').replace('-','_vs_')}/${basename}",
-      "table": "Peak/${basename.split('.')[0].replace('_',' vs. ').replace('-',' vs. ').capitalize()}/Blacklist-filtered overlap peak (hammock)"
+      "path": "peak/${basename.split('.')[0].replace('_vs_','_').replace('_','_vs_').replace('-','_vs_')}/${basename}",
+      "table": "Peak/${basename.split('.')[0].replace('_vs_','_').replace('_',' vs. ').replace('-',' vs. ').capitalize()}/Blacklist-filtered overlap peak (hammock)"
     },
     "frip_qc": {
-      "path": "qc/${basename.split('.')[0].replace('_','_vs_').replace('-','_vs_')}/${basename}",
+      "path": "qc/${basename.split('.')[0].replace('_vs_','_').replace('_','_vs_').replace('-','_vs_')}/${basename}",
       "table": "QC and logs/${basename.split('.')[0].replace('_',' vs. ').replace('-',' vs. ').capitalize()}/Fraction of overlap peaks in reads"
     }
   },
