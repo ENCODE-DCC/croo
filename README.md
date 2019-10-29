@@ -154,15 +154,30 @@ UCSC browsers can only take a **PUBLIC** URL for big genomic data file (e.g. `.b
   
     Any filename prefixed with `col-1` will be replace with `col-2`. `col-1` is usually your local output directory specified by `--out-dir` or a working directory.
 
-2) GCS: If your bucket is public then simply add `--public-gcs` and skip this step. You can make a presinged URL for any file on your private GCS bucket. You need to have a service account on your Google Cloud project and provide a private key file `--gcp-private-key` for the service account. See [this](https://cloud.google.com/storage/docs/access-control/signing-urls-with-helpers) to make a new service account and get a key file from it.
+2) GCS: If your bucket is public then simply add `--public-gcs` and skip this step. You can make a presinged URL for any file on your private GCS bucket. Add `--use-presigned-url-gcs` to Croo command line arguments. You need to have a service account on your Google Cloud project and provide a private key file `--gcp-private-key` for the service account. See [this](https://cloud.google.com/storage/docs/access-control/signing-urls-with-helpers) to make a new service account and get a key file from it.
 
     > **WARNING**: This presigned URL is PUBLIC and will expire in `--duration-presigned-url-gcs` seconds (604800 sec = 1 week by default).
 
-3) AWS: If your bucket is public then simply skip this step. You can make a presinged URL for any file on your private S3 bucket.
+3) AWS: If your bucket is public then simply skip this step. Add `--use-presigned-url-s3` to Croo command line arguments. You can make a presinged URL for any file on your private S3 bucket.
 
     > **WARNING**: This presigned URL is PUBLIC and will expire in `--duration-presigned-url-s3` seconds (604800 sec = 1 week by default).
 
 It also makes a USCS track hub text file (`croo.ucsc_tracks.[WORKFLOW_ID].txt`).
+
+## Using presign URLs for cloud buckets (AWS S3 and GCS)
+
+Presiged URLs are **PUBLIC** and Croo's outputs have those URLs in some files (starting with `croo.*.[WORKFLOW_ID].*` on your output directory/bucket `--out-dir`). Make sure that you keep those outputs in a secure place.
+
+Example Croo files:
+```
+croo.filetable.b8da424d-5704-4350-8e41-a979389dcbed.tsv
+croo.report.b8da424d-5704-4350-8e41-a979389dcbed.html
+croo.ucsc_tracks.b8da424d-5704-4350-8e41-a979389dcbed.txt
+croo.ucsc_tracks.b8da424d-5704-4350-8e41-a979389dcbed.url
+```
+
+Croo will make new presign URLs for all outputs everytime you run it. Default life time of those presigned URLs is 1 week.
+
 
 ## WDL customization
 
