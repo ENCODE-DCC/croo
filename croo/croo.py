@@ -195,8 +195,9 @@ def init_dirs_args(args):
     # make temp dir
     os.makedirs(args['tmp_dir'], exist_ok=True)
 
-    mapping_path_to_url = {}
+    mapping_path_to_url = None
     if args.get('tsv_mapping_path_to_url') is not None:
+        mapping_path_to_url = {}
         f = os.path.expanduser(args.get('tsv_mapping_path_to_url'))
         with open(f, 'r') as fp:
             lines = fp.read().strip('\n').split('\n')
