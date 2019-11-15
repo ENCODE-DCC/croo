@@ -4,9 +4,9 @@ An output definition JSON file must be provided for a corresponding WDL file.
 
 ## General
 
-For the following example of [ENCODE ATAC-Seq pipeline](https://github.com/ENCODE-DCC/atac-seq-pipeline), `atac.bowtie2` is a task called in a `scatter {}` block iterating over biological replicates so that the type of an output variable `atac.bowtie2.bam` in a workflow level is `Array[File]`. Therefore, we need an index for the `scatter {}` iteration to have access to each file that `bam` points to. An inline expression like `${i}` (0-based) allows access to such index. `${basename}` refers to the basename of the original output file. BAM and flagstat log from `atac.bowtie2` will be transferred to different locations `align/repX/` and `qc/repX/`, respectively. `atac.qc_report` is a final task of a workflow gathering all QC logs so it's not called in a `scatter {}` block. There shouldn't be any scatter indices like `i0`, `i1`, `j0` and `j1`.
+For the following example of [ENCODE ATAC-Seq pipeline](https://github.com/ENCODE-DCC/atac-seq-pipeline), `atac.align` is a task called in a `scatter {}` block iterating over biological replicates so that the type of an output variable `atac.align.bam` in a workflow level is `Array[File]`. Therefore, we need an index for the `scatter {}` iteration to have access to each file that `bam` points to. An inline expression like `${i}` (0-based) allows access to such index. `${basename}` refers to the basename of the original output file. BAM and `SAMstats` log from `atac.align` will be transferred to different locations `align/repX/` and `qc/repX/`, respectively. `atac.qc_report` is a final task of a workflow gathering all QC logs so it's not called in a `scatter {}` block. There shouldn't be any scatter indices like `i0`, `i1`, `j0` and `j1`.
 
-Croo also generates a final HTML report `croo.report.html` on `--out-dir`. This HTML report includes a file table summarizing all output files in a tree structure (split by `/`) and a clickable link for UCSC browser tracks.
+Croo also generates a final HTML report `croo.report.[WORKFLOW_ID].html` on `--out-dir`. This HTML report includes a file table summarizing all output files in a tree structure (split by `/`) and a clickable link for UCSC browser tracks.
 
 Example:
 ```json
@@ -111,6 +111,11 @@ More generally for subworkflows a definition JSON file looks like the following:
 
   "task_graph_template": {
     [ANY_KEY]: [ANY_VAL],
+    [ANY_KEY2]: null,
+    [Any_KEY3]: {
+      [Any_KEY3_1]: [ANY_VAL3_1],
+      ...
+    }
     ...
   }
 }
@@ -118,9 +123,11 @@ More generally for subworkflows a definition JSON file looks like the following:
 
 ## Task graph
 
-Optionally, you can define inputs (see the above `"inputs"` JSON object) to show them in a task graph as starting nodes. Otherwise, the task graph will not show any inputs. Croo is an output organize so that it does not modify those inputs. The same mechanics apply to the scatter indices for multi-dimensional `File` inputs (e.g. `Array[Array[File]]` -> `i, j`). Each dimension's index is converted into inline expression variables `i`, `j` and `k` up to 3 dimesions.
+Optionally, you can define inputs (see the above `"inputs"` JSON object) to show them in a task graph as starting nodes. Otherwise, the task graph will not show any inputs. Croo is an output organize so that it does not modify (e.g. presigning bucket URLs) those inputs.
 
-We have another JSON object for task graph's template (see the above "task_graph_template" JSON object). This template JSON will be converted into a Graphviz DOT. Any key/value pair will be converted into `KEY = VAL;` in a DOT, recursively for JSON in JSON. A key with a value `None` or `null` will be converted into `KEY;` alone. An equivalent DOT template converted from the above `"task_graph_template"` JSON object looks like the following. This is useful to define default style for all tasks. Individual output's style can be defined in `"node"`.
+For the scatter indices, the same mechanics apply to multi-dimensional `File` inputs (e.g. `Array[Array[File]]` -> `i, j`). Each dimension's index is converted into inline expression variables `i`, `j` and `k` up to 3 dimesions.
+
+We have another JSON object for task graph's template (see the above "task_graph_template" JSON object). This template JSON will be converted into an equivalent Graphviz DOT. Any key/value pair will be converted into `KEY = VAL;` in a DOT, recursively for JSON in JSON. A key with a value `None` or `null` will be converted into `KEY;` alone. An equivalent DOT template converted from the above `"task_graph_template"` JSON object looks like the following. This is useful to define default style for all tasks while individual task-output's style can be defined in `"node"`.
 
 ```dot
 digraph D {
@@ -157,10 +164,16 @@ digraph D {
 }
 ```
 
+## File table
+
 `{ "path" : "[OUT_REL_PATH_DEF]", "table": "[FILE_TABLE_TREE_ITEM]" }` defines a final output destination and file table tree item. `[OUT_REL_PATH_DEF]` is a file path **RELATIVE** to the output directory species as `--out-dir`. The following inline expressions are allowed for `[OUT_REL_PATH_DEF]` and `[FILE_TABLE_TREE_ITEM]`. You can use basic Python expressions inside `${}`. For example, `${basename.split(".")[0]}` should be helpful to get the prefix of a file like `some_prefix.fastqs.gz`.
+
+## USCS browser track
 
 `"ucsc_track": "[UCSC_TRACK_FORMAT]"` defines UCSC browser's custom track text format except for one parameter `bigDataUrl=` (to define a public URL for a file). See [this](https://genome.ucsc.edu/FAQ/FAQlink.html) for details.
 > **WARNING**: DO NOT INCLUDE ANY PARAMETER IN "[UCSC_TRACK_FORMAT]" WHICH SPECIFIES DATA FILE URL (e.g. `bigDataUrl=` or `url=`). Croo will make a public URL and append it with `bigDataUrl=` to the track text.
+
+## Variables for an inline expression
 
 | Built-in variable | Type       | Description                                      |
 |-------------------|------------|--------------------------------------------------|
