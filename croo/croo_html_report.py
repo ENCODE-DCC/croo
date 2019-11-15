@@ -8,6 +8,7 @@ Author:
 import os
 from .croo_html_report_tracks import CrooHtmlReportUCSCTracks
 from .croo_html_report_file_table import CrooHtmlReportFileTable
+from .croo_html_report_task_graph import CrooHtmlReportTaskGraph
 from caper.caper_uri import CaperURI
 
 
@@ -28,7 +29,8 @@ jquery.min.js"></script>
     """.format(head_contents=HEAD, body_contents=BODY)
     REPORT_HTML = 'croo.report.{workflow_id}.html'
 
-    def __init__(self, out_dir, workflow_id,
+    def __init__(self, out_dir, workflow_id, dag,
+                 task_graph_template=None,
                  ucsc_genome_db=None,
                  ucsc_genome_pos=None):
         self._out_dir = out_dir
@@ -41,12 +43,22 @@ jquery.min.js"></script>
         self._file_table = CrooHtmlReportFileTable(
             out_dir=out_dir,
             workflow_id=workflow_id)
+        self._task_graph = CrooHtmlReportTaskGraph(
+            out_dir=out_dir,
+            workflow_id=workflow_id,
+            dag=dag,
+            template_d=task_graph_template)
 
     def add_to_file_table(self, full_path, url, table_item):
         self._file_table.add(full_path, url, table_item)
 
     def add_to_ucsc_track(self, url, track_line):
         self._ucsc_tracks.add(url, track_line)
+
+    def add_to_task_graph(self, out_var, task_name, shard_idx,
+                          url, node_format, subgraph):
+        self._task_graph.add(out_var, task_name, shard_idx, url,
+                             node_format, subgraph)
 
     def save_to_file(self):
         html = CrooHtmlReport.HTML
@@ -57,8 +69,10 @@ jquery.min.js"></script>
 
         body = ''
         body += self._file_table.get_html_body_str()
+        body += self._task_graph.get_html_body_str()
         body += self._ucsc_tracks.get_html_body_str()
         html = html.replace(CrooHtmlReport.BODY, body)
+
 
         # write to file and return HTML string
         uri_report = os.path.join(

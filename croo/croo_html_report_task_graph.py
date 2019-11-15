@@ -5,14 +5,110 @@ Author:
     Jin Lee (leepc12@gmail.com) at ENCODE-DCC
 """
 
+import os
+from copy import deepcopy
+from base64 import b64encode
+from graphviz import (Source, render)
+from caper.caper_uri import CaperURI, URI_LOCAL, URI_URL
+
 
 class CrooHtmlReportTaskGraph(object):
-    def __init__(self, html_root, use_rel_path_in_link=False):
-        self._html_root = html_root
-        self._use_rel_path_in_link = use_rel_path_in_link
+    TASK_GRAPH_DOT = 'croo.task_graph.{workflow_id}.dot'
+    TASK_GRAPH_SVG = 'croo.task_graph.{workflow_id}.svg'
 
-    def get_html_head_str(self):
-        return ''
+    def __init__(self, out_dir, workflow_id, dag, template_d):
+        """
+        Args:
+            out_dir:
+                directory for SVG (remote or local)
+            dag:
+                Task graph (DAG)
+            template_d:
+                A template dict that will be converted to a template dot file for graphviz
+                This dot file will be converted into SVG and finally be embedded in HTML
+                Refer to the function caper.dict_tool.dict_to_dot_str() for details
+        """
+        self._out_dir = out_dir
+        self._workflow_id = workflow_id
+        self._dag = dag
+        self._template_d = template_d
+        self._items = {}
+
+    def add(self, output_name, task_name, shard_idx, url,
+            node_format, subgraph):
+        # node as task's output
+        self._items[('output', output_name, task_name, shard_idx)] = \
+                (node_format, url, subgraph)
+        # node as task itself
+        self._items[('task', None, task_name, shard_idx)] = \
+                ('[label=\"{}\"]'.format(task_name), None, subgraph)
 
     def get_html_body_str(self):
-        return ''
+        """Embed SVG into HTML
+        """
+        svg_contents = self.__make_svg()
+        if svg_contents is None:
+            return ''
+        else:
+            head = '<div id=\'task-graph\'><b>Task graph</b>\n'
+            tail = '</div><br>'
+            # img = '<br><img src="data:image/svg;base64,{}"/>'.format(
+            #     b64encode(svg_contents.encode()))
+            img = svg_contents
+            return head + img + tail
+
+    def __make_svg(self):
+        """Converts a dict into a dot string and then to a SVG file
+        Returns:
+            An SVG string, but also saves to CrooHtmlReportTaskGraph.TASK_GRAPH_SVG
+        """
+        # define call back functions for node format, href, subgraph
+        def fnc_node_format(n):
+            if (n.type, n.output_name, n.task_name, n.shard_idx) in self._items:
+                return self._items[(n.type, n.output_name, n.task_name, n.shard_idx)][0]
+            else:
+                return None
+
+        def fnc_href(n):
+            if (n.type, n.output_name, n.task_name, n.shard_idx) in self._items:
+                return self._items[(n.type, n.output_name, n.task_name, n.shard_idx)][1]
+            else:
+                return None
+
+        def fnc_subgraph(n):
+            if (n.type, n.output_name, n.task_name, n.shard_idx) in self._items:
+                return self._items[(n.type, n.output_name, n.task_name, n.shard_idx)][2]
+            else:
+                return None
+
+        # convert to dot string
+        dot_str = self._dag.to_dot(
+            fnc_node_format=fnc_node_format,
+            fnc_href=fnc_href,
+            fnc_subgraph=fnc_subgraph,
+            template=self._template_d)
+        # temporary dot, svg from graphviz.Source.render
+        tmp_dot = '_tmp_.dot'
+        svg = Source(dot_str, format='svg').render(
+            filename=tmp_dot)
+
+        # save to DOT
+        uri_dot = os.path.join(
+            self._out_dir,
+            CrooHtmlReportTaskGraph.TASK_GRAPH_DOT.format(
+                workflow_id=self._workflow_id))
+        CaperURI(uri_dot).write_str_to_file(dot_str)
+
+        # save to SVG
+        with open (svg, 'r') as fp:
+            svg_contents = fp.read()
+        uri_svg = os.path.join(
+            self._out_dir,
+            CrooHtmlReportTaskGraph.TASK_GRAPH_SVG.format(
+                workflow_id=self._workflow_id))
+        CaperURI(uri_svg).write_str_to_file(svg_contents)
+
+        os.remove(tmp_dot)
+        os.remove(svg)
+
+        return svg_contents

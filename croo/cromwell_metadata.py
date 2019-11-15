@@ -10,26 +10,37 @@ import re
 import json
 import caper
 from caper.caper_uri import CaperURI
-from collections import OrderedDict
+from collections import OrderedDict, namedtuple
 from .dag import DAG
+
+
+CMNode = namedtuple('CMNode',
+    ('type', 'shard_idx', 'task_name', 'output_name', 'output_path',
+     'all_outputs', 'all_inputs'))
+
+
+def is_parent_cmnode(n1, n2):
+    """Check if n1 is a parent node of n2.
+    There are two types of nodes:
+    1) task
+    2) output
+    """
+    if n1.type not in ('task', 'output') or n2.type not in ('task', 'output'):
+        raise ValueError('Unsupported CMNode type: {}.'.format(n1.type))
+
+    if n1.type == 'task' and n2.type == 'output':
+        return n1.task_name == n2.task_name and n1.shard_idx == n2.shard_idx
+
+    elif n1.type == 'output' and n2.type == 'task':
+        return n2.all_inputs is not None and \
+                n1.output_path in [path for _, path in n2.all_inputs]
+
+    return False
 
 
 class CromwellMetadata(object):
     """Construct a task DAG based Cromwell's metadata.json file
     """
-    TASK_TEMPLATE = {
-        'task_name': None,  # WORKFLOW_NAME.TASK_NAME,
-                            # WORKFLOW_NAME.SUBWORKFLOW_NAME.TASK_NAME
-        'shard_idx': None,  # tuple of shard_idx for possible nested scatters
-                            # due to subworkflows. -1 means no scatter
-                            # e.g. (0,)    scatter id 0 in main workflow
-                            # e.g. (-1, 1) no scatter in main workflow
-                            #              scatter id 1 in sub workflow
-        'status': None,  # status string (e.g. Running)
-        'in_files': None,  # tuple of (var_name, file_path_or_uri)
-        'out_files': None  # tuple of (var_name, file_path_or_uri)
-    }
-
     RE_PATTERN_WDL_COMMENT_OUT_DEF_JSON = \
         r'^\s*\#\s*CROO\s+out_def\s(.+)'
 
@@ -55,8 +66,8 @@ class CromwellMetadata(object):
         self._workflow_id = self._metadata_json['id']
 
         # construct an indexed DAG
-        self._dag = DAG(fnc_is_parent=CromwellMetadata.is_parent,
-                        fnc_hash=CromwellMetadata.hash_task)
+        self._dag = DAG(fnc_is_parent=is_parent_cmnode)
+
         # parse calls
         self.__parse_calls(self._metadata_json['calls'])
 
@@ -96,6 +107,9 @@ class CromwellMetadata(object):
                         parent_wf_shard_idx=(shard_idx,))
                     continue
 
+                task_name = parent_wf_name + wf_name + '.' + task_alias
+                shard_idx = parent_wf_shard_idx + (shard_idx,)
+
                 def find_files_in_dict(d):
                     files = []
                     for k, v in d.items():
@@ -118,21 +132,35 @@ class CromwellMetadata(object):
                 if 'inputs' in c:
                     in_files = find_files_in_dict(c['inputs'])
                 else:
-                    in_files = []
+                    in_files = None
 
                 if 'outputs' in c:
                     out_files = find_files_in_dict(c['outputs'])
                 else:
-                    out_files = []
+                    out_files = None
 
-                t = {
-                    'task_name': parent_wf_name + wf_name + '.' + task_alias,
-                    'shard_idx': parent_wf_shard_idx + (shard_idx,),
-                    'status': status,
-                    'in_files': in_files,
-                    'out_files': out_files
-                }
-                self._dag.add_node(t)
+                # add task itself to DAG
+                n = CMNode(
+                    type='task',
+                    shard_idx=shard_idx,
+                    task_name=task_name,
+                    output_name=None,
+                    output_path=None,
+                    all_outputs=tuple(out_files),
+                    all_inputs=tuple(in_files))
+                self._dag.add_node(n)
+
+                for output_name, output_path in out_files:
+                    # add each output file to DAG
+                    n = CMNode(
+                        type='output',
+                        shard_idx=shard_idx,
+                        task_name=task_name,
+                        output_name=output_name,
+                        output_path=output_path,
+                        all_outputs=None,
+                        all_inputs=None)
+                    self._dag.add_node(n)
 
     def __find_out_def_from_wdl(self):
         r = self.__find_val_from_wdl(
@@ -148,28 +176,6 @@ class CromwellMetadata(object):
                 if len(ret) > 0:
                     result.append(ret)
         return result
-
-    @staticmethod
-    def is_parent(t1, t2):
-        """Checks if task t1 is a parent of task t2.
-        Finds parent task by the intersection of child's in_files
-        and parent's out_files. Checks link between two call objects.
-
-        Args:
-            t1: task 1
-            t2: task 2
-
-        Returns:
-            Boolean that checks if t1 is a parent of t2.
-        """
-        return set([v for k, v in t1['out_files']]) \
-            & set([v for k, v in t2['in_files']])
-
-    @staticmethod
-    def hash_task(t):
-        """Special hash function for a task. Hash task_name and shard_idx only
-        """
-        return hash((t['task_name'], t['shard_idx']))
 
 
 def main():

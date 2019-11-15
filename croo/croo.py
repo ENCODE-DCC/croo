@@ -25,6 +25,7 @@ class Croo(object):
     and organize outputs as specified in output definition JSON
     """
     RE_PATTERN_INLINE_EXP = r'\$\{(.*?)\}'
+    KEY_TASK_GRAPH_TEMPLATE = 'task_graph_template'
 
     def __init__(self, metadata_json, out_def_json, out_dir,
                  soft_link=True,
@@ -67,6 +68,10 @@ class Croo(object):
                 self._out_def_json = json.loads(fp.read())
 
         self._task_graph = self._cm.get_task_graph()
+        if Croo.KEY_TASK_GRAPH_TEMPLATE in self._out_def_json:
+            self._task_graph_template = self._out_def_json.pop(Croo.KEY_TASK_GRAPH_TEMPLATE)
+        else:
+            self._task_graph_template = None
         self._soft_link = soft_link
 
     def organize_output(self):
@@ -75,23 +80,28 @@ class Croo(object):
         report = CrooHtmlReport(
             out_dir=self._out_dir,
             workflow_id=self._cm.get_workflow_id(),
+            dag=self._task_graph,
+            task_graph_template=self._task_graph_template,
             ucsc_genome_db=self._ucsc_genome_db,
             ucsc_genome_pos=self._ucsc_genome_pos)
 
         for task_name, out_vars in self._out_def_json.items():
-            for out_var_name, out_var in out_vars.items():
-                path = out_var.get('path')
-                table_item = out_var.get('table')
-                ucsc_track = out_var.get('ucsc_track')
+            for output_name, output_obj in out_vars.items():
+                path = output_obj.get('path')
+                table_item = output_obj.get('table')
+                ucsc_track = output_obj.get('ucsc_track')
+                node_format = output_obj.get('node')
+                subgraph = output_obj.get('subgraph')
 
-                for _, task in self._task_graph.get_nodes():
-                    if task_name != task['task_name']:
+                for _, node in self._task_graph.get_nodes():
+                    # look at output nodes only (not a task node)
+                    if task_name != node.task_name or node.type != 'task':
                         continue
-                    out_files = task['out_files']
-                    shard_idx = task['shard_idx']
+                    all_outputs = node.all_outputs
+                    shard_idx = node.shard_idx
 
-                    for k, full_path in out_files:
-                        if k != out_var_name:
+                    for k, full_path in all_outputs:
+                        if k != output_name:
                             continue
 
                         if path is not None:
@@ -109,7 +119,11 @@ class Croo(object):
                             target_uri = full_path
 
                         # get presigned URLs if possible
-                        target_url = CaperURI(target_uri).get_url()
+                        if path is not None or table_item is not None \
+                                or ucsc_track is not None or node_format is not None:
+                            target_url = CaperURI(target_uri).get_url()
+                        else:
+                            target_url = None
 
                         if table_item is not None:
                             interpreted_table_item = Croo.__interpret_inline_exp(
@@ -123,7 +137,20 @@ class Croo(object):
                                 ucsc_track, full_path, shard_idx)
                             report.add_to_ucsc_track(target_url,
                                                      interpreted_ucsc_track)
-
+                        if node_format is not None:
+                            interpreted_node_format = Croo.__interpret_inline_exp(
+                                node_format, full_path, shard_idx)
+                            if subgraph is not None:
+                                interpreted_subgraph = Croo.__interpret_inline_exp(
+                                    subgraph, full_path, shard_idx)
+                            else:
+                                interpreted_subgraph = None
+                            report.add_to_task_graph(output_name,
+                                                     task_name,
+                                                     shard_idx,
+                                                     target_url,
+                                                     interpreted_node_format,
+                                                     interpreted_subgraph)
         # write to html report
         report.save_to_file()
 
@@ -167,6 +194,7 @@ class Croo(object):
         dirname = os.path.dirname(full_path)
 
         while True:
+            print(result)
             m = re.search(Croo.RE_PATTERN_INLINE_EXP, result)
             if m is None:
                 break
