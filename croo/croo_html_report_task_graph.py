@@ -52,8 +52,6 @@ class CrooHtmlReportTaskGraph(object):
         else:
             head = '<div id=\'task-graph\'><b>Task graph</b>\n'
             tail = '</div><br>'
-            # img = '<br><img src="data:image/svg;base64,{}"/>'.format(
-            #     b64encode(svg_contents.encode()))
             img = svg_contents
             return head + img + tail
 

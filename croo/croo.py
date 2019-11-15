@@ -26,6 +26,7 @@ class Croo(object):
     """
     RE_PATTERN_INLINE_EXP = r'\$\{(.*?)\}'
     KEY_TASK_GRAPH_TEMPLATE = 'task_graph_template'
+    KEY_INPUT = 'inputs'
 
     def __init__(self, metadata_json, out_def_json, out_dir,
                  soft_link=True,
@@ -72,6 +73,10 @@ class Croo(object):
             self._task_graph_template = self._out_def_json.pop(Croo.KEY_TASK_GRAPH_TEMPLATE)
         else:
             self._task_graph_template = None
+        if Croo.KEY_INPUT in self._out_def_json:
+            self._input_def_json = self._out_def_json.pop(Croo.KEY_INPUT)
+        else:
+            self._input_def_json = None
         self._soft_link = soft_link
 
     def organize_output(self):
@@ -84,6 +89,36 @@ class Croo(object):
             task_graph_template=self._task_graph_template,
             ucsc_genome_db=self._ucsc_genome_db,
             ucsc_genome_pos=self._ucsc_genome_pos)
+
+        if self._input_def_json is not None:
+            for input_name, input_obj in self._input_def_json.items():
+                node_format = input_obj.get('node')
+                subgraph = input_obj.get('subgraph')
+
+                for _, node in self._task_graph.get_nodes():
+                    if node.type == 'output' and node.task_name is None:
+                        print(node.output_name)
+                    # if node is pipeline's input
+                    if node.type != 'output' or node.task_name is not None \
+                            or node.output_name != input_name:
+                        continue
+                    full_path = node.output_path
+                    shard_idx = node.shard_idx
+
+                    if node_format is not None:
+                        interpreted_node_format = Croo.__interpret_inline_exp(
+                            node_format, full_path, shard_idx)
+                        if subgraph is not None:
+                            interpreted_subgraph = Croo.__interpret_inline_exp(
+                                subgraph, full_path, shard_idx)
+                        else:
+                            interpreted_subgraph = None
+                        report.add_to_task_graph(node.output_name,
+                                                 None,
+                                                 shard_idx,
+                                                 full_path,
+                                                 interpreted_node_format,
+                                                 interpreted_subgraph)
 
         for task_name, out_vars in self._out_def_json.items():
             for output_name, output_obj in out_vars.items():
@@ -100,7 +135,7 @@ class Croo(object):
                     all_outputs = node.all_outputs
                     shard_idx = node.shard_idx
 
-                    for k, full_path in all_outputs:
+                    for k, full_path, _ in all_outputs:
                         if k != output_name:
                             continue
 
@@ -148,7 +183,7 @@ class Croo(object):
                             report.add_to_task_graph(output_name,
                                                      task_name,
                                                      shard_idx,
-                                                     target_url,
+                                                     full_path if target_url is None else target_url,
                                                      interpreted_node_format,
                                                      interpreted_subgraph)
         # write to html report
@@ -194,7 +229,6 @@ class Croo(object):
         dirname = os.path.dirname(full_path)
 
         while True:
-            print(result)
             m = re.search(Croo.RE_PATTERN_INLINE_EXP, result)
             if m is None:
                 break

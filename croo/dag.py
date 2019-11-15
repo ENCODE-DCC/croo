@@ -76,6 +76,7 @@ class DAG(object):
 
         Args:
             fnc_node_format(n):
+                should starts with "[" and endswith "]"
                 A single-parameter function to find a format for a node "n".
                 e.g. "[shape=box, stype=filled, color=blue, label="hello"]"
             fnc_href(n) (optional):

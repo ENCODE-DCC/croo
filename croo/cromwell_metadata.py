@@ -33,9 +33,37 @@ def is_parent_cmnode(n1, n2):
 
     elif n1.type == 'output' and n2.type == 'task':
         return n2.all_inputs is not None and \
-                n1.output_path in [path for _, path in n2.all_inputs]
+                n1.output_path in [path for _, path, _ in n2.all_inputs]
 
     return False
+
+
+def find_files_in_dict(d):
+    files = []
+    for k, v in d.items():
+        maybe_files = []
+        if isinstance(v, list):
+            for i, v_ in enumerate(v):
+                if isinstance(v_, str):
+                    maybe_files.append((v_, (i,)))
+                elif isinstance(v_, list):
+                    for j, v__ in enumerate(v_):
+                        if isinstance(v__, str):
+                            maybe_files.append((v__, (i, j)))
+                        elif isinstance(v__, list):
+                            for k, v___ in enumerate(v__):
+                                if isinstance(v___, str):
+                                    maybe_files.append((v___, (i, j, k)))
+        elif isinstance(v, dict):
+            for _, v_ in v.items():
+                if isinstance(v_, str):
+                    maybe_files.append((v_, (-1,)))
+        elif isinstance(v, str):
+            maybe_files.append((v, (-1,)))
+        for f, shard_idx in maybe_files:
+            if CaperURI(f).is_valid_uri():
+                files.append((k, f, shard_idx))
+    return files
 
 
 class CromwellMetadata(object):
@@ -68,8 +96,11 @@ class CromwellMetadata(object):
         # construct an indexed DAG
         self._dag = DAG(fnc_is_parent=is_parent_cmnode)
 
-        # parse calls
+        # parse calls to add tasks and their outputs to graph
         self.__parse_calls(self._metadata_json['calls'])
+
+        # parse input JSON to add inputs to graph
+        self.__parse_input_json()
 
         self._debug = debug
         if self._debug:
@@ -83,6 +114,24 @@ class CromwellMetadata(object):
 
     def get_out_def_json_file(self):
         return self._out_def_json_file
+
+    def __parse_input_json(self):
+        """Recursively parse input JSON to add input files to graph
+        """
+        if self._input_json is None:
+            return
+
+        for file_name, file_path, shard_idx in find_files_in_dict(self._input_json):
+            # add it as an "output" without an associated task
+            n = CMNode(
+                type='output',
+                shard_idx=shard_idx,
+                task_name=None,
+                output_name=file_name,
+                output_path=file_path,
+                all_outputs=None,
+                all_inputs=None)
+            self._dag.add_node(n)
 
     def __parse_calls(self, calls, parent_wf_name='',
                       wf_alias=None, parent_wf_shard_idx=()):
@@ -110,25 +159,6 @@ class CromwellMetadata(object):
                 task_name = parent_wf_name + wf_name + '.' + task_alias
                 shard_idx = parent_wf_shard_idx + (shard_idx,)
 
-                def find_files_in_dict(d):
-                    files = []
-                    for k, v in d.items():
-                        maybe_files = []
-                        if isinstance(v, list):
-                            for v_ in v:
-                                if isinstance(v_, str):
-                                    maybe_files.append(v_)
-                        elif isinstance(v, dict):
-                            for _, v_ in v.items():
-                                if isinstance(v_, str):
-                                    maybe_files.append(v_)
-                        elif isinstance(v, str):
-                            maybe_files.append(v)
-                        for f in maybe_files:
-                            if CaperURI(f).is_valid_uri():
-                                files.append((k, f))
-                    return files
-
                 if 'inputs' in c:
                     in_files = find_files_in_dict(c['inputs'])
                 else:
@@ -150,7 +180,7 @@ class CromwellMetadata(object):
                     all_inputs=tuple(in_files))
                 self._dag.add_node(n)
 
-                for output_name, output_path in out_files:
+                for output_name, output_path, _ in out_files:
                     # add each output file to DAG
                     n = CMNode(
                         type='output',

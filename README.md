@@ -19,6 +19,8 @@ Croo parses `metadata.json` which is an output from Cromwell and makes an organi
 
 * **UCSC browser tracks**: Clickable link for UCSC browser tracks in the HTML report.
 
+* **Task graph**
+
 ## Install
 
 Install it through PIP.
@@ -189,84 +191,7 @@ Croo will make new presign URLs for all outputs everytime you run it. Default li
 
 ## Output definition JSON file
 
-An output definition JSON file must be provided for a corresponding WDL file.
-
-For the following example of [ENCODE ATAC-Seq pipeline](https://github.com/ENCODE-DCC/atac-seq-pipeline), `atac.bowtie2` is a task called in a `scatter {}` block iterating over biological replicates so that the type of an output variable `atac.bowtie2.bam` in a workflow level is `Array[File]`. Therefore, we need an index for the `scatter {}` iteration to have access to each file that `bam` points to. An inline expression like `${i}` (0-based) allows access to such index. `${basename}` refers to the basename of the original output file. BAM and flagstat log from `atac.bowtie2` will be transferred to different locations `align/repX/` and `qc/repX/`, respectively. `atac.qc_report` is a final task of a workflow gathering all QC logs so it's not called in a `scatter {}` block. There shouldn't be any scatter indices like `i0`, `i1`, `j0` and `j1`.
-
-Croo also generates a final HTML report `croo.report.html` on `--out-dir`. This HTML report includes a file table summarizing all output files in a tree structure (split by `/`) and a clickable link for UCSC browser tracks.
-
-Example:
-```json
-{
-  "atac.bowtie2": {
-    "bam": {
-      "path": "align/rep${i+1}/${basename}",
-      "table": "Alignment/Replicate ${i+1}/Raw BAM from bowtie2"
-    },
-    "flagstat_qc": {
-      "path": "qc/rep${i+1}/${basename}",
-      "table": "QC and logs/Replicate ${i+1}/Samtools flagstat for Raw BAM"
-    }
-  },
-  "atac.macs2_signal_track": {
-    "pval_bw": {
-      "path": "signal/rep${i+1}/${basename}",
-      "table": "Signal/Replicate ${i+1}/MACS2 signal track (p-val)",
-      "ucsc_track": "track type=bigWig name=\"MACS2 p-val (rep${i+1})\" priority=${i+1} smoothingWindow=off maxHeightPixels=80:60:40 color=255,0,0 autoScale=off viewLimits=0:40 visibility=full"
-    },
-    "fc_bw": {
-      "path": "signal/rep${i+1}/${basename}",
-      "table": "Signal/Replicate ${i+1}/MACS2 signal track (fold-enrichment)"
-    }
-  },
-  "atac.qc_report": {
-    "report": {
-      "path": "qc/final_qc_report.html",
-      "table": "QC and logs/Final QC HTML report"
-    },
-    "qc_json": {
-      "path": "qc/final_qc.json",
-      "table": "QC and logs/Final QC JSON file"
-    }
-  }
-}
-```
-
-More generally for subworkflows a definition JSON file looks like the following:
-```json
-{
-  "[WORKFLOW_NAME].[TASK_NAME_OR_ALIAS]" : {
-    "[OUT_VAR_NAME_IN_TASK]" : {
-      "path": "[OUT_REL_PATH_DEF]",
-      "table": "[FILE_TABLE_TREE_ITEM]",
-      "ucsc_track": "[UCSC_TRACK_FORMAT]"
-    }
-  },
-
-  "[WORKFLOW_NAME].[SUBWORKFLOW_NAME_OR_ALIAS].[SUBSUBWORKFLOW_NAME_OR_ALIAS].[TASK_NAME_OR_ALIAS]" : {
-    "[OUT_VAR_NAME_IN_TASK]" : {
-      "path": "[OUT_REL_PATH_DEF]",
-      "table": "[FILE_TABLE_TREE_ITEM]",
-      "ucsc_track": "[UCSC_TRACK_FORMAT]"
-    }
-  }
-}
-```
-
-`{ "path" : "[OUT_REL_PATH_DEF]", "table": "[FILE_TABLE_TREE_ITEM]" }` defines a final output destination and file table tree item. `[OUT_REL_PATH_DEF]` is a file path **RELATIVE** to the output directory species as `--out-dir`. The following inline expressions are allowed for `[OUT_REL_PATH_DEF]` and `[FILE_TABLE_TREE_ITEM]`. You can use basic Python expressions inside `${}`. For example, `${basename.split(".")[0]}` should be helpful to get the prefix of a file like `some_prefix.fastqs.gz`.
-
-`"ucsc_track": "[UCSC_TRACK_FORMAT]"` defines UCSC browser's custom track text format except for one parameter `bigDataUrl=` (to define a public URL for a file). See [this](https://genome.ucsc.edu/FAQ/FAQlink.html) for details.
-> **WARNING**: DO NOT INCLUDE ANY PARAMETER IN "[UCSC_TRACK_FORMAT]" WHICH SPECIFIES DATA FILE URL (e.g. `bigDataUrl=` or `url=`). Croo will make a public URL and append it with `bigDataUrl=` to the track text.
-
-| Built-in variable | Type       | Description                                      |
-|-------------------|------------|--------------------------------------------------|
-| `basename`        | str        | Basename of file                                 | 
-| `dirname`         | str        | Dirname of file                                  | 
-| `full_path`       | str        | Full path of file                                | 
-| `i`               | int        | 0-based index for main scatter loop              |
-| `j`               | int        | 0-based index for nested scatter loop            |
-| `k`               | int        | 0-based index for double-nested scatter loop     |
-| `shard_idx`       | tuple(int) | tuple of indices for each dim.: (i, j, k, ...)   |
+See [this](docs/OUT_DEF_JSON.md) document for details.
 
 ## Requirements
 
