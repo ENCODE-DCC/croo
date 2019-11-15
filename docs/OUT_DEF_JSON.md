@@ -173,7 +173,9 @@ digraph D {
 `"ucsc_track": "[UCSC_TRACK_FORMAT]"` defines UCSC browser's custom track text format except for one parameter `bigDataUrl=` (to define a public URL for a file). See [this](https://genome.ucsc.edu/FAQ/FAQlink.html) for details.
 > **WARNING**: DO NOT INCLUDE ANY PARAMETER IN "[UCSC_TRACK_FORMAT]" WHICH SPECIFIES DATA FILE URL (e.g. `bigDataUrl=` or `url=`). Croo will make a public URL and append it with `bigDataUrl=` to the track text.
 
-## Variables for an inline expression
+## Inline expression
+
+List of build-in variables for a inline expression
 
 | Built-in variable | Type       | Description                                      |
 |-------------------|------------|--------------------------------------------------|
