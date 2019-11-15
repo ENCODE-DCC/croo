@@ -18,6 +18,9 @@ Croo parses `metadata.json` which is an output from Cromwell and makes an organi
 * **File table with clickable links**: Croo generates an HTML report with a file table, which is a summary/description of all output files with clickable links for them. Examples: [ATAC](https://storage.googleapis.com/encode-pipeline-output-definition/out_example_atac/croo.report.904b709b-ecb4-42c8-aa81-ca19a15c4bb6.html) and [ChIP](https://storage.googleapis.com/encode-pipeline-output-definition/out_example_chip/croo.report.4665a7c4-c0ac-4e0b-9ac4-3c4d30474d20.html).
 
 * **UCSC browser tracks**: Clickable link for UCSC browser tracks in the HTML report.
+    ```bash
+    $ croo ... --ucsc-genome-db hg38
+    ```
 
 * **Task graph**
 
