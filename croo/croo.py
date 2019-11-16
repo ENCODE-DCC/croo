@@ -96,8 +96,6 @@ class Croo(object):
                 subgraph = input_obj.get('subgraph')
 
                 for _, node in self._task_graph.get_nodes():
-                    if node.type == 'output' and node.task_name is None:
-                        print(node.output_name)
                     # if node is pipeline's input
                     if node.type != 'output' or node.task_name is not None \
                             or node.output_name != input_name:
