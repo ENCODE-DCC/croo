@@ -15,14 +15,12 @@ Croo parses `metadata.json` which is an output from Cromwell and makes an organi
 
 * **Soft-linking** (local storage only): Croo defaults to make soft links instead of copying for local-to-local file transfer (local output file defined in a metadata JSON vs. local output directory specifed by `--out-dir`). In order to force copying instead of soft-linking regardless of a storage type then use `--method copy`. Local-to-cloud and cloud-to-local file transfer always uses `copy` method.
 
-* **File table with clickable links**: Croo generates an HTML report with a file table, which is a summary/description of all output files with clickable links for them. Examples: [ATAC](https://storage.googleapis.com/encode-pipeline-output-definition/out_example_atac/croo.report.904b709b-ecb4-42c8-aa81-ca19a15c4bb6.html) and [ChIP](https://storage.googleapis.com/encode-pipeline-output-definition/out_example_chip/croo.report.4665a7c4-c0ac-4e0b-9ac4-3c4d30474d20.html).
+* **File table, task graph with clickable links**: Croo generates an HTML report with a file table, which is a summary/description of all output files with clickable links for them. Examples: [ATAC](https://storage.googleapis.com/encode-pipeline-test-samples/encode-atac-seq-pipeline/croo_example/croo.report.33654b17-cde4-4329-9499-6498654bf75d.html) and [ChIP](https://storage.googleapis.com/encode-pipeline-test-samples/encode-chip-seq-pipeline/croo_example/croo.report.ff386e27-2335-4916-bc29-b0c22ede066b.html).
 
 * **UCSC browser tracks**: Clickable link for UCSC browser tracks in the HTML report.
     ```bash
     $ croo ... --ucsc-genome-db hg38
     ```
-
-* **Task graph**
 
 ## Install
 
