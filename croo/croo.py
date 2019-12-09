@@ -31,7 +31,8 @@ class Croo(object):
     def __init__(self, metadata_json, out_def_json, out_dir,
                  soft_link=True,
                  ucsc_genome_db=None,
-                 ucsc_genome_pos=None):
+                 ucsc_genome_pos=None,
+                 no_graph=False):
         """Initialize croo with output definition JSON
         """
         if isinstance(metadata_json, dict):
@@ -52,6 +53,7 @@ class Croo(object):
         self._cm = CromwellMetadata(self._metadata)
         self._ucsc_genome_db = ucsc_genome_db
         self._ucsc_genome_pos = ucsc_genome_pos
+        self._no_graph = no_graph
 
         if isinstance(out_def_json, dict):
             self._out_def_json = out_def_json
@@ -103,7 +105,7 @@ class Croo(object):
                     full_path = node.output_path
                     shard_idx = node.shard_idx
 
-                    if node_format is not None:
+                    if node_format is not None and not self._no_graph:
                         interpreted_node_format = Croo.__interpret_inline_exp(
                             node_format, full_path, shard_idx)
                         if subgraph is not None:
@@ -170,7 +172,7 @@ class Croo(object):
                                 ucsc_track, full_path, shard_idx)
                             report.add_to_ucsc_track(target_url,
                                                      interpreted_ucsc_track)
-                        if node_format is not None:
+                        if node_format is not None and not self._no_graph:
                             interpreted_node_format = Croo.__interpret_inline_exp(
                                 node_format, full_path, shard_idx)
                             if subgraph is not None:
@@ -296,7 +298,8 @@ def main():
         out_dir=args['out_dir'],
         ucsc_genome_db=args['ucsc_genome_db'],
         ucsc_genome_pos=args['ucsc_genome_pos'],
-        soft_link=args['method'] == 'link')
+        soft_link=args['method'] == 'link',
+        no_graph=args['no_graph'])
 
     co.organize_output()
 

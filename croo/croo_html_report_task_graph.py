@@ -8,7 +8,6 @@ Author:
 import os
 from copy import deepcopy
 from base64 import b64encode
-from graphviz import (Source, render)
 from caper.caper_uri import CaperURI, URI_LOCAL, URI_URL
 
 
@@ -60,6 +59,10 @@ class CrooHtmlReportTaskGraph(object):
         Returns:
             An SVG string, but also saves to CrooHtmlReportTaskGraph.TASK_GRAPH_SVG
         """
+        if not self._items:
+            return None
+        from graphviz import Source
+
         # define call back functions for node format, href, subgraph
         def fnc_node_format(n):
             if (n.type, n.output_name, n.task_name, n.shard_idx) in self._items:
@@ -78,7 +81,6 @@ class CrooHtmlReportTaskGraph(object):
                 return self._items[(n.type, n.output_name, n.task_name, n.shard_idx)][2]
             else:
                 return None
-
         # convert to dot string
         dot_str = self._dag.to_dot(
             fnc_node_format=fnc_node_format,
