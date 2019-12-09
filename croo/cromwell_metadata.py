@@ -176,8 +176,8 @@ class CromwellMetadata(object):
                     task_name=task_name,
                     output_name=None,
                     output_path=None,
-                    all_outputs=tuple(out_files),
-                    all_inputs=tuple(in_files))
+                    all_outputs=tuple(out_files) if out_files else None,
+                    all_inputs=tuple(in_files) if in_files else None)
                 self._dag.add_node(n)
 
                 for output_name, output_path, _ in out_files:

@@ -13,7 +13,7 @@ from caper.caper_uri import (
     MAX_DURATION_SEC_PRESIGNED_URL_GCS)
 
 
-__version__ = '0.3.2'
+__version__ = '0.3.3'
 
 def parse_croo_arguments():
     """Argument parser for Cromwell Output Organizer (COO)

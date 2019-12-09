@@ -134,6 +134,8 @@ class Croo(object):
                         continue
                     all_outputs = node.all_outputs
                     shard_idx = node.shard_idx
+                    if not all_outputs:
+                        continue
 
                     for k, full_path, _ in all_outputs:
                         if k != output_name:
