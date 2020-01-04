@@ -206,3 +206,14 @@ See [this](docs/OUT_DEF_JSON.md) document for details.
 	```bash
 	$ aws configure
 	```
+* Graphviz executable `dot`.
+
+  For Ubuntu,
+  ```bash
+  $ sudo apt-get update
+  $ sudo apt-get install graphviz
+  ```
+
+## Troubleshoot
+
+If you see any Graphviz error, disable task graph generation by adding `--no-graph` to the command line.
