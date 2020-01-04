@@ -180,17 +180,18 @@ class CromwellMetadata(object):
                     all_inputs=tuple(in_files) if in_files else None)
                 self._dag.add_node(n)
 
-                for output_name, output_path, _ in out_files:
-                    # add each output file to DAG
-                    n = CMNode(
-                        type='output',
-                        shard_idx=shard_idx,
-                        task_name=task_name,
-                        output_name=output_name,
-                        output_path=output_path,
-                        all_outputs=None,
-                        all_inputs=None)
-                    self._dag.add_node(n)
+                if out_files:
+                    for output_name, output_path, _ in out_files:
+                        # add each output file to DAG
+                        n = CMNode(
+                            type='output',
+                            shard_idx=shard_idx,
+                            task_name=task_name,
+                            output_name=output_name,
+                            output_path=output_path,
+                            all_outputs=None,
+                            all_inputs=None)
+                        self._dag.add_node(n)
 
     def __find_out_def_from_wdl(self):
         r = self.__find_val_from_wdl(
