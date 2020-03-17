@@ -63,11 +63,11 @@ def parse_croo_arguments():
              'Google Cloud Platform (GCP). This key will be used to make '
              'presigned URLs on files on gs://.')
     p.add_argument(
-        '--duration-presigned-url-s3',
+        '--duration-presigned-url-s3', type=int,
         default=MAX_DURATION_SEC_PRESIGNED_URL_S3,
         help='Duration for presigned URLs for files on s3:// in seconds. ')
     p.add_argument(
-        '--duration-presigned-url-gcs',
+        '--duration-presigned-url-gcs', type=int,
         default=MAX_DURATION_SEC_PRESIGNED_URL_GCS,
         help='Duration for presigned URLs for files on gs:// in seconds. ')
     p.add_argument(
