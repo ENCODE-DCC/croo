@@ -9,7 +9,7 @@ import os
 from .croo_html_report_tracks import CrooHtmlReportUCSCTracks
 from .croo_html_report_file_table import CrooHtmlReportFileTable
 from .croo_html_report_task_graph import CrooHtmlReportTaskGraph
-from caper.caper_uri import CaperURI
+from autouri import AutoURI
 
 
 class CrooHtmlReport(object):
@@ -79,5 +79,5 @@ jquery.min.js"></script>
             self._out_dir,
             CrooHtmlReport.REPORT_HTML.format(
                 workflow_id=self._workflow_id))
-        CaperURI(uri_report).write_str_to_file(html)
+        AutoURI(uri_report).write(html)
         return html

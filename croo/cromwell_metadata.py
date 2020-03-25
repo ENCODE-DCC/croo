@@ -9,7 +9,7 @@ Author:
 import re
 import json
 import caper
-from caper.caper_uri import CaperURI
+from autouri import AutoURI
 from collections import OrderedDict, namedtuple
 from .dag import DAG
 
@@ -61,7 +61,7 @@ def find_files_in_dict(d):
         elif isinstance(v, str):
             maybe_files.append((v, (-1,)))
         for f, shard_idx in maybe_files:
-            if CaperURI(f).is_valid_uri():
+            if AutoURI(f).is_valid:
                 files.append((k, f, shard_idx))
     return files
 

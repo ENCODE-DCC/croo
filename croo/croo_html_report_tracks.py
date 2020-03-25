@@ -7,7 +7,7 @@ Author:
 
 import os
 import urllib.parse
-from caper.caper_uri import CaperURI
+from autouri import AutoURI
 
 
 class CrooHtmlReportUCSCTracks(object):
@@ -82,14 +82,14 @@ class CrooHtmlReportUCSCTracks(object):
             self._out_dir,
             CrooHtmlReportUCSCTracks.UCSC_TRACKS_TXT.format(
                 workflow_id=self._workflow_id))
-        CaperURI(uri_txt).write_str_to_file(txt)
+        AutoURI(uri_txt).write(txt)
 
         # save to URL
         uri_url = os.path.join(
             self._out_dir,
             CrooHtmlReportUCSCTracks.UCSC_TRACKS_URL.format(
                 workflow_id=self._workflow_id))
-        CaperURI(uri_url).write_str_to_file(url)
+        AutoURI(uri_url).write(url)
 
         return html
 

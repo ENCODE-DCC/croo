@@ -8,9 +8,8 @@ Author:
 
 import argparse
 import sys
-from caper.caper_uri import (
-    MAX_DURATION_SEC_PRESIGNED_URL_S3,
-    MAX_DURATION_SEC_PRESIGNED_URL_GCS)
+import logging
+from autouri import AutoURI, S3URI, GCSURI
 
 
 __version__ = '0.3.5'
@@ -64,11 +63,11 @@ def parse_croo_arguments():
              'presigned URLs on files on gs://.')
     p.add_argument(
         '--duration-presigned-url-s3', type=int,
-        default=MAX_DURATION_SEC_PRESIGNED_URL_S3,
+        default=S3URI.DURATION_PRESIGNED_URL,
         help='Duration for presigned URLs for files on s3:// in seconds. ')
     p.add_argument(
         '--duration-presigned-url-gcs', type=int,
-        default=MAX_DURATION_SEC_PRESIGNED_URL_GCS,
+        default=GCSURI.DURATION_PRESIGNED_URL,
         help='Duration for presigned URLs for files on gs:// in seconds. ')
     p.add_argument(
         '--tsv-mapping-path-to-url',
@@ -87,16 +86,19 @@ def parse_croo_arguments():
              'stored here. You can clean it up but will lose all cached files '
              'so that remote files will be re-downloaded.')
     p.add_argument(
-        '--use-gsutil-over-aws-s3', action='store_true',
-        help='Use gsutil instead of aws s3 CLI even for S3 buckets.')
-    p.add_argument(
-        '--http-user',
-        help='Username to download data from private URLs')
-    p.add_argument(
-        '--http-password',
-        help='Password to download data from private URLs')
+        '--use-gsutil-for-s3', action='store_true',
+        help='Use gsutil for direct tranfer between GCS and S3 buckets. '
+             'Make sure that you have "gsutil" installed and configured '
+             'to have access to credentials for GCS and S3 '
+             '(e.g. ~/.boto or ~/.aws/credientials)')
     p.add_argument('-v', '--version', action='store_true',
                    help='Show version')
+
+    group_log_level = p.add_mutually_exclusive_group()
+    group_log_level.add_argument('-V', '--verbose', action='store_true',
+                   help='Prints all logs >= INFO level')
+    group_log_level.add_argument('-d', '--debug', action='store_true',
+                   help='Prints all logs >= DEBUG level')
 
     if '-v' in sys.argv or '--version' in sys.argv:
         print(__version__)

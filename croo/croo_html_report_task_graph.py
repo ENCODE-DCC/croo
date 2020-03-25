@@ -8,7 +8,7 @@ Author:
 import os
 from copy import deepcopy
 from base64 import b64encode
-from caper.caper_uri import CaperURI, URI_LOCAL, URI_URL
+from autouri import AutoURI
 
 
 class CrooHtmlReportTaskGraph(object):
@@ -26,6 +26,7 @@ class CrooHtmlReportTaskGraph(object):
                 A template dict that will be converted to a template dot file for graphviz
                 This dot file will be converted into SVG and finally be embedded in HTML
                 Refer to the function caper.dict_tool.dict_to_dot_str() for details
+                https://github.com/ENCODE-DCC/caper/blob/master/caper/dict_tool.py#L190
         """
         self._out_dir = out_dir
         self._workflow_id = workflow_id
@@ -97,7 +98,7 @@ class CrooHtmlReportTaskGraph(object):
             self._out_dir,
             CrooHtmlReportTaskGraph.TASK_GRAPH_DOT.format(
                 workflow_id=self._workflow_id))
-        CaperURI(uri_dot).write_str_to_file(dot_str)
+        AutoURI(uri_dot).write(dot_str)
 
         # save to SVG
         with open (svg, 'r') as fp:
@@ -106,7 +107,7 @@ class CrooHtmlReportTaskGraph(object):
             self._out_dir,
             CrooHtmlReportTaskGraph.TASK_GRAPH_SVG.format(
                 workflow_id=self._workflow_id))
-        CaperURI(uri_svg).write_str_to_file(svg_contents)
+        AutoURI(uri_svg).write(svg_contents)
 
         os.remove(tmp_dot)
         os.remove(svg)
