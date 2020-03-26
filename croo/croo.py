@@ -39,8 +39,15 @@ class Croo(object):
                  public_gcs=False,
                  gcp_private_key=None,
                  map_path_to_url=None,
+                 no_checksum=False,
                  no_graph=False):
         """Initialize croo with output definition JSON
+        Args:
+            soft_link:
+                DO NOT MAKE A COPY of original cromwell output
+                (source) on out_dir (destination).
+                Try to soft-link it if both src and dest are on local storage.
+                Otherwise, original cromwell outputs will be just referenced.
         """
         self._tmp_dir = tmp_dir
         if isinstance(metadata_json, dict):
@@ -69,6 +76,7 @@ class Croo(object):
         self._public_gcs = public_gcs
         self._gcp_private_key = gcp_private_key
         self._map_path_to_url = map_path_to_url
+        self._no_checksum = no_checksum
 
         self._no_graph = no_graph
 
@@ -163,21 +171,26 @@ class Croo(object):
                             interpreted_path = Croo.__interpret_inline_exp(
                                 path, full_path, shard_idx)
 
-                            u = AutoURI(full_path)
+                            au = AutoURI(full_path)
                             target_path = os.path.join(self._out_dir, interpreted_path)
 
                             if self._soft_link:
-                                if isinstance(u, AbsPath):
-                                    u.soft_link(target_path, force=True)
+                                au_target = AutoURI(target_path)
+                                if isinstance(au, AbsPath) and isinstance(au_target, AbsPath):
+                                    au.soft_link(target_path, force=True)
                                     target_uri = target_path
+                                else:
+                                    target_uri = full_path
                             else:
-                                target_uri = u.cp(target_path, make_md5_file=True)
+                                target_uri = au.cp(
+                                    target_path,
+                                    no_checksum=self._no_checksum,
+                                    make_md5_file=True)
 
                         # get presigned URLs if possible
                         target_url = None
                         if path is not None or table_item is not None \
                                 or ucsc_track is not None or node_format is not None:
-                            print(target_uri)
                             u = AutoURI(target_uri)
 
                             if isinstance(u, GCSURI):
@@ -189,13 +202,15 @@ class Croo(object):
                                         duration=self._duration_presigned_url_gcs,
                                         private_key_file=self._gcp_private_key)
 
-                            elif isinstance(u, S3URI) and self._use_presigned_url_s3:
-                                target_url = u.get_presigned_url(
-                                    duration=self._duration_presigned_url_s3)
+                            elif isinstance(u, S3URI):
+                                if self._use_presigned_url_s3:
+                                    target_url = u.get_presigned_url(
+                                        duration=self._duration_presigned_url_s3)
 
                             elif isinstance(u, AbsPath):
-                                target_url = u.get_mapped_url(
-                                    map_path_to_url=self._map_path_to_url)
+                                if self._map_path_to_url:
+                                    target_url = u.get_mapped_url(
+                                        map_path_to_url=self._map_path_to_url)
 
                         if table_item is not None:
                             interpreted_table_item = Croo.__interpret_inline_exp(
@@ -274,60 +289,9 @@ class Croo(object):
         return result
 
 
-def init_dirs_args(args):
-    """More initialization for out/tmp directories since tmp
-    directory is important for inter-storage transfer using
-    AutoURI
-    """
-    if args.get('tmp_dir') is None:
-        pass
-    elif args['tmp_dir'].startswith(('http://', 'https://')):
-        raise ValueError('URL is not allowed for --tmp-dir')
-    elif args['tmp_dir'].startswith(('gs://', 's3://')):
-        raise ValueError('Cloud URI is not allowed for --tmp-dir')
-    if args.get('tmp_dir') is not None:
-        args['tmp_dir'] = os.path.abspath(os.path.expanduser(args['tmp_dir']))
-
-    if args['out_dir'].startswith(('http://', 'https://')):
-        raise ValueError('URL is not allowed for --out-dir')
-    elif args['out_dir'].startswith(('gs://', 's3://')):
-        if args.get('tmp_dir') is None:
-            args['tmp_dir'] = os.path.join(os.getcwd(), '.croo_tmp')
-    else:
-        args['out_dir'] = os.path.abspath(os.path.expanduser(args['out_dir']))
-        os.makedirs(args['out_dir'], exist_ok=True)
-
-        if args.get('tmp_dir') is None:
-            args['tmp_dir'] = os.path.join(args['out_dir'], '.croo_tmp')
-
-    # make temp dir
-    os.makedirs(args['tmp_dir'], exist_ok=True)
-
-    if args.get('tsv_mapping_path_to_url') is not None:
-        mapping_path_to_url = {}
-        f = os.path.expanduser(args.get('tsv_mapping_path_to_url'))
-        with open(f, 'r') as fp:
-            lines = fp.read().strip('\n').split('\n')
-            for line in lines:
-                k, v = line.split('\t')
-                mapping_path_to_url[k] = v
-        args['mapping_path_to_url'] = mapping_path_to_url
-    else:
-        args['mapping_path_to_url'] = None
-
-    if args['verbose']:
-        logger.setLevel('INFO')
-    elif args['debug']:
-        logger.setLevel('DEBUG')
-
-    GCSURI.init_gcsuri(
-        use_gsutil_for_s3=args['use_gsutil_for_s3'])
-
 
 def main():
-    # parse arguments. note that args is a dict
     args = parse_croo_arguments()
-    init_dirs_args(args)
 
     co = Croo(
         metadata_json=args['metadata_json'],
@@ -344,6 +308,7 @@ def main():
         public_gcs=args['public_gcs'],
         gcp_private_key=args['gcp_private_key'],
         map_path_to_url=args['mapping_path_to_url'],
+        no_checksum=args['no_checksum'],
         no_graph=args['no_graph'])
 
     co.organize_output()

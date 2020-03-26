@@ -7,9 +7,11 @@ Author:
 """
 
 import argparse
+import os
 import sys
-import logging
-from autouri import AutoURI, S3URI, GCSURI
+from autouri import S3URI, GCSURI
+from autouri import logger as autouri_logger
+
 
 
 __version__ = '0.3.5'
@@ -91,6 +93,11 @@ def parse_croo_arguments():
              'Make sure that you have "gsutil" installed and configured '
              'to have access to credentials for GCS and S3 '
              '(e.g. ~/.boto or ~/.aws/credientials)')
+    p.add_argument(
+        '--no-checksum', action='store_true',
+        help='Always overwrite on output directory/bucket (--out-dir) '
+             'even if md5-identical files (or soft links) already exist there. '
+             'Md5 hash/filename/filesize checking will be skipped.')
     p.add_argument('-v', '--version', action='store_true',
                    help='Show version')
 
@@ -113,20 +120,95 @@ def parse_croo_arguments():
     if args.version is not None and args.version:
         print(__version__)
         p.exit()
-    check_args(args)
 
     # convert to dict
-    return vars(args)
+    d_args = vars(args)
+
+    check_args(d_args)
+    init_dirs(d_args)
+    init_autouri(d_args)
+
+    return d_args
 
 
 def check_args(args):
-    if args.use_presigned_url_gcs and args.gcp_private_key is None:
+    """Check cmd line arguments are valid
+
+    Args:
+        args:
+            dict of cmd line arguments
+    """
+    if args['use_presigned_url_gcs'] and args['gcp_private_key'] is None:
         raise ValueError(
             'Define --gcp-private-key to use presigned URLs on GCS'
             ' (--use-presigned-url-gcs).')
-    if args.public_gcs and args.use_presigned_url_gcs:
+
+    if args['public_gcs'] and args['use_presigned_url_gcs']:
         raise ValueError(
             'Public GCS bucket (--public-gcs) cannot be presigned '
             '(--use-presigned-url-gcs and --gcp-private-key). '
             'Choose one of them.')
 
+    if args['tmp_dir'] is None:
+        pass
+    elif args['tmp_dir'].startswith(('http://', 'https://')):
+        raise ValueError('URL is not allowed for --tmp-dir')
+    elif args['tmp_dir'].startswith(('gs://', 's3://')):
+        raise ValueError('Cloud URI is not allowed for --tmp-dir')
+
+    if args['out_dir'] is None:
+        raise ValueError('--out-dir is not valid.')
+    elif args['out_dir'].startswith(('http://', 'https://')):
+        raise ValueError('URL is not allowed for --out-dir')
+
+
+def init_dirs(args):
+    """More initialization for out/tmp directories since tmp
+    directory is important for inter-storage transfer using
+    Autouri
+
+    Args:
+        args:
+            dict of cmd line arguments
+    """
+    if args['out_dir'].startswith(('gs://', 's3://')):
+        if args['tmp_dir'] is None:
+            args['tmp_dir'] = os.path.join(os.getcwd(), '.croo_tmp')
+    else:
+        args['out_dir'] = os.path.abspath(os.path.expanduser(args['out_dir']))
+        os.makedirs(args['out_dir'], exist_ok=True)
+        if args['tmp_dir'] is None:
+            args['tmp_dir'] = os.path.join(args['out_dir'], '.croo_tmp')
+
+    if args['tmp_dir'] is not None:
+        args['tmp_dir'] = os.path.abspath(os.path.expanduser(args['tmp_dir']))
+
+
+def init_autouri(args):
+    """Initialize Autouri and its logger
+
+    Args:
+        args:
+            dict of cmd line arguments
+    """
+    GCSURI.init_gcsuri(
+        use_gsutil_for_s3=args['use_gsutil_for_s3'])
+
+    # autouri's path to url mapping
+    if args['tsv_mapping_path_to_url'] is not None:
+        mapping_path_to_url = {}
+        f = os.path.expanduser(args['tsv_mapping_path_to_url'])
+        with open(f, 'r') as fp:
+            lines = fp.read().strip('\n').split('\n')
+            for line in lines:
+                k, v = line.split('\t')
+                mapping_path_to_url[k] = v
+        args['mapping_path_to_url'] = mapping_path_to_url
+    else:
+        args['mapping_path_to_url'] = None
+
+    # autouri's logger
+    if args['verbose']:
+        autouri_logger.setLevel('INFO')
+    elif args['debug']:
+        autouri_logger.setLevel('DEBUG')
