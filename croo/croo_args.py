@@ -104,7 +104,7 @@ def parse_croo_arguments():
     group_log_level = p.add_mutually_exclusive_group()
     group_log_level.add_argument('-V', '--verbose', action='store_true',
                    help='Prints all logs >= INFO level')
-    group_log_level.add_argument('-d', '--debug', action='store_true',
+    group_log_level.add_argument('-D', '--debug', action='store_true',
                    help='Prints all logs >= DEBUG level')
 
     if '-v' in sys.argv or '--version' in sys.argv:
