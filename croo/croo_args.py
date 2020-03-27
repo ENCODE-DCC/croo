@@ -153,9 +153,7 @@ def check_args(args):
     elif args['tmp_dir'].startswith(('gs://', 's3://')):
         raise ValueError('Cloud URI is not allowed for --tmp-dir')
 
-    if args['out_dir'] is None:
-        raise ValueError('--out-dir is not valid.')
-    elif args['out_dir'].startswith(('http://', 'https://')):
+    if args['out_dir'].startswith(('http://', 'https://')):
         raise ValueError('URL is not allowed for --out-dir')
 
 
