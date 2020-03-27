@@ -194,11 +194,12 @@ def init_autouri(args):
     if args['tsv_mapping_path_to_url'] is not None:
         mapping_path_to_url = {}
         f = os.path.expanduser(args['tsv_mapping_path_to_url'])
-        with open(f, 'r') as fp:
-            lines = fp.read().strip('\n').split('\n')
-            for line in lines:
-                k, v = line.split('\t')
-                mapping_path_to_url[k] = v
+import csv
+...
+        with open(f, newline="") as fp:
+            reader = csv.reader(fp, delimiter="\t")
+            for line in reader:
+                mapping_path_to_url[line[0]] = line[1]
         args['mapping_path_to_url'] = mapping_path_to_url
     else:
         args['mapping_path_to_url'] = None
