@@ -53,9 +53,9 @@ class CrooHtmlReportTaskGraph(object):
         if svg_contents is None:
             return ''
         else:
-            head = '<div id=\'task-graph\'><b>Task graph</b>\n'
-            tail = '</div><br>'
+            head = '<b>Task graph</b><div id=\'task-graph\'>\n'
             img = svg_contents
+            tail = '</div><br>'
             return head + img + tail
 
     def __make_svg(self):
