@@ -7,6 +7,7 @@ Author:
 """
 
 import argparse
+import csv
 import os
 import sys
 from autouri import S3URI, GCSURI
@@ -194,10 +195,8 @@ def init_autouri(args):
     if args['tsv_mapping_path_to_url'] is not None:
         mapping_path_to_url = {}
         f = os.path.expanduser(args['tsv_mapping_path_to_url'])
-import csv
-...
-        with open(f, newline="") as fp:
-            reader = csv.reader(fp, delimiter="\t")
+        with open(f, newline='') as fp:
+            reader = csv.reader(fp, delimiter='\t')
             for line in reader:
                 mapping_path_to_url[line[0]] = line[1]
         args['mapping_path_to_url'] = mapping_path_to_url
