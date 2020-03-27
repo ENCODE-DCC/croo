@@ -8,6 +8,7 @@ Author:
 
 import os
 import sys
+import logging
 import json
 import re
 import caper
@@ -15,6 +16,10 @@ from autouri import AutoURI, AbsPath, GCSURI, S3URI, logger
 from .croo_args import parse_croo_arguments
 from .croo_html_report import CrooHtmlReport
 from .cromwell_metadata import CromwellMetadata
+
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s|%(name)s|%(levelname)s| %(message)s')
+logger = logging.getLogger('croo')
 
 
 class Croo(object):
@@ -39,8 +44,7 @@ class Croo(object):
                  public_gcs=False,
                  gcp_private_key=None,
                  map_path_to_url=None,
-                 no_checksum=False,
-                 no_graph=False):
+                 no_checksum=False):
         """Initialize croo with output definition JSON
         Args:
             soft_link:
@@ -58,9 +62,10 @@ class Croo(object):
                 self._metadata = json.loads(fp.read())
             if isinstance(self._metadata, list):
                 if len(self._metadata) > 1:
-                    print('[Croo] Warning: multiple metadata JSON objects '
-                          'found in metadata JSON file. Taking the first '
-                          'one...')
+                    logger.warning(
+                        'Multiple metadata JSON objects '
+                        'found in metadata JSON file. Taking the first '
+                        'one...')
                 elif len(self._metadata) == 0:
                     raise Exception('metadata JSON file is empty')
                 self._metadata = self._metadata[0]
@@ -77,8 +82,6 @@ class Croo(object):
         self._gcp_private_key = gcp_private_key
         self._map_path_to_url = map_path_to_url
         self._no_checksum = no_checksum
-
-        self._no_graph = no_graph
 
         if isinstance(out_def_json, dict):
             self._out_def_json = out_def_json
@@ -130,7 +133,7 @@ class Croo(object):
                     full_path = node.output_path
                     shard_idx = node.shard_idx
 
-                    if node_format is not None and not self._no_graph:
+                    if node_format is not None:
                         interpreted_node_format = Croo.__interpret_inline_exp(
                             node_format, full_path, shard_idx)
                         if subgraph is not None:
@@ -224,7 +227,7 @@ class Croo(object):
                                 ucsc_track, full_path, shard_idx)
                             report.add_to_ucsc_track(target_url,
                                                      interpreted_ucsc_track)
-                        if node_format is not None and not self._no_graph:
+                        if node_format is not None:
                             interpreted_node_format = Croo.__interpret_inline_exp(
                                 node_format, full_path, shard_idx)
                             if subgraph is not None:
@@ -293,6 +296,11 @@ class Croo(object):
 def main():
     args = parse_croo_arguments()
 
+    if args['verbose']:
+        logger.setLevel('INFO')
+    elif args['debug']:
+        logger.setLevel('DEBUG')
+
     co = Croo(
         metadata_json=args['metadata_json'],
         out_def_json=args['out_def_json'],
@@ -308,8 +316,7 @@ def main():
         public_gcs=args['public_gcs'],
         gcp_private_key=args['gcp_private_key'],
         map_path_to_url=args['mapping_path_to_url'],
-        no_checksum=args['no_checksum'],
-        no_graph=args['no_graph'])
+        no_checksum=args['no_checksum'])
 
     co.organize_output()
 

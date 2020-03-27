@@ -8,7 +8,10 @@ Author:
 import os
 from copy import deepcopy
 from base64 import b64encode
+from graphviz import Source
+from graphviz.backend import ExecutableNotFound
 from autouri import AutoURI
+from .croo import logger
 
 
 class CrooHtmlReportTaskGraph(object):
@@ -62,7 +65,6 @@ class CrooHtmlReportTaskGraph(object):
         """
         if not self._items:
             return None
-        from graphviz import Source
 
         # define call back functions for node format, href, subgraph
         def fnc_node_format(n):
@@ -90,8 +92,19 @@ class CrooHtmlReportTaskGraph(object):
             template=self._template_d)
         # temporary dot, svg from graphviz.Source.render
         tmp_dot = '_tmp_.dot'
-        svg = Source(dot_str, format='svg').render(
-            filename=tmp_dot)
+
+        try:
+            svg = Source(dot_str, format='svg').render(
+                filename=tmp_dot)
+        except (ExecutableNotFound, FileNotFoundError):
+            logger.info(
+                'Importing graphviz failed. Task graph will not be available. '
+                'Check if you have installed graphviz correctly so that '
+                '"dot" executable exists on your PATH. '
+                '"pip install graphviz" does not install such "dot". '
+                'Use apt or system-level installer instead. '
+                'e.g. sudo apt-get install graphviz.')
+            return None
 
         # save to DOT
         uri_dot = os.path.join(

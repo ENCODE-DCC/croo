@@ -13,7 +13,6 @@ from autouri import S3URI, GCSURI
 from autouri import logger as autouri_logger
 
 
-
 __version__ = '0.3.5'
 
 def parse_croo_arguments():
@@ -37,9 +36,6 @@ def parse_croo_arguments():
         'Original output files will be kept in Cromwell\'s output '
         'directory. '
         '"copy" makes copies of Cromwell\'s original outputs')
-    p.add_argument(
-        '--no-graph', action='store_true',
-        help='No task graph.')
     p.add_argument(
         '--ucsc-genome-db',
         help='UCSC genome browser\'s "db=" parameter. '
