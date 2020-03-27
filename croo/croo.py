@@ -117,6 +117,13 @@ class Croo(object):
             workflow_id=self._cm.get_workflow_id(),
             dag=self._task_graph,
             task_graph_template=self._task_graph_template,
+            public_gcs=self._public_gcs,
+            gcp_private_key=self._gcp_private_key,
+            use_presigned_url_gcs=self._use_presigned_url_gcs,
+            use_presigned_url_s3=self._use_presigned_url_s3,
+            duration_presigned_url_s3 = self._duration_presigned_url_s3,
+            duration_presigned_url_gcs = self._duration_presigned_url_gcs,
+            map_path_to_url=self._map_path_to_url,
             ucsc_genome_db=self._ucsc_genome_db,
             ucsc_genome_pos=self._ucsc_genome_pos)
 

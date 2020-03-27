@@ -31,13 +31,32 @@ jquery.min.js"></script>
 
     def __init__(self, out_dir, workflow_id, dag,
                  task_graph_template=None,
+                 public_gcs=None,
+                 gcp_private_key=None,
+                 use_presigned_url_gcs=False,
+                 use_presigned_url_s3=False,
+                 duration_presigned_url_s3=None,
+                 duration_presigned_url_gcs=None,
+                 map_path_to_url=None,
                  ucsc_genome_db=None,
                  ucsc_genome_pos=None):
         self._out_dir = out_dir
         self._workflow_id = workflow_id
+        self._public_gcs = public_gcs
+        self._gcp_private_key = gcp_private_key
+        self._use_presigned_url_gcs = use_presigned_url_gcs
+        self._use_presigned_url_s3 = use_presigned_url_s3
+        self._duration_presigned_url_s3 = duration_presigned_url_s3
+        self._duration_presigned_url_gcs = duration_presigned_url_gcs
+        self._map_path_to_url = map_path_to_url
         self._ucsc_tracks = CrooHtmlReportUCSCTracks(
             out_dir=out_dir,
             workflow_id=workflow_id,
+            public_gcs=public_gcs,
+            gcp_private_key=gcp_private_key,
+            use_presigned_url_gcs=use_presigned_url_gcs,
+            use_presigned_url_s3=use_presigned_url_s3,
+            map_path_to_url=map_path_to_url,
             ucsc_genome_db=ucsc_genome_db,
             ucsc_genome_pos=ucsc_genome_pos)
         self._file_table = CrooHtmlReportFileTable(
