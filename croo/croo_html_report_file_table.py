@@ -5,7 +5,7 @@
 """
 
 import os
-from caper.caper_uri import CaperURI, URI_LOCAL, URI_URL
+from autouri import AutoURI
 
 
 class CrooHtmlReportFileTable(object):
@@ -134,5 +134,5 @@ return false;">
             self._out_dir,
             CrooHtmlReportFileTable.FILETABLE_TSV.format(
                 workflow_id=self._workflow_id))
-        CaperURI(uri_filetable).write_str_to_file(contents)
+        AutoURI(uri_filetable).write(contents)
         return table_contents
