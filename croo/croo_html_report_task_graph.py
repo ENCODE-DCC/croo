@@ -8,7 +8,10 @@ Author:
 import os
 from copy import deepcopy
 from base64 import b64encode
-from caper.caper_uri import CaperURI, URI_LOCAL, URI_URL
+from graphviz import Source
+from graphviz.backend import ExecutableNotFound
+from autouri import AutoURI
+from .croo import logger
 
 
 class CrooHtmlReportTaskGraph(object):
@@ -26,6 +29,7 @@ class CrooHtmlReportTaskGraph(object):
                 A template dict that will be converted to a template dot file for graphviz
                 This dot file will be converted into SVG and finally be embedded in HTML
                 Refer to the function caper.dict_tool.dict_to_dot_str() for details
+                https://github.com/ENCODE-DCC/caper/blob/master/caper/dict_tool.py#L190
         """
         self._out_dir = out_dir
         self._workflow_id = workflow_id
@@ -49,9 +53,9 @@ class CrooHtmlReportTaskGraph(object):
         if svg_contents is None:
             return ''
         else:
-            head = '<div id=\'task-graph\'><b>Task graph</b>\n'
-            tail = '</div><br>'
+            head = '<b>Task graph</b><div id=\'task-graph\'>\n'
             img = svg_contents
+            tail = '</div><br>'
             return head + img + tail
 
     def __make_svg(self):
@@ -61,7 +65,6 @@ class CrooHtmlReportTaskGraph(object):
         """
         if not self._items:
             return None
-        from graphviz import Source
 
         # define call back functions for node format, href, subgraph
         def fnc_node_format(n):
@@ -89,15 +92,26 @@ class CrooHtmlReportTaskGraph(object):
             template=self._template_d)
         # temporary dot, svg from graphviz.Source.render
         tmp_dot = '_tmp_.dot'
-        svg = Source(dot_str, format='svg').render(
-            filename=tmp_dot)
+
+        try:
+            svg = Source(dot_str, format='svg').render(
+                filename=tmp_dot)
+        except (ExecutableNotFound, FileNotFoundError):
+            logger.info(
+                'Importing graphviz failed. Task graph will not be available. '
+                'Check if you have installed graphviz correctly so that '
+                '"dot" executable exists on your PATH. '
+                '"pip install graphviz" does not install such "dot". '
+                'Use apt or system-level installer instead. '
+                'e.g. sudo apt-get install graphviz.')
+            return None
 
         # save to DOT
         uri_dot = os.path.join(
             self._out_dir,
             CrooHtmlReportTaskGraph.TASK_GRAPH_DOT.format(
                 workflow_id=self._workflow_id))
-        CaperURI(uri_dot).write_str_to_file(dot_str)
+        AutoURI(uri_dot).write(dot_str)
 
         # save to SVG
         with open (svg, 'r') as fp:
@@ -106,7 +120,7 @@ class CrooHtmlReportTaskGraph(object):
             self._out_dir,
             CrooHtmlReportTaskGraph.TASK_GRAPH_SVG.format(
                 workflow_id=self._workflow_id))
-        CaperURI(uri_svg).write_str_to_file(svg_contents)
+        AutoURI(uri_svg).write(svg_contents)
 
         os.remove(tmp_dot)
         os.remove(svg)

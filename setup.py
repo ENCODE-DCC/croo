@@ -21,5 +21,5 @@ setuptools.setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: POSIX :: Linux',
     ],
-    install_requires=['caper>=0.6.1', 'graphviz']
+    install_requires=['autouri>=0.1.1', 'graphviz']
 )
