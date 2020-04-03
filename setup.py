@@ -6,7 +6,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='croo',
-    version='0.4.1',
+    version='0.4.1.1',
     scripts=['bin/croo'],
     python_requires='>=3.6',
     author='Jin Lee',
@@ -21,5 +21,5 @@ setuptools.setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: POSIX :: Linux',
     ],
-    install_requires=['autouri>=0.1.2', 'graphviz']
+    install_requires=['autouri>=0.1.2.1', 'graphviz']
 )

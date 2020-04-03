@@ -14,7 +14,7 @@ from autouri import S3URI, GCSURI
 from autouri import logger as autouri_logger
 
 
-__version__ = '0.4.1'
+__version__ = '0.4.1.1'
 
 def parse_croo_arguments():
     """Argument parser for Cromwell Output Organizer (COO)
