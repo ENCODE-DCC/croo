@@ -1,14 +1,14 @@
 import setuptools
-import croo
+
 
 with open('README.md', 'r') as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name='croo',
-    version=croo.__version__,
+    version='0.4.1',
     scripts=['bin/croo'],
-    python_requires='>3.4.1',
+    python_requires='>=3.6',
     author='Jin Lee',
     author_email='leepc12@gmail.com',
     description='CRomwell Output Organizer',
@@ -21,5 +21,5 @@ setuptools.setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: POSIX :: Linux',
     ],
-    install_requires=['autouri>=0.1.1', 'graphviz']
+    install_requires=['autouri>=0.1.2', 'graphviz']
 )
