@@ -1,5 +1,4 @@
 import setuptools
-import pkg_resources
 
 
 with open('README.md', 'r') as fh:
@@ -7,7 +6,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='croo',
-    version=pkg_resources.get_distribution('croo').version,
+    version='0.4.1',
     scripts=['bin/croo'],
     python_requires='>=3.6',
     author='Jin Lee',
