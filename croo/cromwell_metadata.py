@@ -8,9 +8,9 @@ Author:
 
 import re
 import json
-import caper
 from autouri import AutoURI
 from collections import OrderedDict, namedtuple
+from WDL import parse_document
 from .dag import DAG
 
 
@@ -71,6 +71,7 @@ class CromwellMetadata(object):
     """
     RE_PATTERN_WDL_COMMENT_OUT_DEF_JSON = \
         r'^\s*\#\s*CROO\s+out_def\s(.+)'
+    WDL_WORKFLOW_META_OUT_DEF = 'croo_out_def'
 
     def __init__(self, metadata_json, debug=False):
         self._metadata_json = metadata_json
@@ -194,6 +195,11 @@ class CromwellMetadata(object):
                         self._dag.add_node(n)
 
     def __find_out_def_from_wdl(self):
+        r = self.__find_workflow_meta(
+            CromwellMetadata.WDL_WORKFLOW_META_OUT_DEF)
+        if r is not None:
+            return r
+
         r = self.__find_val_from_wdl(
             CromwellMetadata.RE_PATTERN_WDL_COMMENT_OUT_DEF_JSON)
         return r[0] if len(r) > 0 else None
@@ -208,17 +214,28 @@ class CromwellMetadata(object):
                     result.append(ret)
         return result
 
+    def __find_workflow_meta(self, key):
+        """Find value for a key in workflow's meta section
+
+        Returns:
+            None if key not found or any error occurs.
+        """
+        try:
+            wdl = parse_document(self._wdl_str)
+            if key in wdl.workflow.meta:
+                return wdl.workflow.meta[key]
+        except:
+            pass
+        return None
+
 
 def main():
     import sys
     import os
-    from caper_uri import init_caper_uri
 
     if len(sys.argv) < 2:
         print('Usage: python cromwell_metadata.py [METADATA_JSON_FILE]')
         sys.exit(1)
-
-    init_caper_uri(os.path.join(os.getcwd(), 'cromwell_metadata_tmp'))
 
     m_json_file = sys.argv[1]
     CromwellMetadata(m_json_file, debug=True)
