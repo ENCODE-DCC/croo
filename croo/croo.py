@@ -11,7 +11,6 @@ import sys
 import logging
 import json
 import re
-import caper
 from autouri import AutoURI, AbsPath, GCSURI, S3URI, logger
 from .croo_args import parse_croo_arguments
 from .croo_html_report import CrooHtmlReport
