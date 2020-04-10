@@ -1,4 +1,3 @@
-import croo.croo_args
+from .version import version
 
-__version__ = croo.croo_args.__version__
-
+__version__ = version

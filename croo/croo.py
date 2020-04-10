@@ -1,23 +1,12 @@
-#!/usr/bin/env python3
-"""Croo (croo): Cromwell output organizer based on
-Cromwell's metadata.json.
-
-Author:
-    Jin Lee (leepc12@gmail.com) at ENCODE-DCC
-"""
-
 import os
-import sys
 import logging
 import json
 import re
-from autouri import AutoURI, AbsPath, GCSURI, S3URI, logger
-from .croo_args import parse_croo_arguments
+from autouri import AutoURI, AbsPath, GCSURI, S3URI
 from .croo_html_report import CrooHtmlReport
 from .cromwell_metadata import CromwellMetadata
 
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s|%(name)s|%(levelname)s| %(message)s')
 logger = logging.getLogger(__name__)
 
 
@@ -296,38 +285,3 @@ class Croo(object):
             result = result.replace(m.group(0), str(eval(m.group(1))), 1)
 
         return result
-
-
-
-def main():
-    args = parse_croo_arguments()
-
-    if args['verbose']:
-        logger.setLevel('INFO')
-    elif args['debug']:
-        logger.setLevel('DEBUG')
-
-    co = Croo(
-        metadata_json=args['metadata_json'],
-        out_def_json=args['out_def_json'],
-        out_dir=args['out_dir'],
-        tmp_dir=args['tmp_dir'],
-        soft_link=args['method'] == 'link',
-        ucsc_genome_db=args['ucsc_genome_db'],
-        ucsc_genome_pos=args['ucsc_genome_pos'],
-        use_presigned_url_s3=args['use_presigned_url_s3'],
-        use_presigned_url_gcs=args['use_presigned_url_gcs'],
-        duration_presigned_url_s3=args['duration_presigned_url_s3'],
-        duration_presigned_url_gcs=args['duration_presigned_url_gcs'],
-        public_gcs=args['public_gcs'],
-        gcp_private_key=args['gcp_private_key'],
-        map_path_to_url=args['mapping_path_to_url'],
-        no_checksum=args['no_checksum'])
-
-    co.organize_output()
-
-    return 0
-
-
-if __name__ == '__main__':
-    main()
