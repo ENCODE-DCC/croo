@@ -1,3 +1,4 @@
-from .version import version
+from .croo import Croo
 
-__version__ = version
+
+__version__ = '0.4.1.1'

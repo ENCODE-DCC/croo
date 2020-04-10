@@ -5,7 +5,7 @@ import os
 import sys
 from autouri import S3URI, GCSURI
 from .croo import Croo
-from .version import version
+from . import __version__ as version
 
 
 def parse_croo_arguments():
@@ -92,20 +92,14 @@ def parse_croo_arguments():
     p.add_argument('-D', '--debug', action='store_true',
                    help='Prints all logs >= DEBUG level')
 
-    if '-v' in sys.argv or '--version' in sys.argv:
-        print(__version__)
-        p.exit()
-
     if len(sys.argv[1:]) == 0:
         p.print_help()
         p.exit()
-    # parse all args
-    args = p.parse_args()
-
-    if args.version is not None and args.version:
-        print(__version__)
+    if '-v' in sys.argv or '--version' in sys.argv:
+        print(version)
         p.exit()
 
+    args = p.parse_args()
     # convert to dict
     d_args = vars(args)
 
