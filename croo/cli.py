@@ -89,11 +89,7 @@ def parse_croo_arguments():
              'Md5 hash/filename/filesize checking will be skipped.')
     p.add_argument('-v', '--version', action='store_true',
                    help='Show version')
-
-    group_log_level = p.add_mutually_exclusive_group()
-    group_log_level.add_argument('-V', '--verbose', action='store_true',
-                   help='Prints all logs >= INFO level')
-    group_log_level.add_argument('-D', '--debug', action='store_true',
+    p.add_argument('-D', '--debug', action='store_true',
                    help='Prints all logs >= DEBUG level')
 
     if '-v' in sys.argv or '--version' in sys.argv:
