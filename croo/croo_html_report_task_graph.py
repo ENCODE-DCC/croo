@@ -1,17 +1,13 @@
-#!/usr/bin/env python3
-"""CrooHtmlReportTaskGraph
-
-Author:
-    Jin Lee (leepc12@gmail.com) at ENCODE-DCC
-"""
-
+import logging
 import os
-from copy import deepcopy
+from autouri import AutoURI
 from base64 import b64encode
+from copy import deepcopy
 from graphviz import Source
 from graphviz.backend import ExecutableNotFound
-from autouri import AutoURI
-from .croo import logger
+
+
+logger = logging.getLogger(__name__)
 
 
 class CrooHtmlReportTaskGraph(object):

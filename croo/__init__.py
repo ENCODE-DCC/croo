@@ -1,4 +1,4 @@
-import croo.croo_args
+from .croo import Croo
 
-__version__ = croo.croo_args.__version__
 
+__version__ = '0.4.1.1'
