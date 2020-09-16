@@ -39,8 +39,9 @@ class CrooHtmlReportTaskGraph(object):
         self._items[('output', output_name, task_name, shard_idx)] = \
                 (node_format, url, subgraph)
         # node as task itself
+        task_name_on_graph = task_name.split('.')[-1] if task_name else task_name
         self._items[('task', None, task_name, shard_idx)] = \
-                ('[label=\"{}\"]'.format(task_name), None, subgraph)
+                ('[label=\"{}\"]'.format(task_name_on_graph), task_name, subgraph)
 
     def get_html_body_str(self):
         """Embed SVG into HTML
