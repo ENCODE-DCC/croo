@@ -243,6 +243,7 @@ class Croo(object):
     def __interpret_inline_exp(s, full_path, shard_idx):
         """Interpret inline expression in output defition JSON
         e.g. s can be "align/rep${i1}/${basename}"
+        Nested scatter can only be implemented by using subworkflows.
 
         Args:
             full_path: full absolute path for output file
@@ -256,6 +257,10 @@ class Croo(object):
             ${i} (int) : 0-based index for a main scatter loop
             ${j} (int) : 0-based index for a nested scatter loop
             ${k} (int) : 0-based index for a double-nested scatter loop
+            ${l} (int) : 0-based index for a triple-nested scatter loop
+            ${m} (int) : 0-based index for a quadruple-nested scatter loop
+            ${n} (int) : 0-based index for a 5-nested scatter loop
+            ${o} (int) : 0-based index for a 6-nested scatter loop
             ${basename} (str) : basename of file
             ${dirname} (str)  : dirname of file
             ${full_path} (str) : full_path of file (can be path, gs://, s3://)
@@ -263,18 +268,28 @@ class Croo(object):
         """
         result = s
 
+        i = None
         if shard_idx[0] > -1:
             i = shard_idx[0]
-        else:
-            i = None
+        j = None
         if len(shard_idx) > 1 and shard_idx[1] > -1:
             j = shard_idx[1]
-        else:
-            j = None
+        k = None
         if len(shard_idx) > 2 and shard_idx[2] > -1:
             k = shard_idx[2]
-        else:
-            k = None
+        l = None
+        if len(shard_idx) > 3 and shard_idx[3] > -1:
+            l = shard_idx[3]
+        m = None
+        if len(shard_idx) > 4 and shard_idx[4] > -1:
+            m = shard_idx[4]
+        n = None
+        if len(shard_idx) > 5 and shard_idx[5] > -1:
+            n = shard_idx[5]
+        o = None
+        if len(shard_idx) > 6 and shard_idx[6] > -1:
+            o = shard_idx[6]
+
         basename = os.path.basename(full_path)
         dirname = os.path.dirname(full_path)
 

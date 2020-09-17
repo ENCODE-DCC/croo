@@ -38,31 +38,28 @@ def is_parent_cmnode(n1, n2):
     return False
 
 
-def find_files_in_dict(d):
+def find_files_in_dict(d, parent=tuple(), list_idx=tuple()):
+    """Can recursively parse WDL struct.
+    """
     files = []
-    for k, v in d.items():
-        maybe_files = []
-        if isinstance(v, list):
-            for i, v_ in enumerate(v):
-                if isinstance(v_, str):
-                    maybe_files.append((v_, (i,)))
-                elif isinstance(v_, list):
-                    for j, v__ in enumerate(v_):
-                        if isinstance(v__, str):
-                            maybe_files.append((v__, (i, j)))
-                        elif isinstance(v__, list):
-                            for k, v___ in enumerate(v__):
-                                if isinstance(v___, str):
-                                    maybe_files.append((v___, (i, j, k)))
-        elif isinstance(v, dict):
-            for _, v_ in v.items():
-                if isinstance(v_, str):
-                    maybe_files.append((v_, (-1,)))
-        elif isinstance(v, str):
-            maybe_files.append((v, (-1,)))
-        for f, shard_idx in maybe_files:
-            if AutoURI(f).is_valid:
-                files.append((k, f, shard_idx))
+    if isinstance(d, dict):
+        for k, v in d.items():
+            files.extend(
+                find_files_in_dict(v, parent=parent + (k,), list_idx=list_idx)
+            )
+
+    elif isinstance(d, (list, tuple)):
+        for i, v in enumerate(d):
+            files.extend(
+                find_files_in_dict(v, parent=parent, list_idx=list_idx + (i,))
+            )
+
+    elif isinstance(d, str) and AutoURI(d).is_valid:
+        files.append((
+            '.'.join(parent),
+            d,
+            list_idx if list_idx else (-1,)
+        ))
     return files
 
 
@@ -135,7 +132,7 @@ class CromwellMetadata(object):
             self._dag.add_node(n)
 
     def __parse_calls(self, calls, parent_wf_name='',
-                      wf_alias=None, parent_wf_shard_idx=()):
+                      wf_alias=None, parent_wf_shard_idx=tuple()):
         """Recursively parse calls in metadata JSON for subworkflow
         """
         for call_name, call_list in calls.items():
@@ -154,21 +151,19 @@ class CromwellMetadata(object):
                         c['subWorkflowMetadata']['calls'],
                         parent_wf_name=parent_wf_name + wf_name + '.',
                         wf_alias=task_alias,
-                        parent_wf_shard_idx=(shard_idx,))
+                        parent_wf_shard_idx=parent_wf_shard_idx + (shard_idx,))
                     continue
 
                 task_name = parent_wf_name + wf_name + '.' + task_alias
                 shard_idx = parent_wf_shard_idx + (shard_idx,)
 
+                in_files = None
                 if 'inputs' in c:
                     in_files = find_files_in_dict(c['inputs'])
-                else:
-                    in_files = None
 
+                out_files = None
                 if 'outputs' in c:
                     out_files = find_files_in_dict(c['outputs'])
-                else:
-                    out_files = None
 
                 # add task itself to DAG
                 n = CMNode(
