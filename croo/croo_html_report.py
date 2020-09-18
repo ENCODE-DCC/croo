@@ -6,6 +6,7 @@ Author:
 """
 
 import os
+import textwrap
 from .croo_html_report_tracks import CrooHtmlReportUCSCTracks
 from .croo_html_report_file_table import CrooHtmlReportFileTable
 from .croo_html_report_task_graph import CrooHtmlReportTaskGraph
@@ -15,18 +16,17 @@ from autouri import AutoURI
 class CrooHtmlReport(object):
     HEAD = '@HEAD_CONTENTS'
     BODY = '@BODY_CONTENTS'
-    HTML = """
-    <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
-    <html lang="en">
-      <head>
-        <meta charset="utf-8">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/\
-jquery.min.js"></script>
-        {head_contents}
-      </head>
-      <body>{body_contents}</body>
-    </html>
-    """.format(head_contents=HEAD, body_contents=BODY)
+    HTML = textwrap.dedent("""
+        <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+        <html lang="en">
+          <head>
+            <meta charset="utf-8">
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+            {head_contents}
+          </head>
+          <body>{body_contents}</body>
+        </html>
+    """).format(head_contents=HEAD, body_contents=BODY)
     REPORT_HTML = 'croo.report.{workflow_id}.html'
 
     def __init__(self, out_dir, workflow_id, dag,

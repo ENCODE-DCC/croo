@@ -5,45 +5,41 @@
 """
 
 import os
+import textwrap
 from autouri import AutoURI
 
 
 class CrooHtmlReportFileTable(object):
-    HEAD = """
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-treetable/\
-3.2.0/css/jquery.treetable.min.css" rel="stylesheet" type="text/css" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-treetable/\
-3.2.0/css/jquery.treetable.theme.default.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-treetable/\
-3.2.0/jquery.treetable.min.js"></script>
-    <script type="text/javascript">
-      $(function(){
-        $("#filetable").treetable({
-          expandable: true,
-          onNodeCollapse: function() {},
-          onNodeExpand: function() {}
-        });
-      });
-    </script>    
-    """    
-    BODY = """
-    <div id='file-table'><b>File table</b>
-    <table id='filetable'>
-      <caption>
-        <a href='#' onclick="jQuery('#filetable').treetable('expandAll');\
-return false;">
-          Expand all</a> &nbsp&nbsp
-        <a href='#' onclick="jQuery('#filetable').treetable('collapseAll');\
-return false;">
-          Collapse all</a>
-      </caption>
-    <thead><tr><th>Files</th><th>Path</th></tr></thead>
-      {table_contents}
-    <tbody>
-    </tbody>
-    </table>
-    </div>
-    """
+    HEAD = textwrap.dedent("""
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-treetable/3.2.0/css/jquery.treetable.min.css" rel="stylesheet" type="text/css" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-treetable/3.2.0/css/jquery.treetable.theme.default.min.css" rel="stylesheet" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-treetable/3.2.0/jquery.treetable.min.js"></script>
+        <script type="text/javascript">
+          $(function(){
+            $("#filetable").treetable({
+              expandable: true,
+              onNodeCollapse: function() {},
+              onNodeExpand: function() {}
+            });
+          });
+        </script>
+    """)
+    BODY = textwrap.dedent("""
+        <div id='file-table'><b>File table</b>
+        <table id='filetable'>
+          <caption>
+            <a href='#' onclick="jQuery('#filetable').treetable('expandAll');return false;">
+              Expand all</a> &nbsp&nbsp
+            <a href='#' onclick="jQuery('#filetable').treetable('collapseAll');return false;">
+              Collapse all</a>
+          </caption>
+        <thead><tr><th>Files</th><th>Path</th></tr></thead>
+          {table_contents}
+        <tbody>
+        </tbody>
+        </table>
+        </div>
+    """)
     FILETABLE_TSV = 'croo.filetable.{workflow_id}.tsv'
 
     def __init__(self, out_dir, workflow_id):
