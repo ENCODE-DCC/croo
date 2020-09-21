@@ -179,9 +179,9 @@ List of build-in variables for a inline expression
 
 | Built-in variable | Type       | Description                                      |
 |-------------------|------------|--------------------------------------------------|
-| `basename`        | str        | Basename of file                                 | 
-| `dirname`         | str        | Dirname of file                                  | 
-| `full_path`       | str        | Full path of file                                | 
+| `basename`        | str        | Basename of file                                 |
+| `dirname`         | str        | Dirname of file                                  |
+| `full_path`       | str        | Full path of file                                |
 | `i`               | int        | 0-based index for main scatter loop              |
 | `j`               | int        | 0-based index for nested scatter loop            |
 | `k`               | int        | 0-based index for double-nested scatter loop     |

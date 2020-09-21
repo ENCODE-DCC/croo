@@ -1,6 +1,5 @@
 import setuptools
 
-
 with open('README.md', 'r') as fh:
     long_description = fh.read()
 
@@ -21,5 +20,5 @@ setuptools.setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: POSIX :: Linux',
     ],
-    install_requires=['autouri>=0.1.2.1', 'graphviz', 'miniwdl', 'caper']
+    install_requires=['autouri>=0.1.2.1', 'graphviz', 'miniwdl', 'caper'],
 )
