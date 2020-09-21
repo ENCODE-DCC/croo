@@ -6,6 +6,7 @@ Author:
 """
 
 import os
+import textwrap
 import urllib.parse
 from autouri import AutoURI, GCSURI, S3URI, AbsPath
 
@@ -17,19 +18,21 @@ class CrooHtmlReportUCSCTracks(object):
     UCSC_BROWSER_QUERY_POS_PARAM = '&position='
     UCSC_BROWSER_QUERY_URL = 'http://genome.ucsc.edu/cgi-bin/hgTracks?db={db}&ignoreCookie=1{extra_param}&hgct_customText={encoded}'
     UCSC_BROWSER_TEXT_FORMAT = '{track_line} bigDataUrl="{url}"\n'
-    HTML_TRACK_HUB_LINK = """
-<a href="{url}" target="_blank">{title}</a>
-<br>
-<br>"""
-    HTML_TRACK_HUB_TEXT = """
-<b>{title}</b>
-<br>
-<div style="border:2px solid silver">
-<pre style="white-space:pre-wrap;word-wrap:break-word;margin:5px">
-{txt}
-</pre>
-</div>
-<br>"""
+    HTML_TRACK_HUB_LINK = textwrap.dedent("""
+        <a href="{url}" target="_blank">{title}</a>
+        <br>
+        <br>
+    """)
+    HTML_TRACK_HUB_TEXT = textwrap.dedent("""
+        <b>{title}</b>
+        <br>
+        <div style="border:2px solid silver">
+        <pre style="white-space:pre-wrap;word-wrap:break-word;margin:5px">
+        {txt}
+        </pre>
+        </div>
+        <br>
+    """)
 
     def __init__(self, out_dir, workflow_id,
                  public_gcs=None,
