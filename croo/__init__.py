@@ -1,4 +1,4 @@
 from .croo import Croo
 
-
-__version__ = '0.5.0'
+__all__ = ['Croo']
+__version__ = '0.5.1'

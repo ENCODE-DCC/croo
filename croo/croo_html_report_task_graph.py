@@ -1,11 +1,9 @@
 import logging
 import os
+
 from autouri import AutoURI
-from base64 import b64encode
-from copy import deepcopy
 from graphviz import Source
 from graphviz.backend import ExecutableNotFound
-
 
 logger = logging.getLogger(__name__)
 
@@ -33,15 +31,20 @@ class CrooHtmlReportTaskGraph(object):
         self._template_d = template_d
         self._items = {}
 
-    def add(self, output_name, task_name, shard_idx, url,
-            node_format, subgraph):
+    def add(self, output_name, task_name, shard_idx, url, node_format, subgraph):
         # node as task's output
-        self._items[('output', output_name, task_name, shard_idx)] = \
-                (node_format, url, subgraph)
+        self._items[('output', output_name, task_name, shard_idx)] = (
+            node_format,
+            url,
+            subgraph,
+        )
         # node as task itself
         task_name_on_graph = task_name.split('.')[-1] if task_name else task_name
-        self._items[('task', None, task_name, shard_idx)] = \
-                ('[label=\"{}\"]'.format(task_name_on_graph), task_name, subgraph)
+        self._items[('task', None, task_name, shard_idx)] = (
+            '[label=\"{}\"]'.format(task_name_on_graph),
+            task_name,
+            subgraph,
+        )
 
     def get_html_body_str(self):
         """Embed SVG into HTML
@@ -81,18 +84,19 @@ class CrooHtmlReportTaskGraph(object):
                 return self._items[(n.type, n.output_name, n.task_name, n.shard_idx)][2]
             else:
                 return None
+
         # convert to dot string
         dot_str = self._dag.to_dot(
             fnc_node_format=fnc_node_format,
             fnc_href=fnc_href,
             fnc_subgraph=fnc_subgraph,
-            template=self._template_d)
+            template=self._template_d,
+        )
         # temporary dot, svg from graphviz.Source.render
         tmp_dot = '_tmp_.dot'
 
         try:
-            svg = Source(dot_str, format='svg').render(
-                filename=tmp_dot)
+            svg = Source(dot_str, format='svg').render(filename=tmp_dot)
         except (ExecutableNotFound, FileNotFoundError):
             logger.info(
                 'Importing graphviz failed. Task graph will not be available. '
@@ -100,23 +104,28 @@ class CrooHtmlReportTaskGraph(object):
                 '"dot" executable exists on your PATH. '
                 '"pip install graphviz" does not install such "dot". '
                 'Use apt or system-level installer instead. '
-                'e.g. sudo apt-get install graphviz.')
+                'e.g. sudo apt-get install graphviz.'
+            )
             return None
 
         # save to DOT
         uri_dot = os.path.join(
             self._out_dir,
             CrooHtmlReportTaskGraph.TASK_GRAPH_DOT.format(
-                workflow_id=self._workflow_id))
+                workflow_id=self._workflow_id
+            ),
+        )
         AutoURI(uri_dot).write(dot_str)
 
         # save to SVG
-        with open (svg, 'r') as fp:
+        with open(svg, 'r') as fp:
             svg_contents = fp.read()
         uri_svg = os.path.join(
             self._out_dir,
             CrooHtmlReportTaskGraph.TASK_GRAPH_SVG.format(
-                workflow_id=self._workflow_id))
+                workflow_id=self._workflow_id
+            ),
+        )
         AutoURI(uri_svg).write(svg_contents)
 
         os.remove(tmp_dot)

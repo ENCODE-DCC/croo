@@ -1,11 +1,12 @@
-import os
-import logging
 import json
+import logging
+import os
 import re
-from autouri import AutoURI, AbsPath, GCSURI, S3URI
-from .croo_html_report import CrooHtmlReport
-from .cromwell_metadata import CromwellMetadata
 
+from autouri import GCSURI, S3URI, AbsPath, AutoURI
+
+from .cromwell_metadata import CromwellMetadata
+from .croo_html_report import CrooHtmlReport
 
 logger = logging.getLogger(__name__)
 
@@ -16,23 +17,29 @@ class Croo(object):
     It parses Cromwell's metadata.json to get all information about outputs
     and organize outputs as specified in output definition JSON
     """
+
     RE_PATTERN_INLINE_EXP = r'\$\{(.*?)\}'
     KEY_TASK_GRAPH_TEMPLATE = 'task_graph_template'
     KEY_INPUT = 'inputs'
 
-    def __init__(self, metadata_json, out_def_json, out_dir,
-                 tmp_dir,
-                 soft_link=True,
-                 ucsc_genome_db=None,
-                 ucsc_genome_pos=None,
-                 use_presigned_url_s3=False,
-                 use_presigned_url_gcs=False,
-                 duration_presigned_url_s3=0,
-                 duration_presigned_url_gcs=0,
-                 public_gcs=False,
-                 gcp_private_key=None,
-                 map_path_to_url=None,
-                 no_checksum=False):
+    def __init__(
+        self,
+        metadata_json,
+        out_def_json,
+        out_dir,
+        tmp_dir,
+        soft_link=True,
+        ucsc_genome_db=None,
+        ucsc_genome_pos=None,
+        use_presigned_url_s3=False,
+        use_presigned_url_gcs=False,
+        duration_presigned_url_s3=0,
+        duration_presigned_url_gcs=0,
+        public_gcs=False,
+        gcp_private_key=None,
+        map_path_to_url=None,
+        no_checksum=False,
+    ):
         """Initialize croo with output definition JSON
         Args:
             soft_link:
@@ -53,7 +60,8 @@ class Croo(object):
                     logger.warning(
                         'Multiple metadata JSON objects '
                         'found in metadata JSON file. Taking the first '
-                        'one...')
+                        'one...'
+                    )
                 elif len(self._metadata) == 0:
                     raise Exception('metadata JSON file is empty')
                 self._metadata = self._metadata[0]
@@ -77,10 +85,12 @@ class Croo(object):
             if out_def_json is None:
                 out_def_json_file_from_wdl = self._cm.get_out_def_json_file()
                 if out_def_json_file_from_wdl is None:
-                    raise ValueError('out_def JSON file is not defined. '
-                                     'Define --out-def-json in cmd line arg or '
-                                     'add "#CROO out_def [URL_OR_CLOUD_URI]" '
-                                     'to your WDL')
+                    raise ValueError(
+                        'out_def JSON file is not defined. '
+                        'Define --out-def-json in cmd line arg or '
+                        'add "#CROO out_def [URL_OR_CLOUD_URI]" '
+                        'to your WDL'
+                    )
                 out_def_json = out_def_json_file_from_wdl
             f = AutoURI(out_def_json).localize_on(self._tmp_dir)
             with open(f, 'r') as fp:
@@ -88,7 +98,9 @@ class Croo(object):
 
         self._task_graph = self._cm.get_task_graph()
         if Croo.KEY_TASK_GRAPH_TEMPLATE in self._out_def_json:
-            self._task_graph_template = self._out_def_json.pop(Croo.KEY_TASK_GRAPH_TEMPLATE)
+            self._task_graph_template = self._out_def_json.pop(
+                Croo.KEY_TASK_GRAPH_TEMPLATE
+            )
         else:
             self._task_graph_template = None
         if Croo.KEY_INPUT in self._out_def_json:
@@ -109,11 +121,12 @@ class Croo(object):
             gcp_private_key=self._gcp_private_key,
             use_presigned_url_gcs=self._use_presigned_url_gcs,
             use_presigned_url_s3=self._use_presigned_url_s3,
-            duration_presigned_url_s3 = self._duration_presigned_url_s3,
-            duration_presigned_url_gcs = self._duration_presigned_url_gcs,
+            duration_presigned_url_s3=self._duration_presigned_url_s3,
+            duration_presigned_url_gcs=self._duration_presigned_url_gcs,
             map_path_to_url=self._map_path_to_url,
             ucsc_genome_db=self._ucsc_genome_db,
-            ucsc_genome_pos=self._ucsc_genome_pos)
+            ucsc_genome_pos=self._ucsc_genome_pos,
+        )
 
         if self._input_def_json is not None:
             for input_name, input_obj in self._input_def_json.items():
@@ -122,26 +135,33 @@ class Croo(object):
 
                 for _, node in self._task_graph.get_nodes():
                     # if node is pipeline's input
-                    if node.type != 'output' or node.task_name is not None \
-                            or node.output_name != input_name:
+                    if (
+                        node.type != 'output'
+                        or node.task_name is not None
+                        or node.output_name != input_name
+                    ):
                         continue
                     full_path = node.output_path
                     shard_idx = node.shard_idx
 
                     if node_format is not None:
                         interpreted_node_format = Croo.__interpret_inline_exp(
-                            node_format, full_path, shard_idx)
+                            node_format, full_path, shard_idx
+                        )
                         if subgraph is not None:
                             interpreted_subgraph = Croo.__interpret_inline_exp(
-                                subgraph, full_path, shard_idx)
+                                subgraph, full_path, shard_idx
+                            )
                         else:
                             interpreted_subgraph = None
-                        report.add_to_task_graph(node.output_name,
-                                                 None,
-                                                 shard_idx,
-                                                 full_path,
-                                                 interpreted_node_format,
-                                                 interpreted_subgraph)
+                        report.add_to_task_graph(
+                            node.output_name,
+                            None,
+                            shard_idx,
+                            full_path,
+                            interpreted_node_format,
+                            interpreted_subgraph,
+                        )
 
         for task_name, out_vars in self._out_def_json.items():
             for output_name, output_obj in out_vars.items():
@@ -167,14 +187,17 @@ class Croo(object):
                         target_uri = full_path
                         if path is not None:
                             interpreted_path = Croo.__interpret_inline_exp(
-                                path, full_path, shard_idx)
+                                path, full_path, shard_idx
+                            )
 
                             au = AutoURI(full_path)
                             target_path = os.path.join(self._out_dir, interpreted_path)
 
                             if self._soft_link:
                                 au_target = AutoURI(target_path)
-                                if isinstance(au, AbsPath) and isinstance(au_target, AbsPath):
+                                if isinstance(au, AbsPath) and isinstance(
+                                    au_target, AbsPath
+                                ):
                                     au.soft_link(target_path, force=True)
                                     target_uri = target_path
                                 else:
@@ -183,12 +206,17 @@ class Croo(object):
                                 target_uri = au.cp(
                                     target_path,
                                     no_checksum=self._no_checksum,
-                                    make_md5_file=True)
+                                    make_md5_file=True,
+                                )
 
                         # get presigned URLs if possible
                         target_url = None
-                        if path is not None or table_item is not None \
-                                or ucsc_track is not None or node_format is not None:
+                        if (
+                            path is not None
+                            or table_item is not None
+                            or ucsc_track is not None
+                            or node_format is not None
+                        ):
                             u = AutoURI(target_uri)
 
                             if isinstance(u, GCSURI):
@@ -198,44 +226,52 @@ class Croo(object):
                                 elif self._use_presigned_url_gcs:
                                     target_url = u.get_presigned_url(
                                         duration=self._duration_presigned_url_gcs,
-                                        private_key_file=self._gcp_private_key)
+                                        private_key_file=self._gcp_private_key,
+                                    )
 
                             elif isinstance(u, S3URI):
                                 if self._use_presigned_url_s3:
                                     target_url = u.get_presigned_url(
-                                        duration=self._duration_presigned_url_s3)
+                                        duration=self._duration_presigned_url_s3
+                                    )
 
                             elif isinstance(u, AbsPath):
                                 if self._map_path_to_url:
                                     target_url = u.get_mapped_url(
-                                        map_path_to_url=self._map_path_to_url)
+                                        map_path_to_url=self._map_path_to_url
+                                    )
 
                         if table_item is not None:
                             interpreted_table_item = Croo.__interpret_inline_exp(
-                                table_item, full_path, shard_idx)
+                                table_item, full_path, shard_idx
+                            )
                             # add to file table
-                            report.add_to_file_table(target_uri,
-                                                     target_url,
-                                                     interpreted_table_item)
+                            report.add_to_file_table(
+                                target_uri, target_url, interpreted_table_item
+                            )
                         if ucsc_track is not None and target_url is not None:
                             interpreted_ucsc_track = Croo.__interpret_inline_exp(
-                                ucsc_track, full_path, shard_idx)
-                            report.add_to_ucsc_track(target_url,
-                                                     interpreted_ucsc_track)
+                                ucsc_track, full_path, shard_idx
+                            )
+                            report.add_to_ucsc_track(target_url, interpreted_ucsc_track)
                         if node_format is not None:
                             interpreted_node_format = Croo.__interpret_inline_exp(
-                                node_format, full_path, shard_idx)
+                                node_format, full_path, shard_idx
+                            )
                             if subgraph is not None:
                                 interpreted_subgraph = Croo.__interpret_inline_exp(
-                                    subgraph, full_path, shard_idx)
+                                    subgraph, full_path, shard_idx
+                                )
                             else:
                                 interpreted_subgraph = None
-                            report.add_to_task_graph(output_name,
-                                                     task_name,
-                                                     shard_idx,
-                                                     full_path if target_url is None else target_url,
-                                                     interpreted_node_format,
-                                                     interpreted_subgraph)
+                            report.add_to_task_graph(
+                                output_name,
+                                task_name,
+                                shard_idx,
+                                full_path if target_url is None else target_url,
+                                interpreted_node_format,
+                                interpreted_subgraph,
+                            )
         # write to html report
         report.save_to_file()
 
@@ -257,7 +293,7 @@ class Croo(object):
             ${i} (int) : 0-based index for a main scatter loop
             ${j} (int) : 0-based index for a nested scatter loop
             ${k} (int) : 0-based index for a double-nested scatter loop
-            ${l} (int) : 0-based index for a triple-nested scatter loop
+            ${ll} (int) : 0-based index for a triple-nested scatter loop
             ${m} (int) : 0-based index for a quadruple-nested scatter loop
             ${n} (int) : 0-based index for a 5-nested scatter loop
             ${o} (int) : 0-based index for a 6-nested scatter loop
@@ -292,6 +328,12 @@ class Croo(object):
 
         basename = os.path.basename(full_path)
         dirname = os.path.dirname(full_path)
+        logger.debug(
+            'inline expression: basename={basename}, dirname={dirname}, '
+            'i={i}, j={j}, k={k}, l={l}, m={m}, n={n}, o={o}'.format(
+                basename=basename, dirname=dirname, i=i, j=j, k=k, l=l, m=m, n=n, o=o
+            )
+        )
 
         while True:
             m = re.search(Croo.RE_PATTERN_INLINE_EXP, result)

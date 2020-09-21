@@ -8,6 +8,7 @@ Author:
 """
 
 import copy
+
 from caper.dict_tool import dict_to_dot_str
 
 
@@ -32,6 +33,7 @@ class DAG(object):
         self._children:
             { h: set([h_parent1, h_parent2, ...]) } where h = hash of a node.
     """
+
     def __init__(self, fnc_is_parent, fnc_hash=None, nodes=None):
         self._fnc_is_parent = fnc_is_parent
         self._fnc_hash = fnc_hash
@@ -46,8 +48,11 @@ class DAG(object):
     def from_dag(cls, dag):
         """Copy constructor for DAG.
         """
-        return cls(is_parent=dag._is_parent, fnc_hash=dag._fnc_hash,
-                   nodes=copy.copy(dag._nodes))
+        return cls(
+            is_parent=dag._is_parent,
+            fnc_hash=dag._fnc_hash,
+            nodes=copy.copy(dag._nodes),
+        )
 
     def __str__(self):
         """to String.
@@ -59,14 +64,14 @@ class DAG(object):
         result += '\n=== parents ===\n'
         for h, v in self._parents.items():
             result += '{}: {}\n'.format(h, v)
-            for _, h_ in enumerate(v):
-                result += '\t{}: {}\n'.format(h_)
+            for i, h_ in enumerate(v):
+                result += '\t{}: {}\n'.format(i, h_)
 
         result += '\n=== children ===\n'
         for h, v in self._children.items():
             result += '{}: {}\n'.format(h, v)
-            for _, h_ in enumerate(v):
-                result += '\t{}: {}\n'.format(h_)
+            for i, h_ in enumerate(v):
+                result += '\t{}: {}\n'.format(i, h_)
 
         return result
 
@@ -149,8 +154,11 @@ class DAG(object):
                 if fnc_href is not None:
                     href = fnc_href(n)
                     if href is not None:
-                        format = format.rstrip(']') \
-                                + ' href="{url}" target="blank" tooltip="{url}"]'.format(url=href)
+                        format = format.rstrip(
+                            ']'
+                        ) + ' href="{url}" target="blank" tooltip="{url}"]'.format(
+                            url=href
+                        )
                 formatted_nodes.append((h, format))
 
         for h, format in formatted_nodes:

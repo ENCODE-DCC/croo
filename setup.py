@@ -1,12 +1,11 @@
 import setuptools
 
-
 with open('README.md', 'r') as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name='croo',
-    version='0.5.0',
+    version='0.5.1',
     scripts=['bin/croo'],
     python_requires='>=3.6',
     author='Jin Lee',
@@ -21,5 +20,5 @@ setuptools.setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: POSIX :: Linux',
     ],
-    install_requires=['autouri>=0.1.2.1', 'graphviz', 'miniwdl', 'caper']
+    install_requires=['autouri>=0.1.2.1', 'graphviz', 'miniwdl', 'caper'],
 )
