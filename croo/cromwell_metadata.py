@@ -6,17 +6,27 @@ Author:
     Jin Lee (leepc12@gmail.com) at ENCODE-DCC
 """
 
-import re
 import json
-from autouri import AutoURI
+import re
 from collections import OrderedDict, namedtuple
+
+from autouri import AutoURI
 from WDL import parse_document
+
 from .dag import DAG
 
-
-CMNode = namedtuple('CMNode',
-    ('type', 'shard_idx', 'task_name', 'output_name', 'output_path',
-     'all_outputs', 'all_inputs'))
+CMNode = namedtuple(
+    'CMNode',
+    (
+        'type',
+        'shard_idx',
+        'task_name',
+        'output_name',
+        'output_path',
+        'all_outputs',
+        'all_inputs',
+    ),
+)
 
 
 def is_parent_cmnode(n1, n2):
@@ -32,8 +42,9 @@ def is_parent_cmnode(n1, n2):
         return n1.task_name == n2.task_name and n1.shard_idx == n2.shard_idx
 
     elif n1.type == 'output' and n2.type == 'task':
-        return n2.all_inputs is not None and \
-                n1.output_path in [path for _, path, _ in n2.all_inputs]
+        return n2.all_inputs is not None and n1.output_path in [
+            path for _, path, _ in n2.all_inputs
+        ]
 
     return False
 
@@ -44,30 +55,22 @@ def find_files_in_dict(d, parent=tuple(), list_idx=tuple()):
     files = []
     if isinstance(d, dict):
         for k, v in d.items():
-            files.extend(
-                find_files_in_dict(v, parent=parent + (k,), list_idx=list_idx)
-            )
+            files.extend(find_files_in_dict(v, parent=parent + (k,), list_idx=list_idx))
 
     elif isinstance(d, (list, tuple)):
         for i, v in enumerate(d):
-            files.extend(
-                find_files_in_dict(v, parent=parent, list_idx=list_idx + (i,))
-            )
+            files.extend(find_files_in_dict(v, parent=parent, list_idx=list_idx + (i,)))
 
     elif isinstance(d, str) and AutoURI(d).is_valid:
-        files.append((
-            '.'.join(parent),
-            d,
-            list_idx if list_idx else (-1,)
-        ))
+        files.append(('.'.join(parent), d, list_idx if list_idx else (-1,)))
     return files
 
 
 class CromwellMetadata(object):
     """Construct a task DAG based Cromwell's metadata.json file
     """
-    RE_PATTERN_WDL_COMMENT_OUT_DEF_JSON = \
-        r'^\s*\#\s*CROO\s+out_def\s(.+)'
+
+    RE_PATTERN_WDL_COMMENT_OUT_DEF_JSON = r'^\s*\#\s*CROO\s+out_def\s(.+)'
     WDL_WORKFLOW_META_OUT_DEF = 'croo_out_def'
 
     def __init__(self, metadata_json, debug=False):
@@ -77,7 +80,8 @@ class CromwellMetadata(object):
         if 'submittedFiles' in self._metadata_json:
             self._input_json = json.loads(
                 self._metadata_json['submittedFiles']['inputs'],
-                object_pairs_hook=OrderedDict)
+                object_pairs_hook=OrderedDict,
+            )
             # WDL contents
             self._wdl_str = self._metadata_json['submittedFiles']['workflow']
             self._out_def_json_file = self.__find_out_def_from_wdl()
@@ -128,17 +132,18 @@ class CromwellMetadata(object):
                 output_name=file_name,
                 output_path=file_path,
                 all_outputs=None,
-                all_inputs=None)
+                all_inputs=None,
+            )
             self._dag.add_node(n)
 
-    def __parse_calls(self, calls, parent_wf_name='',
-                      wf_alias=None, parent_wf_shard_idx=tuple()):
+    def __parse_calls(
+        self, calls, parent_wf_name='', wf_alias=None, parent_wf_shard_idx=tuple()
+    ):
         """Recursively parse calls in metadata JSON for subworkflow
         """
         for call_name, call_list in calls.items():
             for _, c in enumerate(call_list):
                 shard_idx = c['shardIndex']
-                status = c['executionStatus']
                 if wf_alias is None:
                     wf_name = call_name.split('.')[0]
                 else:
@@ -151,7 +156,8 @@ class CromwellMetadata(object):
                         c['subWorkflowMetadata']['calls'],
                         parent_wf_name=parent_wf_name + wf_name + '.',
                         wf_alias=task_alias,
-                        parent_wf_shard_idx=parent_wf_shard_idx + (shard_idx,))
+                        parent_wf_shard_idx=parent_wf_shard_idx + (shard_idx,),
+                    )
                     continue
 
                 task_name = parent_wf_name + wf_name + '.' + task_alias
@@ -173,7 +179,8 @@ class CromwellMetadata(object):
                     output_name=None,
                     output_path=None,
                     all_outputs=tuple(out_files) if out_files else None,
-                    all_inputs=tuple(in_files) if in_files else None)
+                    all_inputs=tuple(in_files) if in_files else None,
+                )
                 self._dag.add_node(n)
 
                 if out_files:
@@ -186,17 +193,18 @@ class CromwellMetadata(object):
                             output_name=output_name,
                             output_path=output_path,
                             all_outputs=None,
-                            all_inputs=None)
+                            all_inputs=None,
+                        )
                         self._dag.add_node(n)
 
     def __find_out_def_from_wdl(self):
-        r = self.__find_workflow_meta(
-            CromwellMetadata.WDL_WORKFLOW_META_OUT_DEF)
+        r = self.__find_workflow_meta(CromwellMetadata.WDL_WORKFLOW_META_OUT_DEF)
         if r is not None:
             return r
 
         r = self.__find_val_from_wdl(
-            CromwellMetadata.RE_PATTERN_WDL_COMMENT_OUT_DEF_JSON)
+            CromwellMetadata.RE_PATTERN_WDL_COMMENT_OUT_DEF_JSON
+        )
         return r[0] if len(r) > 0 else None
 
     def __find_val_from_wdl(self, regex_val):
@@ -219,14 +227,13 @@ class CromwellMetadata(object):
             wdl = parse_document(self._wdl_str)
             if key in wdl.workflow.meta:
                 return wdl.workflow.meta[key]
-        except:
+        except Exception:
             pass
         return None
 
 
 def main():
     import sys
-    import os
 
     if len(sys.argv) < 2:
         print('Usage: python cromwell_metadata.py [METADATA_JSON_FILE]')

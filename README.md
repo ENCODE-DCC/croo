@@ -146,7 +146,7 @@ Clickable links on a file table works a bit differently from UCSC browser tracks
 
 Croo creates UCSC genome browser tracks. Define `--ucsc-genome-db` for your genome (e.g. `hg38` for GRCh38 and `mm10` for mm10). `--ucsc-genome-pos` is optional to specify a genome position (e.g. `chr1:1000-4000`).
 
-UCSC browsers can only take a **PUBLIC** URL for big genomic data file (e.g. `.bigWig`, `.bigBed`, `.bam`, ...). 
+UCSC browsers can only take a **PUBLIC** URL for big genomic data file (e.g. `.bigWig`, `.bigBed`, `.bam`, ...).
 
 1) Local: If you have organized outputs on your local stroage then you should have a web server (e.g. Apache2) to host files to be visualized. Also you need to define a mapping from local path to URL. Make a TSV file for `--tsv-mapping-path-to-url`. Such 2-col TSV file which looks like the following (`LOCAL_PATH_PREFIX [TAB] URL_PREFIX`):
 
@@ -154,7 +154,7 @@ UCSC browsers can only take a **PUBLIC** URL for big genomic data file (e.g. `.b
     /your/local/storage http://your.server/somewhere
     /your/lab/storage http://your.server/lab/directory
     ```
-  
+
     Any filename prefixed with `col-1` will be replace with `col-2`. `col-1` is usually your local output directory specified by `--out-dir` or a working directory.
 
 2) GCS: If your bucket is public then simply add `--public-gcs` and skip this step. You can make a presinged URL for any file on your private GCS bucket. Add `--use-presigned-url-gcs` to Croo command line arguments. You need to have a service account on your Google Cloud project and provide a private key file `--gcp-private-key` for the service account. See [this](https://cloud.google.com/storage/docs/access-control/signing-urls-with-helpers) to make a new service account and get a key file from it.
