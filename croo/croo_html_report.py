@@ -6,6 +6,7 @@ Author:
 """
 
 import os
+import tempfile
 import textwrap
 
 from autouri import AutoURI
@@ -18,9 +19,10 @@ from .croo_html_report_tracks import CrooHtmlReportUCSCTracks
 class CrooHtmlReport(object):
     HEAD = '@HEAD_CONTENTS'
     BODY = '@BODY_CONTENTS'
-    HTML = textwrap.dedent(
-        """
-        <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+    HTML = (
+        textwrap.dedent(
+            """
+        <!DOCTYPE html>
         <html lang="en">
           <head>
             <meta charset="utf-8">
@@ -30,7 +32,10 @@ class CrooHtmlReport(object):
           <body>{body_contents}</body>
         </html>
     """
-    ).format(head_contents=HEAD, body_contents=BODY)
+        )
+        .format(head_contents=HEAD, body_contents=BODY)
+        .lstrip()
+    )
     REPORT_HTML = 'croo.report.{workflow_id}.html'
 
     def __init__(
@@ -108,5 +113,11 @@ class CrooHtmlReport(object):
             self._out_dir,
             CrooHtmlReport.REPORT_HTML.format(workflow_id=self._workflow_id),
         )
-        AutoURI(uri_report).write(html)
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            local_uri_report = os.path.join(
+                tmp_dir,
+                CrooHtmlReport.REPORT_HTML.format(workflow_id=self._workflow_id),
+            )
+            AutoURI(local_uri_report).write(html)
+            AutoURI(local_uri_report).cp(uri_report)
         return html
