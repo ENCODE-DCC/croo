@@ -1,5 +1,6 @@
 import logging
 import os
+import tempfile
 
 from autouri import AutoURI
 from graphviz import Source
@@ -92,43 +93,41 @@ class CrooHtmlReportTaskGraph(object):
             fnc_subgraph=fnc_subgraph,
             template=self._template_d,
         )
-        # temporary dot, svg from graphviz.Source.render
-        tmp_dot = '_tmp_.dot'
 
-        try:
-            svg = Source(dot_str, format='svg').render(filename=tmp_dot)
-        except (ExecutableNotFound, FileNotFoundError):
-            logger.info(
-                'Importing graphviz failed. Task graph will not be available. '
-                'Check if you have installed graphviz correctly so that '
-                '"dot" executable exists on your PATH. '
-                '"pip install graphviz" does not install such "dot". '
-                'Use apt or system-level installer instead. '
-                'e.g. sudo apt-get install graphviz.'
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            # temporary dot, svg from graphviz.Source.render
+            tmp_dot = os.path.join(tmp_dir, '_tmp_.dot')
+
+            try:
+                svg = Source(dot_str, format='svg').render(filename=tmp_dot)
+            except (ExecutableNotFound, FileNotFoundError):
+                logger.error(
+                    'Importing graphviz failed. Task graph will not be available. '
+                    'Check if you have installed graphviz correctly so that '
+                    '"dot" executable exists on your PATH. '
+                    '"pip install graphviz" does not install such "dot". '
+                    'Use apt or system-level installer instead. '
+                    'e.g. sudo apt-get install graphviz.'
+                )
+                return None
+
+            # save to DOT
+            uri_dot = os.path.join(
+                self._out_dir,
+                CrooHtmlReportTaskGraph.TASK_GRAPH_DOT.format(
+                    workflow_id=self._workflow_id
+                ),
             )
-            return None
+            AutoURI(uri_dot).write(dot_str)
 
-        # save to DOT
-        uri_dot = os.path.join(
-            self._out_dir,
-            CrooHtmlReportTaskGraph.TASK_GRAPH_DOT.format(
-                workflow_id=self._workflow_id
-            ),
-        )
-        AutoURI(uri_dot).write(dot_str)
-
-        # save to SVG
-        with open(svg, 'r') as fp:
-            svg_contents = fp.read()
-        uri_svg = os.path.join(
-            self._out_dir,
-            CrooHtmlReportTaskGraph.TASK_GRAPH_SVG.format(
-                workflow_id=self._workflow_id
-            ),
-        )
-        AutoURI(uri_svg).write(svg_contents)
-
-        os.remove(tmp_dot)
-        os.remove(svg)
+            # save to SVG
+            uri_svg = os.path.join(
+                self._out_dir,
+                CrooHtmlReportTaskGraph.TASK_GRAPH_SVG.format(
+                    workflow_id=self._workflow_id
+                ),
+            )
+            svg_contents = AutoURI(svg).read()
+            AutoURI(uri_svg).write(svg_contents)
 
         return svg_contents
