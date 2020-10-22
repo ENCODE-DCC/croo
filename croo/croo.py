@@ -52,7 +52,7 @@ class Croo(object):
         if isinstance(metadata_json, dict):
             self._metadata = metadata_json
         else:
-            f = AutoURI(metadata_json).localize_on(self._tmp_dir)
+            f = AutoURI(metadata_json).localize_on(self._tmp_dir, no_lock=True)
             with open(f, 'r') as fp:
                 self._metadata = json.loads(fp.read())
             if isinstance(self._metadata, list):
@@ -207,6 +207,7 @@ class Croo(object):
                                     target_path,
                                     no_checksum=self._no_checksum,
                                     make_md5_file=True,
+                                    no_lock=True,
                                 )
 
                         # get presigned URLs if possible

@@ -99,7 +99,7 @@ class CrooHtmlReportUCSCTracks(object):
         # localize TXT
         # long URL doesn't work
         u = AutoURI(uri_txt)
-        u.write(txt)
+        u.write(txt, no_lock=True)
 
         url_trackhub_txt_file = None
         if isinstance(u, GCSURI):
