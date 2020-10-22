@@ -118,6 +118,6 @@ class CrooHtmlReport(object):
                 tmp_dir,
                 CrooHtmlReport.REPORT_HTML.format(workflow_id=self._workflow_id),
             )
-            AutoURI(local_uri_report).write(html)
-            AutoURI(local_uri_report).cp(uri_report)
+            AutoURI(local_uri_report).write(html, no_lock=True)
+            AutoURI(local_uri_report).cp(uri_report, no_lock=True)
         return html

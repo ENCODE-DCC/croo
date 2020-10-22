@@ -136,5 +136,5 @@ class CrooHtmlReportFileTable(object):
             self._out_dir,
             CrooHtmlReportFileTable.FILETABLE_TSV.format(workflow_id=self._workflow_id),
         )
-        AutoURI(uri_filetable).write(contents)
+        AutoURI(uri_filetable).write(contents, no_lock=True)
         return table_contents

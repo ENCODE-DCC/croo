@@ -118,7 +118,7 @@ class CrooHtmlReportTaskGraph(object):
                     workflow_id=self._workflow_id
                 ),
             )
-            AutoURI(uri_dot).write(dot_str)
+            AutoURI(uri_dot).write(dot_str, no_lock=True)
 
             # save to SVG
             uri_svg = os.path.join(
@@ -128,6 +128,6 @@ class CrooHtmlReportTaskGraph(object):
                 ),
             )
             svg_contents = AutoURI(svg).read()
-            AutoURI(uri_svg).write(svg_contents)
+            AutoURI(uri_svg).write(svg_contents, no_lock=True)
 
         return svg_contents
