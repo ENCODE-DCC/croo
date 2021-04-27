@@ -210,7 +210,7 @@ class CromwellMetadata(object):
                     subworkflow_or_task_alias,
                 )
                 none_free_parent_workflows = (
-                    wf for wf in none_free_parent_workflows if wf
+                    wf for wf in none_free_parent_workflows if wf is not None
                 )
 
                 full_call_name = '.'.join(none_free_parent_workflows)
