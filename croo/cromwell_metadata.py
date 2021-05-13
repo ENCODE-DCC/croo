@@ -99,7 +99,10 @@ class CromwellMetadata(object):
         self._dag = DAG(fnc_is_parent=is_parent_cmnode)
 
         # parse calls to add tasks and their outputs to graph
-        self.__parse_calls(self._metadata_json['calls'])
+        self.__parse_calls(
+            self._metadata_json['calls'],
+            parent_workflows=(self._metadata_json['workflowName'],),
+        )
 
         # parse input JSON to add inputs to graph
         self.__parse_input_json()
@@ -137,31 +140,80 @@ class CromwellMetadata(object):
             self._dag.add_node(n)
 
     def __parse_calls(
-        self, calls, parent_wf_name='', wf_alias=None, parent_wf_shard_idx=tuple()
+        self, calls, parent_workflows, parent_workflow_shard_indices=tuple()
     ):
-        """Recursively parse calls in metadata JSON for subworkflow
+        """Recursively parse `calls` in Cromwell's metadata JSON for subworkflow.
+        `calls` is a dict of { key: list_of_calls } with the following two key naming formats.
+
+        - workflow_name.alias_of_subworkflow_or_task:
+            Alias is used instead of name if subworkflow/task is imported/called with `as` statement.
+
+        - ScatterAt*_*:
+            Cromwell's temporary subworkflow to implement a nested `scatter` of WDL 1.0.
+            It is a subworkflow without dot notation.
+
+        Such dict's value `list_of_calls` is a list of `call` objects.
+
+        Args:
+            calls:
+                `calls` in metadata JSON.
+            parent_workflows:
+                A tuple of parent workflow's name/alias.
+                Grander parent comes first.
+                Alias means a subworkflow imported with `as` statement in WDL.
+                `None` element in this list means a temporary subworkflow to implement
+                nested `scatter`.
+            parent_workflow_shard_indices:
+                Shard indices of all parent workflows (including nested scatter's indices).
+                Grander parent's index comes first.
+                The dimensions of `parent_workflows` and `parent_workflow_shard_indices` do not
+                necessarily match if there is a nested `scatter`.
         """
+        if not parent_workflows or not isinstance(parent_workflows, tuple):
+            raise ValueError(
+                'parent_workflows must be defined as non-empty tuple. '
+                'If it is a root calling of this function '
+                'then call with parent_workflows=(main_workflow_name,).'
+            )
+
         for call_name, call_list in calls.items():
-            for _, c in enumerate(call_list):
+            split_call_name = call_name.split('.')
+
+            if len(split_call_name) == 2:
+                subworkflow_or_task_alias = split_call_name[1]
+
+            elif len(split_call_name) == 1:
+                if not call_name.startswith('ScatterAt'):
+                    raise ValueError(
+                        'Wrong temporary call name format for a nested subworkflow.'
+                    )
+                subworkflow_or_task_alias = None
+
+            else:
+                raise ValueError('Wrong call name format. Too many dots.')
+
+            for c in call_list:
                 shard_idx = c['shardIndex']
-                if wf_alias is None:
-                    wf_name = call_name.split('.')[0]
-                else:
-                    wf_name = wf_alias
-                task_alias = call_name.split('.')[1]
 
                 # if it is a subworkflow, then recursively dive into it
                 if 'subWorkflowMetadata' in c:
                     self.__parse_calls(
                         c['subWorkflowMetadata']['calls'],
-                        parent_wf_name=parent_wf_name + wf_name + '.',
-                        wf_alias=task_alias,
-                        parent_wf_shard_idx=parent_wf_shard_idx + (shard_idx,),
+                        parent_workflows=parent_workflows
+                        + (subworkflow_or_task_alias,),
+                        parent_workflow_shard_indices=parent_workflow_shard_indices
+                        + (shard_idx,),
                     )
                     continue
 
-                task_name = parent_wf_name + wf_name + '.' + task_alias
-                shard_idx = parent_wf_shard_idx + (shard_idx,)
+                none_free_parent_workflows = (
+                    workflow
+                    for workflow in parent_workflows + (subworkflow_or_task_alias,)
+                    if workflow is not None
+                )
+
+                full_call_name = '.'.join(none_free_parent_workflows)
+                shard_idx = parent_workflow_shard_indices + (shard_idx,)
 
                 in_files = None
                 if 'inputs' in c:
@@ -175,7 +227,7 @@ class CromwellMetadata(object):
                 n = CMNode(
                     type='task',
                     shard_idx=shard_idx,
-                    task_name=task_name,
+                    task_name=full_call_name,
                     output_name=None,
                     output_path=None,
                     all_outputs=tuple(out_files) if out_files else None,
@@ -189,7 +241,7 @@ class CromwellMetadata(object):
                         n = CMNode(
                             type='output',
                             shard_idx=shard_idx,
-                            task_name=task_name,
+                            task_name=full_call_name,
                             output_name=output_name,
                             output_path=output_path,
                             all_outputs=None,

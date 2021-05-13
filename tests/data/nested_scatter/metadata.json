@@ -1,0 +1,473 @@
+{
+  "workflowName": "nested_scatter",
+  "workflowProcessingEvents": [{
+    "cromwellId": "cromid-a1b3133",
+    "description": "Finished",
+    "timestamp": "2021-05-11T20:54:39.209Z",
+    "cromwellVersion": "59"
+  }, {
+    "timestamp": "2021-05-11T20:54:12.361Z",
+    "cromwellVersion": "59",
+    "description": "PickedUp",
+    "cromwellId": "cromid-a1b3133"
+  }],
+  "metadataSource": "Unarchived",
+  "actualWorkflowLanguageVersion": "1.0",
+  "submittedFiles": {
+    "workflow": "        version 1.0\n\n        workflow nested_scatter {\n            meta {\n                croo_out_def: \"nested_scatter.croo.json\"\n            }\n\n            scatter(i in range(2)) {\n                scatter(j in range(2)) {\n                    call t_nested_scatter_1 { input:\n                        i = i,\n                        j = j,\n                    }\n                }\n            }\n        }\n\n        task t_nested_scatter_1 {\n            input {\n                Int i\n                Int j\n            }\n\n            command {\n                echo ~{i}.~{j} > t_nested_scatter_1.~{i}.~{j}.out\n                sleep 2\n            }\n            output {\n                File out = \"t_nested_scatter_1.~{i}.~{j}.out\"\n            }\n        }\n\n",
+    "root": "",
+    "options": "{\n  \"backend\": \"Local\",\n  \"default_runtime_attributes\": {\n    \"maxRetries\": 1\n  }\n}",
+    "inputs": "{}",
+    "workflowUrl": "/mnt/data/scratch/leepc12/test_subworkflows_nested_scatters/nested_scatter.wdl",
+    "labels": "{\n    \"caper-backend\": \"Local\",\n    \"caper-user\": \"leepc12\"\n}"
+  },
+  "calls": {
+    "ScatterAt9_25": [{
+      "executionStatus": "Done",
+      "subWorkflowMetadata": {
+        "workflowName": "ScatterAt9_25",
+        "rootWorkflowId": "33b3c05e-4729-4fcb-b670-7470c207ae7a",
+        "calls": {
+          "nested_scatter.t_nested_scatter_1": [{
+            "executionStatus": "Done",
+            "stdout": "/mnt/data/scratch/leepc12/caper_out/nested_scatter/33b3c05e-4729-4fcb-b670-7470c207ae7a/call-ScatterAt9_25/shard-0/ScatterAt9_25/49f574e7-597f-42ec-90fd-58dd6ff5de2b/call-t_nested_scatter_1/shard-0/execution/stdout",
+            "backendStatus": "Done",
+            "commandLine": "echo 0.0 > t_nested_scatter_1.0.0.out\nsleep 2",
+            "shardIndex": 0,
+            "outputs": {
+              "out": "/mnt/data/scratch/leepc12/caper_out/nested_scatter/33b3c05e-4729-4fcb-b670-7470c207ae7a/call-ScatterAt9_25/shard-0/ScatterAt9_25/49f574e7-597f-42ec-90fd-58dd6ff5de2b/call-t_nested_scatter_1/shard-0/execution/t_nested_scatter_1.0.0.out"
+            },
+            "runtimeAttributes": {
+              "continueOnReturnCode": "0",
+              "maxRetries": "1",
+              "failOnStderr": "false"
+            },
+            "callCaching": {
+              "allowResultReuse": true,
+              "hit": false,
+              "result": "Cache Miss",
+              "hashes": {
+                "output count": "C4CA4238A0B923820DCC509A6F75849B",
+                "runtime attribute": {
+                  "continueOnReturnCode": "CFCD208495D565EF66E7DFF9F98764DA",
+                  "failOnStderr": "68934A3E9455FA72420237EB05902327",
+                  "docker": "N/A"
+                },
+                "output expression": {
+                  "File out": "B4280CBD92795519817DE8ED72AE1217"
+                },
+                "input count": "C81E728D9D4C2F636F067F89CC14862C",
+                "backend name": "509820290D57F333403F490DDE7316F4",
+                "command template": "DBEC4BBF7A2B317C23DCD067B6F63E91",
+                "input": {
+                  "Int j": "CFCD208495D565EF66E7DFF9F98764DA",
+                  "Int i": "CFCD208495D565EF66E7DFF9F98764DA"
+                }
+              },
+              "effectiveCallCachingMode": "ReadAndWriteCache"
+            },
+            "inputs": {
+              "j": 0,
+              "i": 0
+            },
+            "returnCode": 0,
+            "jobId": "31689",
+            "backend": "Local",
+            "end": "2021-05-11T20:54:36.065Z",
+            "stderr": "/mnt/data/scratch/leepc12/caper_out/nested_scatter/33b3c05e-4729-4fcb-b670-7470c207ae7a/call-ScatterAt9_25/shard-0/ScatterAt9_25/49f574e7-597f-42ec-90fd-58dd6ff5de2b/call-t_nested_scatter_1/shard-0/execution/stderr",
+            "callRoot": "/mnt/data/scratch/leepc12/caper_out/nested_scatter/33b3c05e-4729-4fcb-b670-7470c207ae7a/call-ScatterAt9_25/shard-0/ScatterAt9_25/49f574e7-597f-42ec-90fd-58dd6ff5de2b/call-t_nested_scatter_1/shard-0",
+            "attempt": 1,
+            "executionEvents": [{
+              "description": "UpdatingCallCache",
+              "startTime": "2021-05-11T20:54:35.468Z",
+              "endTime": "2021-05-11T20:54:36.065Z"
+            }, {
+              "endTime": "2021-05-11T20:54:28.130Z",
+              "startTime": "2021-05-11T20:54:28.129Z",
+              "description": "WaitingForValueStore"
+            }, {
+              "startTime": "2021-05-11T20:54:28.134Z",
+              "endTime": "2021-05-11T20:54:28.139Z",
+              "description": "CallCacheReading"
+            }, {
+              "startTime": "2021-05-11T20:54:28.139Z",
+              "endTime": "2021-05-11T20:54:35.468Z",
+              "description": "RunningJob"
+            }, {
+              "startTime": "2021-05-11T20:54:36.065Z",
+              "endTime": "2021-05-11T20:54:36.065Z",
+              "description": "UpdatingJobStore"
+            }, {
+              "description": "Pending",
+              "endTime": "2021-05-11T20:54:21.991Z",
+              "startTime": "2021-05-11T20:54:21.975Z"
+            }, {
+              "endTime": "2021-05-11T20:54:28.129Z",
+              "description": "RequestingExecutionToken",
+              "startTime": "2021-05-11T20:54:21.991Z"
+            }, {
+              "description": "PreparingJob",
+              "endTime": "2021-05-11T20:54:28.134Z",
+              "startTime": "2021-05-11T20:54:28.130Z"
+            }],
+            "start": "2021-05-11T20:54:21.956Z"
+          }, {
+            "executionStatus": "Done",
+            "stdout": "/mnt/data/scratch/leepc12/caper_out/nested_scatter/33b3c05e-4729-4fcb-b670-7470c207ae7a/call-ScatterAt9_25/shard-0/ScatterAt9_25/49f574e7-597f-42ec-90fd-58dd6ff5de2b/call-t_nested_scatter_1/shard-1/execution/stdout",
+            "backendStatus": "Done",
+            "commandLine": "echo 0.1 > t_nested_scatter_1.0.1.out\nsleep 2",
+            "shardIndex": 1,
+            "outputs": {
+              "out": "/mnt/data/scratch/leepc12/caper_out/nested_scatter/33b3c05e-4729-4fcb-b670-7470c207ae7a/call-ScatterAt9_25/shard-0/ScatterAt9_25/49f574e7-597f-42ec-90fd-58dd6ff5de2b/call-t_nested_scatter_1/shard-1/execution/t_nested_scatter_1.0.1.out"
+            },
+            "runtimeAttributes": {
+              "failOnStderr": "false",
+              "continueOnReturnCode": "0",
+              "maxRetries": "1"
+            },
+            "callCaching": {
+              "allowResultReuse": true,
+              "hit": false,
+              "result": "Cache Miss",
+              "hashes": {
+                "output count": "C4CA4238A0B923820DCC509A6F75849B",
+                "runtime attribute": {
+                  "docker": "N/A",
+                  "failOnStderr": "68934A3E9455FA72420237EB05902327",
+                  "continueOnReturnCode": "CFCD208495D565EF66E7DFF9F98764DA"
+                },
+                "output expression": {
+                  "File out": "B4280CBD92795519817DE8ED72AE1217"
+                },
+                "input count": "C81E728D9D4C2F636F067F89CC14862C",
+                "backend name": "509820290D57F333403F490DDE7316F4",
+                "command template": "DBEC4BBF7A2B317C23DCD067B6F63E91",
+                "input": {
+                  "Int i": "CFCD208495D565EF66E7DFF9F98764DA",
+                  "Int j": "C4CA4238A0B923820DCC509A6F75849B"
+                }
+              },
+              "effectiveCallCachingMode": "ReadAndWriteCache"
+            },
+            "inputs": {
+              "j": 1,
+              "i": 0
+            },
+            "returnCode": 0,
+            "jobId": "29289",
+            "backend": "Local",
+            "end": "2021-05-11T20:54:36.066Z",
+            "stderr": "/mnt/data/scratch/leepc12/caper_out/nested_scatter/33b3c05e-4729-4fcb-b670-7470c207ae7a/call-ScatterAt9_25/shard-0/ScatterAt9_25/49f574e7-597f-42ec-90fd-58dd6ff5de2b/call-t_nested_scatter_1/shard-1/execution/stderr",
+            "callRoot": "/mnt/data/scratch/leepc12/caper_out/nested_scatter/33b3c05e-4729-4fcb-b670-7470c207ae7a/call-ScatterAt9_25/shard-0/ScatterAt9_25/49f574e7-597f-42ec-90fd-58dd6ff5de2b/call-t_nested_scatter_1/shard-1",
+            "attempt": 1,
+            "executionEvents": [{
+              "startTime": "2021-05-11T20:54:26.128Z",
+              "endTime": "2021-05-11T20:54:26.130Z",
+              "description": "WaitingForValueStore"
+            }, {
+              "description": "PreparingJob",
+              "endTime": "2021-05-11T20:54:26.137Z",
+              "startTime": "2021-05-11T20:54:26.130Z"
+            }, {
+              "endTime": "2021-05-11T20:54:36.065Z",
+              "startTime": "2021-05-11T20:54:36.065Z",
+              "description": "UpdatingJobStore"
+            }, {
+              "description": "RequestingExecutionToken",
+              "startTime": "2021-05-11T20:54:21.991Z",
+              "endTime": "2021-05-11T20:54:26.128Z"
+            }, {
+              "description": "UpdatingCallCache",
+              "endTime": "2021-05-11T20:54:36.065Z",
+              "startTime": "2021-05-11T20:54:34.318Z"
+            }, {
+              "endTime": "2021-05-11T20:54:26.144Z",
+              "description": "CallCacheReading",
+              "startTime": "2021-05-11T20:54:26.137Z"
+            }, {
+              "startTime": "2021-05-11T20:54:21.975Z",
+              "endTime": "2021-05-11T20:54:21.991Z",
+              "description": "Pending"
+            }, {
+              "endTime": "2021-05-11T20:54:34.318Z",
+              "description": "RunningJob",
+              "startTime": "2021-05-11T20:54:26.144Z"
+            }],
+            "start": "2021-05-11T20:54:21.954Z"
+          }]
+        },
+        "outputs": {
+          "t_nested_scatter_1.out": ["/mnt/data/scratch/leepc12/caper_out/nested_scatter/33b3c05e-4729-4fcb-b670-7470c207ae7a/call-ScatterAt9_25/shard-0/ScatterAt9_25/49f574e7-597f-42ec-90fd-58dd6ff5de2b/call-t_nested_scatter_1/shard-0/execution/t_nested_scatter_1.0.0.out", "/mnt/data/scratch/leepc12/caper_out/nested_scatter/33b3c05e-4729-4fcb-b670-7470c207ae7a/call-ScatterAt9_25/shard-0/ScatterAt9_25/49f574e7-597f-42ec-90fd-58dd6ff5de2b/call-t_nested_scatter_1/shard-1/execution/t_nested_scatter_1.0.1.out"]
+        },
+        "workflowRoot": "/mnt/data/scratch/leepc12/caper_out/nested_scatter/33b3c05e-4729-4fcb-b670-7470c207ae7a",
+        "id": "49f574e7-597f-42ec-90fd-58dd6ff5de2b",
+        "inputs": {
+          "i": 0
+        },
+        "status": "Succeeded",
+        "parentWorkflowId": "33b3c05e-4729-4fcb-b670-7470c207ae7a",
+        "end": "2021-05-11T20:54:37.250Z",
+        "start": "2021-05-11T20:54:17.775Z"
+      },
+      "shardIndex": 0,
+      "outputs": {
+        "out": ["/mnt/data/scratch/leepc12/caper_out/nested_scatter/33b3c05e-4729-4fcb-b670-7470c207ae7a/call-ScatterAt9_25/shard-0/ScatterAt9_25/49f574e7-597f-42ec-90fd-58dd6ff5de2b/call-t_nested_scatter_1/shard-0/execution/t_nested_scatter_1.0.0.out", "/mnt/data/scratch/leepc12/caper_out/nested_scatter/33b3c05e-4729-4fcb-b670-7470c207ae7a/call-ScatterAt9_25/shard-0/ScatterAt9_25/49f574e7-597f-42ec-90fd-58dd6ff5de2b/call-t_nested_scatter_1/shard-1/execution/t_nested_scatter_1.0.1.out"]
+      },
+      "inputs": {
+        "i": 0
+      },
+      "end": "2021-05-11T20:54:37.251Z",
+      "attempt": 1,
+      "executionEvents": [{
+        "startTime": "2021-05-11T20:54:17.759Z",
+        "endTime": "2021-05-11T20:54:17.771Z",
+        "description": "SubWorkflowPendingState"
+      }, {
+        "startTime": "2021-05-11T20:54:17.804Z",
+        "endTime": "2021-05-11T20:54:37.251Z",
+        "description": "SubWorkflowRunningState"
+      }, {
+        "startTime": "2021-05-11T20:54:17.771Z",
+        "description": "WaitingForValueStore",
+        "endTime": "2021-05-11T20:54:17.775Z"
+      }, {
+        "startTime": "2021-05-11T20:54:17.775Z",
+        "description": "SubWorkflowPreparingState",
+        "endTime": "2021-05-11T20:54:17.804Z"
+      }],
+      "start": "2021-05-11T20:54:17.755Z"
+    }, {
+      "executionStatus": "Done",
+      "subWorkflowMetadata": {
+        "workflowName": "ScatterAt9_25",
+        "rootWorkflowId": "33b3c05e-4729-4fcb-b670-7470c207ae7a",
+        "calls": {
+          "nested_scatter.t_nested_scatter_1": [{
+            "executionStatus": "Done",
+            "stdout": "/mnt/data/scratch/leepc12/caper_out/nested_scatter/33b3c05e-4729-4fcb-b670-7470c207ae7a/call-ScatterAt9_25/shard-1/ScatterAt9_25/86188e7a-2bf3-407a-aedf-45b63e5ea1fb/call-t_nested_scatter_1/shard-0/execution/stdout",
+            "backendStatus": "Done",
+            "commandLine": "echo 1.0 > t_nested_scatter_1.1.0.out\nsleep 2",
+            "shardIndex": 0,
+            "outputs": {
+              "out": "/mnt/data/scratch/leepc12/caper_out/nested_scatter/33b3c05e-4729-4fcb-b670-7470c207ae7a/call-ScatterAt9_25/shard-1/ScatterAt9_25/86188e7a-2bf3-407a-aedf-45b63e5ea1fb/call-t_nested_scatter_1/shard-0/execution/t_nested_scatter_1.1.0.out"
+            },
+            "runtimeAttributes": {
+              "maxRetries": "1",
+              "failOnStderr": "false",
+              "continueOnReturnCode": "0"
+            },
+            "callCaching": {
+              "allowResultReuse": true,
+              "hit": false,
+              "result": "Cache Miss",
+              "hashes": {
+                "output count": "C4CA4238A0B923820DCC509A6F75849B",
+                "runtime attribute": {
+                  "docker": "N/A",
+                  "failOnStderr": "68934A3E9455FA72420237EB05902327",
+                  "continueOnReturnCode": "CFCD208495D565EF66E7DFF9F98764DA"
+                },
+                "output expression": {
+                  "File out": "B4280CBD92795519817DE8ED72AE1217"
+                },
+                "input count": "C81E728D9D4C2F636F067F89CC14862C",
+                "backend name": "509820290D57F333403F490DDE7316F4",
+                "command template": "DBEC4BBF7A2B317C23DCD067B6F63E91",
+                "input": {
+                  "Int i": "C4CA4238A0B923820DCC509A6F75849B",
+                  "Int j": "CFCD208495D565EF66E7DFF9F98764DA"
+                }
+              },
+              "effectiveCallCachingMode": "ReadAndWriteCache"
+            },
+            "inputs": {
+              "j": 0,
+              "i": 1
+            },
+            "returnCode": 0,
+            "jobId": "22886",
+            "backend": "Local",
+            "end": "2021-05-11T20:54:33.105Z",
+            "stderr": "/mnt/data/scratch/leepc12/caper_out/nested_scatter/33b3c05e-4729-4fcb-b670-7470c207ae7a/call-ScatterAt9_25/shard-1/ScatterAt9_25/86188e7a-2bf3-407a-aedf-45b63e5ea1fb/call-t_nested_scatter_1/shard-0/execution/stderr",
+            "callRoot": "/mnt/data/scratch/leepc12/caper_out/nested_scatter/33b3c05e-4729-4fcb-b670-7470c207ae7a/call-ScatterAt9_25/shard-1/ScatterAt9_25/86188e7a-2bf3-407a-aedf-45b63e5ea1fb/call-t_nested_scatter_1/shard-0",
+            "attempt": 1,
+            "executionEvents": [{
+              "description": "UpdatingJobStore",
+              "startTime": "2021-05-11T20:54:33.099Z",
+              "endTime": "2021-05-11T20:54:33.101Z"
+            }, {
+              "startTime": "2021-05-11T20:54:21.991Z",
+              "description": "RequestingExecutionToken",
+              "endTime": "2021-05-11T20:54:22.145Z"
+            }, {
+              "startTime": "2021-05-11T20:54:22.232Z",
+              "description": "CallCacheReading",
+              "endTime": "2021-05-11T20:54:22.304Z"
+            }, {
+              "description": "UpdatingCallCache",
+              "startTime": "2021-05-11T20:54:30.379Z",
+              "endTime": "2021-05-11T20:54:33.099Z"
+            }, {
+              "endTime": "2021-05-11T20:54:21.991Z",
+              "startTime": "2021-05-11T20:54:21.975Z",
+              "description": "Pending"
+            }, {
+              "description": "RunningJob",
+              "endTime": "2021-05-11T20:54:30.379Z",
+              "startTime": "2021-05-11T20:54:22.304Z"
+            }, {
+              "startTime": "2021-05-11T20:54:22.154Z",
+              "description": "PreparingJob",
+              "endTime": "2021-05-11T20:54:22.232Z"
+            }, {
+              "startTime": "2021-05-11T20:54:22.145Z",
+              "description": "WaitingForValueStore",
+              "endTime": "2021-05-11T20:54:22.154Z"
+            }],
+            "start": "2021-05-11T20:54:21.956Z"
+          }, {
+            "executionStatus": "Done",
+            "stdout": "/mnt/data/scratch/leepc12/caper_out/nested_scatter/33b3c05e-4729-4fcb-b670-7470c207ae7a/call-ScatterAt9_25/shard-1/ScatterAt9_25/86188e7a-2bf3-407a-aedf-45b63e5ea1fb/call-t_nested_scatter_1/shard-1/execution/stdout",
+            "backendStatus": "Done",
+            "commandLine": "echo 1.1 > t_nested_scatter_1.1.1.out\nsleep 2",
+            "shardIndex": 1,
+            "outputs": {
+              "out": "/mnt/data/scratch/leepc12/caper_out/nested_scatter/33b3c05e-4729-4fcb-b670-7470c207ae7a/call-ScatterAt9_25/shard-1/ScatterAt9_25/86188e7a-2bf3-407a-aedf-45b63e5ea1fb/call-t_nested_scatter_1/shard-1/execution/t_nested_scatter_1.1.1.out"
+            },
+            "runtimeAttributes": {
+              "maxRetries": "1",
+              "failOnStderr": "false",
+              "continueOnReturnCode": "0"
+            },
+            "callCaching": {
+              "allowResultReuse": true,
+              "hit": false,
+              "result": "Cache Miss",
+              "hashes": {
+                "output count": "C4CA4238A0B923820DCC509A6F75849B",
+                "runtime attribute": {
+                  "continueOnReturnCode": "CFCD208495D565EF66E7DFF9F98764DA",
+                  "docker": "N/A",
+                  "failOnStderr": "68934A3E9455FA72420237EB05902327"
+                },
+                "output expression": {
+                  "File out": "B4280CBD92795519817DE8ED72AE1217"
+                },
+                "input count": "C81E728D9D4C2F636F067F89CC14862C",
+                "backend name": "509820290D57F333403F490DDE7316F4",
+                "command template": "DBEC4BBF7A2B317C23DCD067B6F63E91",
+                "input": {
+                  "Int i": "C4CA4238A0B923820DCC509A6F75849B",
+                  "Int j": "C4CA4238A0B923820DCC509A6F75849B"
+                }
+              },
+              "effectiveCallCachingMode": "ReadAndWriteCache"
+            },
+            "inputs": {
+              "j": 1,
+              "i": 1
+            },
+            "returnCode": 0,
+            "jobId": "26851",
+            "backend": "Local",
+            "end": "2021-05-11T20:54:33.100Z",
+            "stderr": "/mnt/data/scratch/leepc12/caper_out/nested_scatter/33b3c05e-4729-4fcb-b670-7470c207ae7a/call-ScatterAt9_25/shard-1/ScatterAt9_25/86188e7a-2bf3-407a-aedf-45b63e5ea1fb/call-t_nested_scatter_1/shard-1/execution/stderr",
+            "callRoot": "/mnt/data/scratch/leepc12/caper_out/nested_scatter/33b3c05e-4729-4fcb-b670-7470c207ae7a/call-ScatterAt9_25/shard-1/ScatterAt9_25/86188e7a-2bf3-407a-aedf-45b63e5ea1fb/call-t_nested_scatter_1/shard-1",
+            "attempt": 1,
+            "executionEvents": [{
+              "endTime": "2021-05-11T20:54:21.991Z",
+              "startTime": "2021-05-11T20:54:21.975Z",
+              "description": "Pending"
+            }, {
+              "startTime": "2021-05-11T20:54:33.099Z",
+              "description": "UpdatingJobStore",
+              "endTime": "2021-05-11T20:54:33.101Z"
+            }, {
+              "description": "CallCacheReading",
+              "endTime": "2021-05-11T20:54:24.143Z",
+              "startTime": "2021-05-11T20:54:24.136Z"
+            }, {
+              "startTime": "2021-05-11T20:54:24.143Z",
+              "description": "RunningJob",
+              "endTime": "2021-05-11T20:54:31.837Z"
+            }, {
+              "startTime": "2021-05-11T20:54:24.128Z",
+              "description": "WaitingForValueStore",
+              "endTime": "2021-05-11T20:54:24.129Z"
+            }, {
+              "startTime": "2021-05-11T20:54:31.837Z",
+              "description": "UpdatingCallCache",
+              "endTime": "2021-05-11T20:54:33.099Z"
+            }, {
+              "startTime": "2021-05-11T20:54:21.991Z",
+              "description": "RequestingExecutionToken",
+              "endTime": "2021-05-11T20:54:24.128Z"
+            }, {
+              "endTime": "2021-05-11T20:54:24.136Z",
+              "description": "PreparingJob",
+              "startTime": "2021-05-11T20:54:24.129Z"
+            }],
+            "start": "2021-05-11T20:54:21.954Z"
+          }]
+        },
+        "outputs": {
+          "t_nested_scatter_1.out": ["/mnt/data/scratch/leepc12/caper_out/nested_scatter/33b3c05e-4729-4fcb-b670-7470c207ae7a/call-ScatterAt9_25/shard-1/ScatterAt9_25/86188e7a-2bf3-407a-aedf-45b63e5ea1fb/call-t_nested_scatter_1/shard-0/execution/t_nested_scatter_1.1.0.out", "/mnt/data/scratch/leepc12/caper_out/nested_scatter/33b3c05e-4729-4fcb-b670-7470c207ae7a/call-ScatterAt9_25/shard-1/ScatterAt9_25/86188e7a-2bf3-407a-aedf-45b63e5ea1fb/call-t_nested_scatter_1/shard-1/execution/t_nested_scatter_1.1.1.out"]
+        },
+        "workflowRoot": "/mnt/data/scratch/leepc12/caper_out/nested_scatter/33b3c05e-4729-4fcb-b670-7470c207ae7a",
+        "id": "86188e7a-2bf3-407a-aedf-45b63e5ea1fb",
+        "inputs": {
+          "i": 1
+        },
+        "status": "Succeeded",
+        "parentWorkflowId": "33b3c05e-4729-4fcb-b670-7470c207ae7a",
+        "end": "2021-05-11T20:54:34.209Z",
+        "start": "2021-05-11T20:54:17.775Z"
+      },
+      "shardIndex": 1,
+      "outputs": {
+        "out": ["/mnt/data/scratch/leepc12/caper_out/nested_scatter/33b3c05e-4729-4fcb-b670-7470c207ae7a/call-ScatterAt9_25/shard-1/ScatterAt9_25/86188e7a-2bf3-407a-aedf-45b63e5ea1fb/call-t_nested_scatter_1/shard-0/execution/t_nested_scatter_1.1.0.out", "/mnt/data/scratch/leepc12/caper_out/nested_scatter/33b3c05e-4729-4fcb-b670-7470c207ae7a/call-ScatterAt9_25/shard-1/ScatterAt9_25/86188e7a-2bf3-407a-aedf-45b63e5ea1fb/call-t_nested_scatter_1/shard-1/execution/t_nested_scatter_1.1.1.out"]
+      },
+      "inputs": {
+        "i": 1
+      },
+      "end": "2021-05-11T20:54:34.211Z",
+      "attempt": 1,
+      "executionEvents": [{
+        "startTime": "2021-05-11T20:54:17.804Z",
+        "description": "SubWorkflowRunningState",
+        "endTime": "2021-05-11T20:54:34.209Z"
+      }, {
+        "startTime": "2021-05-11T20:54:17.775Z",
+        "description": "SubWorkflowPreparingState",
+        "endTime": "2021-05-11T20:54:17.804Z"
+      }, {
+        "startTime": "2021-05-11T20:54:17.771Z",
+        "endTime": "2021-05-11T20:54:17.775Z",
+        "description": "WaitingForValueStore"
+      }, {
+        "startTime": "2021-05-11T20:54:17.759Z",
+        "description": "SubWorkflowPendingState",
+        "endTime": "2021-05-11T20:54:17.771Z"
+      }],
+      "start": "2021-05-11T20:54:17.757Z"
+    }]
+  },
+  "outputs": {
+    "nested_scatter.t_nested_scatter_1.out": [["/mnt/data/scratch/leepc12/caper_out/nested_scatter/33b3c05e-4729-4fcb-b670-7470c207ae7a/call-ScatterAt9_25/shard-0/ScatterAt9_25/49f574e7-597f-42ec-90fd-58dd6ff5de2b/call-t_nested_scatter_1/shard-0/execution/t_nested_scatter_1.0.0.out", "/mnt/data/scratch/leepc12/caper_out/nested_scatter/33b3c05e-4729-4fcb-b670-7470c207ae7a/call-ScatterAt9_25/shard-0/ScatterAt9_25/49f574e7-597f-42ec-90fd-58dd6ff5de2b/call-t_nested_scatter_1/shard-1/execution/t_nested_scatter_1.0.1.out"], ["/mnt/data/scratch/leepc12/caper_out/nested_scatter/33b3c05e-4729-4fcb-b670-7470c207ae7a/call-ScatterAt9_25/shard-1/ScatterAt9_25/86188e7a-2bf3-407a-aedf-45b63e5ea1fb/call-t_nested_scatter_1/shard-0/execution/t_nested_scatter_1.1.0.out", "/mnt/data/scratch/leepc12/caper_out/nested_scatter/33b3c05e-4729-4fcb-b670-7470c207ae7a/call-ScatterAt9_25/shard-1/ScatterAt9_25/86188e7a-2bf3-407a-aedf-45b63e5ea1fb/call-t_nested_scatter_1/shard-1/execution/t_nested_scatter_1.1.1.out"]]
+  },
+  "workflowRoot": "/mnt/data/scratch/leepc12/caper_out/nested_scatter/33b3c05e-4729-4fcb-b670-7470c207ae7a",
+  "actualWorkflowLanguage": "WDL",
+  "id": "33b3c05e-4729-4fcb-b670-7470c207ae7a",
+  "inputs": {
+
+  },
+  "labels": {
+    "caper-user": "leepc12",
+    "caper-backend": "Local",
+    "cromwell-workflow-id": "cromwell-33b3c05e-4729-4fcb-b670-7470c207ae7a"
+  },
+  "submission": "2021-05-11T20:54:12.196Z",
+  "status": "Succeeded",
+  "end": "2021-05-11T20:54:39.208Z",
+  "start": "2021-05-11T20:54:12.410Z"
+}
