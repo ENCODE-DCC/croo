@@ -1,9 +1,113 @@
+import json
 import os
 from pathlib import Path
 from textwrap import dedent
 
 import pytest
 from caper.caper_runner import CaperRunner
+
+
+def mkdir_and_touch_output_only(maybe_file):
+    """mkdir -p and then touch file if it's `.out`
+    """
+    if Path(maybe_file).suffix == '.out':
+        Path(maybe_file).parent.mkdir(parents=True, exist_ok=True)
+        Path(maybe_file).touch()
+
+
+def recursive_replace_val_str(obj, string, new_string, callback_on_replaced=None):
+    """Recursively replace value strings in a nested dict/list `obj`.
+    Replaces `string` value with `new_string`.
+    If `callback_on_replaced` is not None, then call it on a replaced full string.
+    """
+    if isinstance(obj, list):
+        obj = [
+            recursive_replace_val_str(x, string, new_string, callback_on_replaced)
+            for x in obj
+        ]
+    elif isinstance(obj, dict):
+        for k in obj.keys():
+            obj[k] = recursive_replace_val_str(
+                obj[k], string, new_string, callback_on_replaced
+            )
+    elif isinstance(obj, str):
+        if string in obj:
+            obj = obj.replace(string, new_string)
+            if callback_on_replaced:
+                callback_on_replaced(obj)
+
+    return obj
+
+
+def pytest_addoption(parser):
+    parser.addoption(
+        '--ci-prefix', default='default_ci_prefix', help='Prefix for CI test.'
+    )
+    parser.addoption(
+        '--metadata-json-for-subworkflow',
+        default='data/subworkflow/metadata.json',
+        help='Path for metadata.json to test subworkflow.'
+        'Make sure to run pytest on this script\'s directory '
+        'if you use the default path.',
+    )
+    parser.addoption(
+        '--metadata-json-for-nested-scatter',
+        default='data/subworkflow/metadata.json',
+        help='Path for metadata.json to test nested scatter. '
+        'Make sure to run pytest on this script\'s directory '
+        'if you use the default path.',
+    )
+
+
+@pytest.fixture(scope='session')
+def ci_prefix(request):
+    return request.config.getoption('--ci-prefix').rstrip('/')
+
+
+@pytest.fixture(scope='session')
+def metadata_json_for_subworkflow(request, tmpdir_factory):
+    """Make a copy of the JSON file and replaces its root with tmp_dir.
+    Make empty output files with the same directory structure in the JSON.
+    Returns a temporary metadata JSON file with workflow root strings replaced.
+    """
+    root = tmpdir_factory.mktemp('metadata_json_for_subworkflow')
+    metadata_json = json.loads(
+        Path(request.config.getoption('--metadata-json-for-subworkflow')).read_text()
+    )
+    recursive_replace_val_str(
+        metadata_json,
+        metadata_json['workflowRoot'],
+        str(root),
+        mkdir_and_touch_output_only,
+    )
+
+    metadata_json_file = root / 'metadata.json'
+    Path(metadata_json_file).write_text(json.dumps(metadata_json, indent=4))
+
+    return metadata_json_file
+
+
+@pytest.fixture(scope='session')
+def metadata_json_for_nested_scatter(request, tmpdir_factory):
+    """Make a copy of the JSON file and replaces its root with tmp_dir.
+    Make empty output files with the same directory structure in the JSON.
+    Returns a temporary metadata JSON file with workflow root strings replaced.
+    """
+    root = tmpdir_factory.mktemp('metadata_json_for_nested_scatter')
+    metadata_json = json.loads(
+        Path(request.config.getoption('--metadata-json-for-nested-scatter')).read_text()
+    )
+    recursive_replace_val_str(
+        metadata_json,
+        metadata_json['workflowRoot'],
+        str(root),
+        mkdir_and_touch_output_only,
+    )
+
+    metadata_json_file = root / 'metadata.json'
+    Path(metadata_json_file).write_text(json.dumps(metadata_json, indent=4))
+
+    return metadata_json_file
 
 
 @pytest.fixture(scope='session')
@@ -237,7 +341,7 @@ def tmpdir_for_nested_scatter(tmpdir_factory, wdl_nested_scatter):
 
 
 @pytest.fixture(scope='session')
-def metadata_json_for_subworkflow(tmpdir_for_subworkflow,):
+def run_caper_to_make_metadata_json_for_subworkflow(tmpdir_for_subworkflow,):
     wdl = tmpdir_for_subworkflow / 'main.wdl'
     metadata_json = tmpdir_for_subworkflow / 'metadata.json'
 
@@ -245,7 +349,6 @@ def metadata_json_for_subworkflow(tmpdir_for_subworkflow,):
     caper_runner = CaperRunner(
         default_backend='Local', local_out_dir=str(tmpdir_for_subworkflow)
     )
-    print('LOCAL_OUT_DIR', str(tmpdir_for_subworkflow))
 
     thread = caper_runner.run(
         backend='Local', wdl=str(wdl), metadata_output=str(metadata_json)
@@ -256,7 +359,7 @@ def metadata_json_for_subworkflow(tmpdir_for_subworkflow,):
 
 
 @pytest.fixture(scope='session')
-def metadata_json_for_nested_scatter(tmpdir_for_nested_scatter,):
+def run_caper_to_make_metadata_json_for_nested_scatter(tmpdir_for_nested_scatter,):
     wdl = tmpdir_for_nested_scatter / 'nested_scatter.wdl'
     metadata_json = tmpdir_for_nested_scatter / 'metadata.json'
 

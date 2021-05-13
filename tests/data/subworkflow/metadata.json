@@ -1,0 +1,1688 @@
+{
+  "workflowName": "main",
+  "workflowProcessingEvents": [{
+    "description": "PickedUp",
+    "cromwellVersion": "59",
+    "cromwellId": "cromid-d577fe8",
+    "timestamp": "2021-05-07T22:46:27.588Z"
+  }, {
+    "description": "Finished",
+    "timestamp": "2021-05-07T22:47:19.422Z",
+    "cromwellId": "cromid-d577fe8",
+    "cromwellVersion": "59"
+  }],
+  "metadataSource": "Unarchived",
+  "actualWorkflowLanguageVersion": "1.0",
+  "submittedFiles": {
+    "workflow": "        version 1.0\n\n        import \"sub/sub.wdl\"\n        import \"sub2/sub2.wdl\" as sub2_import_alias\n\n        workflow main {\n            meta {\n                croo_out_def: \"main.croo.json\"\n            }\n\n            scatter(i in range(2)) {\n                call t_main_1 { input:\n                    i = i,\n                }\n                call sub.sub { input:\n                    i = i,\n                }\n            }\n            call t_main_1 as t_main_1_alias { input:\n                i = -1,\n            }\n\n            call sub2_import_alias.sub2\n            call sub2_import_alias.sub2 as sub2_alias\n        }\n\n        task t_main_1 {\n            input {\n                Int i\n            }\n\n            command {\n                echo ~{i} > t_main_1.~{i}.out\n                sleep 2\n            }\n\n            output {\n                File out = \"t_main_1.~{i}.out\"\n            }\n        }\n\n",
+    "root": "",
+    "options": "{\n  \"backend\": \"Local\",\n  \"default_runtime_attributes\": {\n    \"maxRetries\": 1\n  }\n}",
+    "inputs": "{}",
+    "workflowUrl": "/mnt/data2/scratch/leepc12/test_subworkflows_nested_scatters/main.wdl",
+    "labels": "{\n    \"caper-backend\": \"Local\",\n    \"caper-user\": \"leepc12\"\n}"
+  },
+  "calls": {
+    "main.t_main_1": [{
+      "executionStatus": "Done",
+      "stdout": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-t_main_1/shard-0/execution/stdout",
+      "backendStatus": "Done",
+      "commandLine": "echo 0 > t_main_1.0.out\nsleep 2",
+      "shardIndex": 0,
+      "outputs": {
+        "out": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-t_main_1/shard-0/execution/t_main_1.0.out"
+      },
+      "runtimeAttributes": {
+        "maxRetries": "1",
+        "failOnStderr": "false",
+        "continueOnReturnCode": "0"
+      },
+      "callCaching": {
+        "allowResultReuse": true,
+        "hit": false,
+        "result": "Cache Miss",
+        "hashes": {
+          "output count": "C4CA4238A0B923820DCC509A6F75849B",
+          "runtime attribute": {
+            "docker": "N/A",
+            "failOnStderr": "68934A3E9455FA72420237EB05902327",
+            "continueOnReturnCode": "CFCD208495D565EF66E7DFF9F98764DA"
+          },
+          "output expression": {
+            "File out": "46E6E67C4D3A60D2C9E09F4E47FBEF9B"
+          },
+          "input count": "C4CA4238A0B923820DCC509A6F75849B",
+          "backend name": "509820290D57F333403F490DDE7316F4",
+          "command template": "9D9B20A2F2FD692B80A189864EADD5E1",
+          "input": {
+            "Int i": "CFCD208495D565EF66E7DFF9F98764DA"
+          }
+        },
+        "effectiveCallCachingMode": "ReadAndWriteCache"
+      },
+      "inputs": {
+        "i": 0
+      },
+      "returnCode": 0,
+      "jobId": "11762",
+      "backend": "Local",
+      "end": "2021-05-07T22:46:51.262Z",
+      "stderr": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-t_main_1/shard-0/execution/stderr",
+      "callRoot": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-t_main_1/shard-0",
+      "attempt": 1,
+      "executionEvents": [{
+        "endTime": "2021-05-07T22:46:41.332Z",
+        "description": "WaitingForValueStore",
+        "startTime": "2021-05-07T22:46:41.330Z"
+      }, {
+        "startTime": "2021-05-07T22:46:51.262Z",
+        "endTime": "2021-05-07T22:46:51.262Z",
+        "description": "UpdatingJobStore"
+      }, {
+        "description": "UpdatingCallCache",
+        "startTime": "2021-05-07T22:46:50.189Z",
+        "endTime": "2021-05-07T22:46:51.262Z"
+      }, {
+        "description": "PreparingJob",
+        "startTime": "2021-05-07T22:46:41.332Z",
+        "endTime": "2021-05-07T22:46:41.338Z"
+      }, {
+        "startTime": "2021-05-07T22:46:41.347Z",
+        "endTime": "2021-05-07T22:46:50.189Z",
+        "description": "RunningJob"
+      }, {
+        "startTime": "2021-05-07T22:46:35.543Z",
+        "description": "RequestingExecutionToken",
+        "endTime": "2021-05-07T22:46:41.330Z"
+      }, {
+        "startTime": "2021-05-07T22:46:41.338Z",
+        "endTime": "2021-05-07T22:46:41.347Z",
+        "description": "CallCacheReading"
+      }, {
+        "endTime": "2021-05-07T22:46:35.543Z",
+        "description": "Pending",
+        "startTime": "2021-05-07T22:46:35.542Z"
+      }],
+      "start": "2021-05-07T22:46:35.542Z"
+    }, {
+      "executionStatus": "Done",
+      "stdout": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-t_main_1/shard-1/execution/stdout",
+      "backendStatus": "Done",
+      "commandLine": "echo 1 > t_main_1.1.out\nsleep 2",
+      "shardIndex": 1,
+      "outputs": {
+        "out": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-t_main_1/shard-1/execution/t_main_1.1.out"
+      },
+      "runtimeAttributes": {
+        "maxRetries": "1",
+        "failOnStderr": "false",
+        "continueOnReturnCode": "0"
+      },
+      "callCaching": {
+        "allowResultReuse": true,
+        "hit": false,
+        "result": "Cache Miss",
+        "hashes": {
+          "output count": "C4CA4238A0B923820DCC509A6F75849B",
+          "runtime attribute": {
+            "docker": "N/A",
+            "continueOnReturnCode": "CFCD208495D565EF66E7DFF9F98764DA",
+            "failOnStderr": "68934A3E9455FA72420237EB05902327"
+          },
+          "output expression": {
+            "File out": "46E6E67C4D3A60D2C9E09F4E47FBEF9B"
+          },
+          "input count": "C4CA4238A0B923820DCC509A6F75849B",
+          "backend name": "509820290D57F333403F490DDE7316F4",
+          "command template": "9D9B20A2F2FD692B80A189864EADD5E1",
+          "input": {
+            "Int i": "C4CA4238A0B923820DCC509A6F75849B"
+          }
+        },
+        "effectiveCallCachingMode": "ReadAndWriteCache"
+      },
+      "inputs": {
+        "i": 1
+      },
+      "returnCode": 0,
+      "jobId": "11791",
+      "backend": "Local",
+      "end": "2021-05-07T22:46:54.250Z",
+      "stderr": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-t_main_1/shard-1/execution/stderr",
+      "callRoot": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-t_main_1/shard-1",
+      "attempt": 1,
+      "executionEvents": [{
+        "endTime": "2021-05-07T22:46:54.250Z",
+        "startTime": "2021-05-07T22:46:54.250Z",
+        "description": "UpdatingJobStore"
+      }, {
+        "startTime": "2021-05-07T22:46:43.330Z",
+        "description": "WaitingForValueStore",
+        "endTime": "2021-05-07T22:46:43.331Z"
+      }, {
+        "startTime": "2021-05-07T22:46:35.545Z",
+        "description": "RequestingExecutionToken",
+        "endTime": "2021-05-07T22:46:43.330Z"
+      }, {
+        "startTime": "2021-05-07T22:46:35.543Z",
+        "description": "Pending",
+        "endTime": "2021-05-07T22:46:35.545Z"
+      }, {
+        "description": "UpdatingCallCache",
+        "startTime": "2021-05-07T22:46:51.337Z",
+        "endTime": "2021-05-07T22:46:54.250Z"
+      }, {
+        "endTime": "2021-05-07T22:46:43.339Z",
+        "description": "PreparingJob",
+        "startTime": "2021-05-07T22:46:43.331Z"
+      }, {
+        "description": "CallCacheReading",
+        "endTime": "2021-05-07T22:46:43.346Z",
+        "startTime": "2021-05-07T22:46:43.339Z"
+      }, {
+        "startTime": "2021-05-07T22:46:43.346Z",
+        "endTime": "2021-05-07T22:46:51.337Z",
+        "description": "RunningJob"
+      }],
+      "start": "2021-05-07T22:46:35.543Z"
+    }],
+    "main.sub2_alias": [{
+      "executionStatus": "Done",
+      "subWorkflowMetadata": {
+        "workflowName": "sub2_alias",
+        "rootWorkflowId": "19c73690-0da1-4111-a9e5-4db007d3e30c",
+        "calls": {
+          "sub2.t_sub2_1": [{
+            "executionStatus": "Done",
+            "stdout": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub2_alias/sub2/854df8c1-cb97-4bf1-aad5-c72dda8ed681/call-t_sub2_1/execution/stdout",
+            "backendStatus": "Done",
+            "commandLine": "echo -1 > t_sub2_1.out",
+            "shardIndex": -1,
+            "outputs": {
+              "out": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub2_alias/sub2/854df8c1-cb97-4bf1-aad5-c72dda8ed681/call-t_sub2_1/execution/t_sub2_1.out"
+            },
+            "runtimeAttributes": {
+              "maxRetries": "1",
+              "failOnStderr": "false",
+              "continueOnReturnCode": "0"
+            },
+            "callCaching": {
+              "allowResultReuse": true,
+              "hit": false,
+              "result": "Cache Miss",
+              "hashes": {
+                "output count": "C4CA4238A0B923820DCC509A6F75849B",
+                "runtime attribute": {
+                  "docker": "N/A",
+                  "failOnStderr": "68934A3E9455FA72420237EB05902327",
+                  "continueOnReturnCode": "CFCD208495D565EF66E7DFF9F98764DA"
+                },
+                "output expression": {
+                  "File out": "C4387729A8F7356122CAC2AE0C2E0CDA"
+                },
+                "input count": "CFCD208495D565EF66E7DFF9F98764DA",
+                "backend name": "509820290D57F333403F490DDE7316F4",
+                "command template": "F794EC8A0718CE6240841B028082E38C"
+              },
+              "effectiveCallCachingMode": "ReadAndWriteCache"
+            },
+            "inputs": {
+
+            },
+            "returnCode": 0,
+            "jobId": "11690",
+            "backend": "Local",
+            "end": "2021-05-07T22:46:42.372Z",
+            "stderr": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub2_alias/sub2/854df8c1-cb97-4bf1-aad5-c72dda8ed681/call-t_sub2_1/execution/stderr",
+            "callRoot": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub2_alias/sub2/854df8c1-cb97-4bf1-aad5-c72dda8ed681/call-t_sub2_1",
+            "attempt": 1,
+            "executionEvents": [{
+              "description": "UpdatingCallCache",
+              "startTime": "2021-05-07T22:46:41.144Z",
+              "endTime": "2021-05-07T22:46:42.370Z"
+            }, {
+              "startTime": "2021-05-07T22:46:35.451Z",
+              "description": "CallCacheReading",
+              "endTime": "2021-05-07T22:46:35.542Z"
+            }, {
+              "startTime": "2021-05-07T22:46:33.541Z",
+              "description": "RequestingExecutionToken",
+              "endTime": "2021-05-07T22:46:35.340Z"
+            }, {
+              "startTime": "2021-05-07T22:46:42.370Z",
+              "description": "UpdatingJobStore",
+              "endTime": "2021-05-07T22:46:42.378Z"
+            }, {
+              "startTime": "2021-05-07T22:46:35.542Z",
+              "description": "RunningJob",
+              "endTime": "2021-05-07T22:46:41.144Z"
+            }, {
+              "startTime": "2021-05-07T22:46:33.522Z",
+              "description": "Pending",
+              "endTime": "2021-05-07T22:46:33.541Z"
+            }, {
+              "startTime": "2021-05-07T22:46:35.352Z",
+              "endTime": "2021-05-07T22:46:35.451Z",
+              "description": "PreparingJob"
+            }, {
+              "description": "WaitingForValueStore",
+              "endTime": "2021-05-07T22:46:35.352Z",
+              "startTime": "2021-05-07T22:46:35.340Z"
+            }],
+            "start": "2021-05-07T22:46:33.500Z"
+          }]
+        },
+        "outputs": {
+          "sub2.out": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub2_alias/sub2/854df8c1-cb97-4bf1-aad5-c72dda8ed681/call-t_sub2_1/execution/t_sub2_1.out"
+        },
+        "workflowRoot": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c",
+        "id": "854df8c1-cb97-4bf1-aad5-c72dda8ed681",
+        "inputs": {
+
+        },
+        "status": "Succeeded",
+        "parentWorkflowId": "19c73690-0da1-4111-a9e5-4db007d3e30c",
+        "end": "2021-05-07T22:46:43.721Z",
+        "start": "2021-05-07T22:46:32.428Z"
+      },
+      "shardIndex": -1,
+      "outputs": {
+        "out": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub2_alias/sub2/854df8c1-cb97-4bf1-aad5-c72dda8ed681/call-t_sub2_1/execution/t_sub2_1.out"
+      },
+      "inputs": {
+
+      },
+      "end": "2021-05-07T22:46:43.726Z",
+      "attempt": 1,
+      "executionEvents": [{
+        "startTime": "2021-05-07T22:46:32.394Z",
+        "description": "SubWorkflowPendingState",
+        "endTime": "2021-05-07T22:46:32.408Z"
+      }, {
+        "description": "SubWorkflowRunningState",
+        "startTime": "2021-05-07T22:46:32.438Z",
+        "endTime": "2021-05-07T22:46:43.721Z"
+      }, {
+        "startTime": "2021-05-07T22:46:32.408Z",
+        "description": "WaitingForValueStore",
+        "endTime": "2021-05-07T22:46:32.428Z"
+      }, {
+        "startTime": "2021-05-07T22:46:32.428Z",
+        "endTime": "2021-05-07T22:46:32.438Z",
+        "description": "SubWorkflowPreparingState"
+      }],
+      "start": "2021-05-07T22:46:32.390Z"
+    }],
+    "main.t_main_1_alias": [{
+      "executionStatus": "Done",
+      "stdout": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-t_main_1_alias/execution/stdout",
+      "backendStatus": "Done",
+      "commandLine": "echo -1 > t_main_1.-1.out\nsleep 2",
+      "shardIndex": -1,
+      "outputs": {
+        "out": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-t_main_1_alias/execution/t_main_1.-1.out"
+      },
+      "runtimeAttributes": {
+        "maxRetries": "1",
+        "failOnStderr": "false",
+        "continueOnReturnCode": "0"
+      },
+      "callCaching": {
+        "allowResultReuse": true,
+        "hit": false,
+        "result": "Cache Miss",
+        "hashes": {
+          "output count": "C4CA4238A0B923820DCC509A6F75849B",
+          "runtime attribute": {
+            "docker": "N/A",
+            "failOnStderr": "68934A3E9455FA72420237EB05902327",
+            "continueOnReturnCode": "CFCD208495D565EF66E7DFF9F98764DA"
+          },
+          "output expression": {
+            "File out": "46E6E67C4D3A60D2C9E09F4E47FBEF9B"
+          },
+          "input count": "C4CA4238A0B923820DCC509A6F75849B",
+          "backend name": "509820290D57F333403F490DDE7316F4",
+          "command template": "9D9B20A2F2FD692B80A189864EADD5E1",
+          "input": {
+            "Int i": "6BB61E3B7BCE0931DA574D19D1D82C88"
+          }
+        },
+        "effectiveCallCachingMode": "ReadAndWriteCache"
+      },
+      "inputs": {
+        "i": -1
+      },
+      "returnCode": 0,
+      "jobId": "11748",
+      "backend": "Local",
+      "end": "2021-05-07T22:46:48.259Z",
+      "stderr": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-t_main_1_alias/execution/stderr",
+      "callRoot": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-t_main_1_alias",
+      "attempt": 1,
+      "executionEvents": [{
+        "description": "UpdatingCallCache",
+        "endTime": "2021-05-07T22:46:48.258Z",
+        "startTime": "2021-05-07T22:46:46.667Z"
+      }, {
+        "startTime": "2021-05-07T22:46:48.258Z",
+        "endTime": "2021-05-07T22:46:48.259Z",
+        "description": "UpdatingJobStore"
+      }, {
+        "description": "Pending",
+        "endTime": "2021-05-07T22:46:33.541Z",
+        "startTime": "2021-05-07T22:46:33.522Z"
+      }, {
+        "endTime": "2021-05-07T22:46:39.331Z",
+        "description": "RequestingExecutionToken",
+        "startTime": "2021-05-07T22:46:33.541Z"
+      }, {
+        "startTime": "2021-05-07T22:46:39.356Z",
+        "endTime": "2021-05-07T22:46:46.667Z",
+        "description": "RunningJob"
+      }, {
+        "description": "CallCacheReading",
+        "startTime": "2021-05-07T22:46:39.338Z",
+        "endTime": "2021-05-07T22:46:39.356Z"
+      }, {
+        "startTime": "2021-05-07T22:46:39.332Z",
+        "endTime": "2021-05-07T22:46:39.338Z",
+        "description": "PreparingJob"
+      }, {
+        "description": "WaitingForValueStore",
+        "startTime": "2021-05-07T22:46:39.331Z",
+        "endTime": "2021-05-07T22:46:39.332Z"
+      }],
+      "start": "2021-05-07T22:46:33.498Z"
+    }],
+    "main.sub": [{
+      "executionStatus": "Done",
+      "subWorkflowMetadata": {
+        "workflowName": "sub",
+        "rootWorkflowId": "19c73690-0da1-4111-a9e5-4db007d3e30c",
+        "calls": {
+          "sub.subsub": [{
+            "executionStatus": "Done",
+            "subWorkflowMetadata": {
+              "workflowName": "subsub",
+              "rootWorkflowId": "19c73690-0da1-4111-a9e5-4db007d3e30c",
+              "calls": {
+                "subsub.t_subsub_1": [{
+                  "executionStatus": "Done",
+                  "stdout": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-0/subsub/401e9e77-32c2-4a39-9169-1df48212b688/call-t_subsub_1/shard-0/execution/stdout",
+                  "backendStatus": "Done",
+                  "commandLine": "echo 0.0.0 > t_subsub_1.0.0.0.out",
+                  "shardIndex": 0,
+                  "outputs": {
+                    "out": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-0/subsub/401e9e77-32c2-4a39-9169-1df48212b688/call-t_subsub_1/shard-0/execution/t_subsub_1.0.0.0.out"
+                  },
+                  "runtimeAttributes": {
+                    "maxRetries": "1",
+                    "failOnStderr": "false",
+                    "continueOnReturnCode": "0"
+                  },
+                  "callCaching": {
+                    "allowResultReuse": true,
+                    "hit": false,
+                    "result": "Cache Miss",
+                    "hashes": {
+                      "output count": "C4CA4238A0B923820DCC509A6F75849B",
+                      "runtime attribute": {
+                        "continueOnReturnCode": "CFCD208495D565EF66E7DFF9F98764DA",
+                        "failOnStderr": "68934A3E9455FA72420237EB05902327",
+                        "docker": "N/A"
+                      },
+                      "output expression": {
+                        "File out": "558798620DC147BDA7BF2B5E7CEB52AD"
+                      },
+                      "input count": "ECCBC87E4B5CE2FE28308FD9F2A7BAF3",
+                      "backend name": "509820290D57F333403F490DDE7316F4",
+                      "command template": "8FB83256E2BEBDC29C4B9B3E81568989",
+                      "input": {
+                        "Int i": "CFCD208495D565EF66E7DFF9F98764DA",
+                        "Int k": "CFCD208495D565EF66E7DFF9F98764DA",
+                        "Int j": "CFCD208495D565EF66E7DFF9F98764DA"
+                      }
+                    },
+                    "effectiveCallCachingMode": "ReadAndWriteCache"
+                  },
+                  "inputs": {
+                    "k": 0,
+                    "i": 0,
+                    "j": 0
+                  },
+                  "returnCode": 0,
+                  "jobId": "11968",
+                  "backend": "Local",
+                  "end": "2021-05-07T22:47:09.261Z",
+                  "stderr": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-0/subsub/401e9e77-32c2-4a39-9169-1df48212b688/call-t_subsub_1/shard-0/execution/stderr",
+                  "callRoot": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-0/subsub/401e9e77-32c2-4a39-9169-1df48212b688/call-t_subsub_1/shard-0",
+                  "attempt": 1,
+                  "executionEvents": [{
+                    "description": "RunningJob",
+                    "endTime": "2021-05-07T22:47:07.331Z",
+                    "startTime": "2021-05-07T22:47:01.343Z"
+                  }, {
+                    "description": "CallCacheReading",
+                    "startTime": "2021-05-07T22:47:01.338Z",
+                    "endTime": "2021-05-07T22:47:01.343Z"
+                  }, {
+                    "startTime": "2021-05-07T22:47:09.261Z",
+                    "endTime": "2021-05-07T22:47:09.261Z",
+                    "description": "UpdatingJobStore"
+                  }, {
+                    "description": "RequestingExecutionToken",
+                    "endTime": "2021-05-07T22:47:01.331Z",
+                    "startTime": "2021-05-07T22:46:43.777Z"
+                  }, {
+                    "startTime": "2021-05-07T22:47:01.331Z",
+                    "endTime": "2021-05-07T22:47:01.332Z",
+                    "description": "WaitingForValueStore"
+                  }, {
+                    "startTime": "2021-05-07T22:47:07.331Z",
+                    "endTime": "2021-05-07T22:47:09.261Z",
+                    "description": "UpdatingCallCache"
+                  }, {
+                    "description": "PreparingJob",
+                    "startTime": "2021-05-07T22:47:01.332Z",
+                    "endTime": "2021-05-07T22:47:01.338Z"
+                  }, {
+                    "startTime": "2021-05-07T22:46:43.776Z",
+                    "endTime": "2021-05-07T22:46:43.777Z",
+                    "description": "Pending"
+                  }],
+                  "start": "2021-05-07T22:46:43.775Z"
+                }, {
+                  "executionStatus": "Done",
+                  "stdout": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-0/subsub/401e9e77-32c2-4a39-9169-1df48212b688/call-t_subsub_1/shard-1/execution/stdout",
+                  "backendStatus": "Done",
+                  "commandLine": "echo 0.0.1 > t_subsub_1.0.0.1.out",
+                  "shardIndex": 1,
+                  "outputs": {
+                    "out": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-0/subsub/401e9e77-32c2-4a39-9169-1df48212b688/call-t_subsub_1/shard-1/execution/t_subsub_1.0.0.1.out"
+                  },
+                  "runtimeAttributes": {
+                    "maxRetries": "1",
+                    "continueOnReturnCode": "0",
+                    "failOnStderr": "false"
+                  },
+                  "callCaching": {
+                    "allowResultReuse": true,
+                    "hit": false,
+                    "result": "Cache Miss",
+                    "hashes": {
+                      "output count": "C4CA4238A0B923820DCC509A6F75849B",
+                      "runtime attribute": {
+                        "docker": "N/A",
+                        "failOnStderr": "68934A3E9455FA72420237EB05902327",
+                        "continueOnReturnCode": "CFCD208495D565EF66E7DFF9F98764DA"
+                      },
+                      "output expression": {
+                        "File out": "558798620DC147BDA7BF2B5E7CEB52AD"
+                      },
+                      "input count": "ECCBC87E4B5CE2FE28308FD9F2A7BAF3",
+                      "backend name": "509820290D57F333403F490DDE7316F4",
+                      "command template": "8FB83256E2BEBDC29C4B9B3E81568989",
+                      "input": {
+                        "Int j": "CFCD208495D565EF66E7DFF9F98764DA",
+                        "Int k": "C4CA4238A0B923820DCC509A6F75849B",
+                        "Int i": "CFCD208495D565EF66E7DFF9F98764DA"
+                      }
+                    },
+                    "effectiveCallCachingMode": "ReadAndWriteCache"
+                  },
+                  "inputs": {
+                    "k": 1,
+                    "i": 0,
+                    "j": 0
+                  },
+                  "returnCode": 0,
+                  "jobId": "11988",
+                  "backend": "Local",
+                  "end": "2021-05-07T22:47:12.251Z",
+                  "stderr": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-0/subsub/401e9e77-32c2-4a39-9169-1df48212b688/call-t_subsub_1/shard-1/execution/stderr",
+                  "callRoot": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-0/subsub/401e9e77-32c2-4a39-9169-1df48212b688/call-t_subsub_1/shard-1",
+                  "attempt": 1,
+                  "executionEvents": [{
+                    "startTime": "2021-05-07T22:47:12.250Z",
+                    "endTime": "2021-05-07T22:47:12.251Z",
+                    "description": "UpdatingJobStore"
+                  }, {
+                    "description": "WaitingForValueStore",
+                    "startTime": "2021-05-07T22:47:03.330Z",
+                    "endTime": "2021-05-07T22:47:03.331Z"
+                  }, {
+                    "description": "RequestingExecutionToken",
+                    "startTime": "2021-05-07T22:46:43.779Z",
+                    "endTime": "2021-05-07T22:47:03.330Z"
+                  }, {
+                    "startTime": "2021-05-07T22:47:03.337Z",
+                    "endTime": "2021-05-07T22:47:03.345Z",
+                    "description": "CallCacheReading"
+                  }, {
+                    "startTime": "2021-05-07T22:47:03.345Z",
+                    "endTime": "2021-05-07T22:47:09.967Z",
+                    "description": "RunningJob"
+                  }, {
+                    "startTime": "2021-05-07T22:46:43.778Z",
+                    "description": "Pending",
+                    "endTime": "2021-05-07T22:46:43.779Z"
+                  }, {
+                    "startTime": "2021-05-07T22:47:03.331Z",
+                    "endTime": "2021-05-07T22:47:03.337Z",
+                    "description": "PreparingJob"
+                  }, {
+                    "startTime": "2021-05-07T22:47:09.967Z",
+                    "endTime": "2021-05-07T22:47:12.250Z",
+                    "description": "UpdatingCallCache"
+                  }],
+                  "start": "2021-05-07T22:46:43.778Z"
+                }]
+              },
+              "outputs": {
+                "subsub.out": ["/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-0/subsub/401e9e77-32c2-4a39-9169-1df48212b688/call-t_subsub_1/shard-0/execution/t_subsub_1.0.0.0.out", "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-0/subsub/401e9e77-32c2-4a39-9169-1df48212b688/call-t_subsub_1/shard-1/execution/t_subsub_1.0.0.1.out"]
+              },
+              "workflowRoot": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c",
+              "id": "401e9e77-32c2-4a39-9169-1df48212b688",
+              "inputs": {
+                "j": 0,
+                "i": 0
+              },
+              "status": "Succeeded",
+              "parentWorkflowId": "ac45c74d-01d6-4b60-8d62-ae09ff4690d9",
+              "end": "2021-05-07T22:47:14.382Z",
+              "start": "2021-05-07T22:46:39.663Z"
+            },
+            "shardIndex": 0,
+            "outputs": {
+              "out": ["/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-0/subsub/401e9e77-32c2-4a39-9169-1df48212b688/call-t_subsub_1/shard-0/execution/t_subsub_1.0.0.0.out", "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-0/subsub/401e9e77-32c2-4a39-9169-1df48212b688/call-t_subsub_1/shard-1/execution/t_subsub_1.0.0.1.out"]
+            },
+            "inputs": {
+              "j": 0,
+              "i": 0
+            },
+            "end": "2021-05-07T22:47:14.382Z",
+            "attempt": 1,
+            "executionEvents": [{
+              "startTime": "2021-05-07T22:46:39.663Z",
+              "description": "WaitingForValueStore",
+              "endTime": "2021-05-07T22:46:39.665Z"
+            }, {
+              "startTime": "2021-05-07T22:46:39.679Z",
+              "endTime": "2021-05-07T22:47:14.382Z",
+              "description": "SubWorkflowRunningState"
+            }, {
+              "startTime": "2021-05-07T22:46:39.662Z",
+              "endTime": "2021-05-07T22:46:39.663Z",
+              "description": "SubWorkflowPendingState"
+            }, {
+              "startTime": "2021-05-07T22:46:39.665Z",
+              "endTime": "2021-05-07T22:46:39.679Z",
+              "description": "SubWorkflowPreparingState"
+            }],
+            "start": "2021-05-07T22:46:39.662Z"
+          }, {
+            "executionStatus": "Done",
+            "subWorkflowMetadata": {
+              "workflowName": "subsub",
+              "rootWorkflowId": "19c73690-0da1-4111-a9e5-4db007d3e30c",
+              "calls": {
+                "subsub.t_subsub_1": [{
+                  "executionStatus": "Done",
+                  "stdout": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-1/subsub/afe48722-2bf7-4c3d-b030-73a02f1f8c1b/call-t_subsub_1/shard-0/execution/stdout",
+                  "backendStatus": "Done",
+                  "commandLine": "echo 0.1.0 > t_subsub_1.0.1.0.out",
+                  "shardIndex": 0,
+                  "outputs": {
+                    "out": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-1/subsub/afe48722-2bf7-4c3d-b030-73a02f1f8c1b/call-t_subsub_1/shard-0/execution/t_subsub_1.0.1.0.out"
+                  },
+                  "runtimeAttributes": {
+                    "maxRetries": "1",
+                    "failOnStderr": "false",
+                    "continueOnReturnCode": "0"
+                  },
+                  "callCaching": {
+                    "allowResultReuse": true,
+                    "hit": false,
+                    "result": "Cache Miss",
+                    "hashes": {
+                      "output count": "C4CA4238A0B923820DCC509A6F75849B",
+                      "runtime attribute": {
+                        "docker": "N/A",
+                        "continueOnReturnCode": "CFCD208495D565EF66E7DFF9F98764DA",
+                        "failOnStderr": "68934A3E9455FA72420237EB05902327"
+                      },
+                      "output expression": {
+                        "File out": "558798620DC147BDA7BF2B5E7CEB52AD"
+                      },
+                      "input count": "ECCBC87E4B5CE2FE28308FD9F2A7BAF3",
+                      "backend name": "509820290D57F333403F490DDE7316F4",
+                      "command template": "8FB83256E2BEBDC29C4B9B3E81568989",
+                      "input": {
+                        "Int j": "C4CA4238A0B923820DCC509A6F75849B",
+                        "Int i": "CFCD208495D565EF66E7DFF9F98764DA",
+                        "Int k": "CFCD208495D565EF66E7DFF9F98764DA"
+                      }
+                    },
+                    "effectiveCallCachingMode": "ReadAndWriteCache"
+                  },
+                  "inputs": {
+                    "k": 0,
+                    "i": 0,
+                    "j": 1
+                  },
+                  "returnCode": 0,
+                  "jobId": "11930",
+                  "backend": "Local",
+                  "end": "2021-05-07T22:47:03.274Z",
+                  "stderr": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-1/subsub/afe48722-2bf7-4c3d-b030-73a02f1f8c1b/call-t_subsub_1/shard-0/execution/stderr",
+                  "callRoot": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-1/subsub/afe48722-2bf7-4c3d-b030-73a02f1f8c1b/call-t_subsub_1/shard-0",
+                  "attempt": 1,
+                  "executionEvents": [{
+                    "startTime": "2021-05-07T22:47:03.273Z",
+                    "endTime": "2021-05-07T22:47:03.274Z",
+                    "description": "UpdatingJobStore"
+                  }, {
+                    "startTime": "2021-05-07T22:46:57.343Z",
+                    "description": "RunningJob",
+                    "endTime": "2021-05-07T22:47:03.073Z"
+                  }, {
+                    "startTime": "2021-05-07T22:46:43.762Z",
+                    "description": "RequestingExecutionToken",
+                    "endTime": "2021-05-07T22:46:57.330Z"
+                  }, {
+                    "startTime": "2021-05-07T22:47:03.073Z",
+                    "endTime": "2021-05-07T22:47:03.273Z",
+                    "description": "UpdatingCallCache"
+                  }, {
+                    "startTime": "2021-05-07T22:46:43.761Z",
+                    "endTime": "2021-05-07T22:46:43.762Z",
+                    "description": "Pending"
+                  }, {
+                    "startTime": "2021-05-07T22:46:57.330Z",
+                    "description": "WaitingForValueStore",
+                    "endTime": "2021-05-07T22:46:57.331Z"
+                  }, {
+                    "endTime": "2021-05-07T22:46:57.343Z",
+                    "startTime": "2021-05-07T22:46:57.338Z",
+                    "description": "CallCacheReading"
+                  }, {
+                    "startTime": "2021-05-07T22:46:57.331Z",
+                    "description": "PreparingJob",
+                    "endTime": "2021-05-07T22:46:57.338Z"
+                  }],
+                  "start": "2021-05-07T22:46:43.761Z"
+                }, {
+                  "executionStatus": "Done",
+                  "stdout": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-1/subsub/afe48722-2bf7-4c3d-b030-73a02f1f8c1b/call-t_subsub_1/shard-1/execution/stdout",
+                  "backendStatus": "Done",
+                  "commandLine": "echo 0.1.1 > t_subsub_1.0.1.1.out",
+                  "shardIndex": 1,
+                  "outputs": {
+                    "out": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-1/subsub/afe48722-2bf7-4c3d-b030-73a02f1f8c1b/call-t_subsub_1/shard-1/execution/t_subsub_1.0.1.1.out"
+                  },
+                  "runtimeAttributes": {
+                    "maxRetries": "1",
+                    "failOnStderr": "false",
+                    "continueOnReturnCode": "0"
+                  },
+                  "callCaching": {
+                    "allowResultReuse": true,
+                    "hit": false,
+                    "result": "Cache Miss",
+                    "hashes": {
+                      "output count": "C4CA4238A0B923820DCC509A6F75849B",
+                      "runtime attribute": {
+                        "docker": "N/A",
+                        "failOnStderr": "68934A3E9455FA72420237EB05902327",
+                        "continueOnReturnCode": "CFCD208495D565EF66E7DFF9F98764DA"
+                      },
+                      "output expression": {
+                        "File out": "558798620DC147BDA7BF2B5E7CEB52AD"
+                      },
+                      "input count": "ECCBC87E4B5CE2FE28308FD9F2A7BAF3",
+                      "backend name": "509820290D57F333403F490DDE7316F4",
+                      "command template": "8FB83256E2BEBDC29C4B9B3E81568989",
+                      "input": {
+                        "Int j": "C4CA4238A0B923820DCC509A6F75849B",
+                        "Int k": "C4CA4238A0B923820DCC509A6F75849B",
+                        "Int i": "CFCD208495D565EF66E7DFF9F98764DA"
+                      }
+                    },
+                    "effectiveCallCachingMode": "ReadAndWriteCache"
+                  },
+                  "inputs": {
+                    "k": 1,
+                    "i": 0,
+                    "j": 1
+                  },
+                  "returnCode": 0,
+                  "jobId": "11949",
+                  "backend": "Local",
+                  "end": "2021-05-07T22:47:06.265Z",
+                  "stderr": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-1/subsub/afe48722-2bf7-4c3d-b030-73a02f1f8c1b/call-t_subsub_1/shard-1/execution/stderr",
+                  "callRoot": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-1/subsub/afe48722-2bf7-4c3d-b030-73a02f1f8c1b/call-t_subsub_1/shard-1",
+                  "attempt": 1,
+                  "executionEvents": [{
+                    "startTime": "2021-05-07T22:46:43.762Z",
+                    "endTime": "2021-05-07T22:46:59.320Z",
+                    "description": "RequestingExecutionToken"
+                  }, {
+                    "startTime": "2021-05-07T22:46:59.320Z",
+                    "endTime": "2021-05-07T22:46:59.321Z",
+                    "description": "WaitingForValueStore"
+                  }, {
+                    "description": "UpdatingJobStore",
+                    "startTime": "2021-05-07T22:47:06.265Z",
+                    "endTime": "2021-05-07T22:47:06.266Z"
+                  }, {
+                    "description": "RunningJob",
+                    "endTime": "2021-05-07T22:47:04.758Z",
+                    "startTime": "2021-05-07T22:46:59.332Z"
+                  }, {
+                    "startTime": "2021-05-07T22:47:04.758Z",
+                    "endTime": "2021-05-07T22:47:06.265Z",
+                    "description": "UpdatingCallCache"
+                  }, {
+                    "startTime": "2021-05-07T22:46:59.321Z",
+                    "endTime": "2021-05-07T22:46:59.326Z",
+                    "description": "PreparingJob"
+                  }, {
+                    "startTime": "2021-05-07T22:46:59.326Z",
+                    "endTime": "2021-05-07T22:46:59.332Z",
+                    "description": "CallCacheReading"
+                  }, {
+                    "startTime": "2021-05-07T22:46:43.762Z",
+                    "endTime": "2021-05-07T22:46:43.762Z",
+                    "description": "Pending"
+                  }],
+                  "start": "2021-05-07T22:46:43.762Z"
+                }]
+              },
+              "outputs": {
+                "subsub.out": ["/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-1/subsub/afe48722-2bf7-4c3d-b030-73a02f1f8c1b/call-t_subsub_1/shard-0/execution/t_subsub_1.0.1.0.out", "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-1/subsub/afe48722-2bf7-4c3d-b030-73a02f1f8c1b/call-t_subsub_1/shard-1/execution/t_subsub_1.0.1.1.out"]
+              },
+              "workflowRoot": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c",
+              "id": "afe48722-2bf7-4c3d-b030-73a02f1f8c1b",
+              "inputs": {
+                "j": 1,
+                "i": 0
+              },
+              "status": "Succeeded",
+              "parentWorkflowId": "ac45c74d-01d6-4b60-8d62-ae09ff4690d9",
+              "end": "2021-05-07T22:47:09.252Z",
+              "start": "2021-05-07T22:46:39.662Z"
+            },
+            "shardIndex": 1,
+            "outputs": {
+              "out": ["/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-1/subsub/afe48722-2bf7-4c3d-b030-73a02f1f8c1b/call-t_subsub_1/shard-0/execution/t_subsub_1.0.1.0.out", "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-1/subsub/afe48722-2bf7-4c3d-b030-73a02f1f8c1b/call-t_subsub_1/shard-1/execution/t_subsub_1.0.1.1.out"]
+            },
+            "inputs": {
+              "j": 1,
+              "i": 0
+            },
+            "end": "2021-05-07T22:47:09.252Z",
+            "attempt": 1,
+            "executionEvents": [{
+              "startTime": "2021-05-07T22:46:39.663Z",
+              "description": "SubWorkflowPreparingState",
+              "endTime": "2021-05-07T22:46:39.676Z"
+            }, {
+              "endTime": "2021-05-07T22:46:39.662Z",
+              "description": "SubWorkflowPendingState",
+              "startTime": "2021-05-07T22:46:39.662Z"
+            }, {
+              "startTime": "2021-05-07T22:46:39.662Z",
+              "endTime": "2021-05-07T22:46:39.663Z",
+              "description": "WaitingForValueStore"
+            }, {
+              "startTime": "2021-05-07T22:46:39.676Z",
+              "description": "SubWorkflowRunningState",
+              "endTime": "2021-05-07T22:47:09.252Z"
+            }],
+            "start": "2021-05-07T22:46:39.661Z"
+          }],
+          "sub.t_sub_1": [{
+            "executionStatus": "Done",
+            "stdout": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-t_sub_1/execution/stdout",
+            "backendStatus": "Done",
+            "commandLine": "echo 0 > t_sub_1.0.out",
+            "shardIndex": -1,
+            "outputs": {
+              "out": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-t_sub_1/execution/t_sub_1.0.out"
+            },
+            "runtimeAttributes": {
+              "maxRetries": "1",
+              "failOnStderr": "false",
+              "continueOnReturnCode": "0"
+            },
+            "callCaching": {
+              "allowResultReuse": true,
+              "hit": false,
+              "result": "Cache Miss",
+              "hashes": {
+                "output count": "C4CA4238A0B923820DCC509A6F75849B",
+                "runtime attribute": {
+                  "docker": "N/A",
+                  "continueOnReturnCode": "CFCD208495D565EF66E7DFF9F98764DA",
+                  "failOnStderr": "68934A3E9455FA72420237EB05902327"
+                },
+                "output expression": {
+                  "File out": "D20B10A8C3BCF4A07F0537C0E8DAA6AE"
+                },
+                "input count": "C4CA4238A0B923820DCC509A6F75849B",
+                "backend name": "509820290D57F333403F490DDE7316F4",
+                "command template": "6670CB2B2D7C7368CDE58755FD806DA0",
+                "input": {
+                  "Int i": "CFCD208495D565EF66E7DFF9F98764DA"
+                }
+              },
+              "effectiveCallCachingMode": "ReadAndWriteCache"
+            },
+            "inputs": {
+              "i": 0
+            },
+            "returnCode": 0,
+            "jobId": "11832",
+            "backend": "Local",
+            "end": "2021-05-07T22:46:54.252Z",
+            "stderr": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-t_sub_1/execution/stderr",
+            "callRoot": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-t_sub_1",
+            "attempt": 1,
+            "executionEvents": [{
+              "description": "Pending",
+              "endTime": "2021-05-07T22:46:37.623Z",
+              "startTime": "2021-05-07T22:46:37.622Z"
+            }, {
+              "description": "CallCacheReading",
+              "startTime": "2021-05-07T22:46:47.336Z",
+              "endTime": "2021-05-07T22:46:47.341Z"
+            }, {
+              "startTime": "2021-05-07T22:46:37.623Z",
+              "description": "RequestingExecutionToken",
+              "endTime": "2021-05-07T22:46:47.330Z"
+            }, {
+              "startTime": "2021-05-07T22:46:47.330Z",
+              "description": "WaitingForValueStore",
+              "endTime": "2021-05-07T22:46:47.331Z"
+            }, {
+              "startTime": "2021-05-07T22:46:53.387Z",
+              "endTime": "2021-05-07T22:46:54.252Z",
+              "description": "UpdatingCallCache"
+            }, {
+              "startTime": "2021-05-07T22:46:54.252Z",
+              "endTime": "2021-05-07T22:46:54.252Z",
+              "description": "UpdatingJobStore"
+            }, {
+              "startTime": "2021-05-07T22:46:47.341Z",
+              "endTime": "2021-05-07T22:46:53.387Z",
+              "description": "RunningJob"
+            }, {
+              "startTime": "2021-05-07T22:46:47.331Z",
+              "endTime": "2021-05-07T22:46:47.336Z",
+              "description": "PreparingJob"
+            }],
+            "start": "2021-05-07T22:46:37.621Z"
+          }]
+        },
+        "outputs": {
+          "sub.out": [["/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-0/subsub/401e9e77-32c2-4a39-9169-1df48212b688/call-t_subsub_1/shard-0/execution/t_subsub_1.0.0.0.out", "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-0/subsub/401e9e77-32c2-4a39-9169-1df48212b688/call-t_subsub_1/shard-1/execution/t_subsub_1.0.0.1.out"], ["/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-1/subsub/afe48722-2bf7-4c3d-b030-73a02f1f8c1b/call-t_subsub_1/shard-0/execution/t_subsub_1.0.1.0.out", "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-1/subsub/afe48722-2bf7-4c3d-b030-73a02f1f8c1b/call-t_subsub_1/shard-1/execution/t_subsub_1.0.1.1.out"]]
+        },
+        "workflowRoot": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c",
+        "id": "ac45c74d-01d6-4b60-8d62-ae09ff4690d9",
+        "inputs": {
+          "i": 0
+        },
+        "status": "Succeeded",
+        "parentWorkflowId": "19c73690-0da1-4111-a9e5-4db007d3e30c",
+        "end": "2021-05-07T22:47:17.392Z",
+        "start": "2021-05-07T22:46:35.552Z"
+      },
+      "shardIndex": 0,
+      "outputs": {
+        "out": [["/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-0/subsub/401e9e77-32c2-4a39-9169-1df48212b688/call-t_subsub_1/shard-0/execution/t_subsub_1.0.0.0.out", "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-0/subsub/401e9e77-32c2-4a39-9169-1df48212b688/call-t_subsub_1/shard-1/execution/t_subsub_1.0.0.1.out"], ["/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-1/subsub/afe48722-2bf7-4c3d-b030-73a02f1f8c1b/call-t_subsub_1/shard-0/execution/t_subsub_1.0.1.0.out", "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-1/subsub/afe48722-2bf7-4c3d-b030-73a02f1f8c1b/call-t_subsub_1/shard-1/execution/t_subsub_1.0.1.1.out"]]
+      },
+      "inputs": {
+        "i": 0
+      },
+      "end": "2021-05-07T22:47:17.392Z",
+      "attempt": 1,
+      "executionEvents": [{
+        "description": "WaitingForValueStore",
+        "startTime": "2021-05-07T22:46:35.551Z",
+        "endTime": "2021-05-07T22:46:35.554Z"
+      }, {
+        "startTime": "2021-05-07T22:46:35.548Z",
+        "endTime": "2021-05-07T22:46:35.551Z",
+        "description": "SubWorkflowPendingState"
+      }, {
+        "description": "SubWorkflowPreparingState",
+        "startTime": "2021-05-07T22:46:35.554Z",
+        "endTime": "2021-05-07T22:46:35.585Z"
+      }, {
+        "startTime": "2021-05-07T22:46:35.585Z",
+        "description": "SubWorkflowRunningState",
+        "endTime": "2021-05-07T22:47:17.392Z"
+      }],
+      "start": "2021-05-07T22:46:35.550Z"
+    }, {
+      "executionStatus": "Done",
+      "subWorkflowMetadata": {
+        "workflowName": "sub",
+        "rootWorkflowId": "19c73690-0da1-4111-a9e5-4db007d3e30c",
+        "calls": {
+          "sub.subsub": [{
+            "executionStatus": "Done",
+            "subWorkflowMetadata": {
+              "workflowName": "subsub",
+              "rootWorkflowId": "19c73690-0da1-4111-a9e5-4db007d3e30c",
+              "calls": {
+                "subsub.t_subsub_1": [{
+                  "executionStatus": "Done",
+                  "stdout": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-0/subsub/66d9c797-242b-4c04-8dce-08f6361ed29e/call-t_subsub_1/shard-0/execution/stdout",
+                  "backendStatus": "Done",
+                  "commandLine": "echo 1.0.0 > t_subsub_1.1.0.0.out",
+                  "shardIndex": 0,
+                  "outputs": {
+                    "out": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-0/subsub/66d9c797-242b-4c04-8dce-08f6361ed29e/call-t_subsub_1/shard-0/execution/t_subsub_1.1.0.0.out"
+                  },
+                  "runtimeAttributes": {
+                    "maxRetries": "1",
+                    "failOnStderr": "false",
+                    "continueOnReturnCode": "0"
+                  },
+                  "callCaching": {
+                    "allowResultReuse": true,
+                    "hit": false,
+                    "result": "Cache Miss",
+                    "hashes": {
+                      "output count": "C4CA4238A0B923820DCC509A6F75849B",
+                      "runtime attribute": {
+                        "docker": "N/A",
+                        "failOnStderr": "68934A3E9455FA72420237EB05902327",
+                        "continueOnReturnCode": "CFCD208495D565EF66E7DFF9F98764DA"
+                      },
+                      "output expression": {
+                        "File out": "558798620DC147BDA7BF2B5E7CEB52AD"
+                      },
+                      "input count": "ECCBC87E4B5CE2FE28308FD9F2A7BAF3",
+                      "backend name": "509820290D57F333403F490DDE7316F4",
+                      "command template": "8FB83256E2BEBDC29C4B9B3E81568989",
+                      "input": {
+                        "Int j": "CFCD208495D565EF66E7DFF9F98764DA",
+                        "Int k": "CFCD208495D565EF66E7DFF9F98764DA",
+                        "Int i": "C4CA4238A0B923820DCC509A6F75849B"
+                      }
+                    },
+                    "effectiveCallCachingMode": "ReadAndWriteCache"
+                  },
+                  "inputs": {
+                    "k": 0,
+                    "i": 1,
+                    "j": 0
+                  },
+                  "returnCode": 0,
+                  "jobId": "11892",
+                  "backend": "Local",
+                  "end": "2021-05-07T22:47:00.262Z",
+                  "stderr": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-0/subsub/66d9c797-242b-4c04-8dce-08f6361ed29e/call-t_subsub_1/shard-0/execution/stderr",
+                  "callRoot": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-0/subsub/66d9c797-242b-4c04-8dce-08f6361ed29e/call-t_subsub_1/shard-0",
+                  "attempt": 1,
+                  "executionEvents": [{
+                    "endTime": "2021-05-07T22:46:53.320Z",
+                    "description": "RequestingExecutionToken",
+                    "startTime": "2021-05-07T22:46:43.763Z"
+                  }, {
+                    "startTime": "2021-05-07T22:46:53.320Z",
+                    "endTime": "2021-05-07T22:46:53.321Z",
+                    "description": "WaitingForValueStore"
+                  }, {
+                    "endTime": "2021-05-07T22:46:53.334Z",
+                    "startTime": "2021-05-07T22:46:53.328Z",
+                    "description": "CallCacheReading"
+                  }, {
+                    "description": "UpdatingCallCache",
+                    "endTime": "2021-05-07T22:47:00.261Z",
+                    "startTime": "2021-05-07T22:46:58.508Z"
+                  }, {
+                    "description": "PreparingJob",
+                    "endTime": "2021-05-07T22:46:53.328Z",
+                    "startTime": "2021-05-07T22:46:53.321Z"
+                  }, {
+                    "startTime": "2021-05-07T22:46:53.334Z",
+                    "description": "RunningJob",
+                    "endTime": "2021-05-07T22:46:58.508Z"
+                  }, {
+                    "startTime": "2021-05-07T22:46:43.761Z",
+                    "endTime": "2021-05-07T22:46:43.763Z",
+                    "description": "Pending"
+                  }, {
+                    "startTime": "2021-05-07T22:47:00.261Z",
+                    "endTime": "2021-05-07T22:47:00.262Z",
+                    "description": "UpdatingJobStore"
+                  }],
+                  "start": "2021-05-07T22:46:43.761Z"
+                }, {
+                  "executionStatus": "Done",
+                  "stdout": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-0/subsub/66d9c797-242b-4c04-8dce-08f6361ed29e/call-t_subsub_1/shard-1/execution/stdout",
+                  "backendStatus": "Done",
+                  "commandLine": "echo 1.0.1 > t_subsub_1.1.0.1.out",
+                  "shardIndex": 1,
+                  "outputs": {
+                    "out": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-0/subsub/66d9c797-242b-4c04-8dce-08f6361ed29e/call-t_subsub_1/shard-1/execution/t_subsub_1.1.0.1.out"
+                  },
+                  "runtimeAttributes": {
+                    "maxRetries": "1",
+                    "failOnStderr": "false",
+                    "continueOnReturnCode": "0"
+                  },
+                  "callCaching": {
+                    "allowResultReuse": true,
+                    "hit": false,
+                    "result": "Cache Miss",
+                    "hashes": {
+                      "output count": "C4CA4238A0B923820DCC509A6F75849B",
+                      "runtime attribute": {
+                        "docker": "N/A",
+                        "failOnStderr": "68934A3E9455FA72420237EB05902327",
+                        "continueOnReturnCode": "CFCD208495D565EF66E7DFF9F98764DA"
+                      },
+                      "output expression": {
+                        "File out": "558798620DC147BDA7BF2B5E7CEB52AD"
+                      },
+                      "input count": "ECCBC87E4B5CE2FE28308FD9F2A7BAF3",
+                      "backend name": "509820290D57F333403F490DDE7316F4",
+                      "command template": "8FB83256E2BEBDC29C4B9B3E81568989",
+                      "input": {
+                        "Int j": "CFCD208495D565EF66E7DFF9F98764DA",
+                        "Int k": "C4CA4238A0B923820DCC509A6F75849B",
+                        "Int i": "C4CA4238A0B923820DCC509A6F75849B"
+                      }
+                    },
+                    "effectiveCallCachingMode": "ReadAndWriteCache"
+                  },
+                  "inputs": {
+                    "k": 1,
+                    "i": 1,
+                    "j": 0
+                  },
+                  "returnCode": 0,
+                  "jobId": "11911",
+                  "backend": "Local",
+                  "end": "2021-05-07T22:47:03.274Z",
+                  "stderr": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-0/subsub/66d9c797-242b-4c04-8dce-08f6361ed29e/call-t_subsub_1/shard-1/execution/stderr",
+                  "callRoot": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-0/subsub/66d9c797-242b-4c04-8dce-08f6361ed29e/call-t_subsub_1/shard-1",
+                  "attempt": 1,
+                  "executionEvents": [{
+                    "startTime": "2021-05-07T22:46:43.762Z",
+                    "description": "Pending",
+                    "endTime": "2021-05-07T22:46:43.762Z"
+                  }, {
+                    "startTime": "2021-05-07T22:46:55.335Z",
+                    "description": "CallCacheReading",
+                    "endTime": "2021-05-07T22:46:55.342Z"
+                  }, {
+                    "description": "WaitingForValueStore",
+                    "endTime": "2021-05-07T22:46:55.331Z",
+                    "startTime": "2021-05-07T22:46:55.331Z"
+                  }, {
+                    "startTime": "2021-05-07T22:47:03.273Z",
+                    "endTime": "2021-05-07T22:47:03.274Z",
+                    "description": "UpdatingJobStore"
+                  }, {
+                    "description": "RequestingExecutionToken",
+                    "endTime": "2021-05-07T22:46:55.331Z",
+                    "startTime": "2021-05-07T22:46:43.762Z"
+                  }, {
+                    "endTime": "2021-05-07T22:47:01.938Z",
+                    "description": "RunningJob",
+                    "startTime": "2021-05-07T22:46:55.342Z"
+                  }, {
+                    "startTime": "2021-05-07T22:47:01.938Z",
+                    "description": "UpdatingCallCache",
+                    "endTime": "2021-05-07T22:47:03.273Z"
+                  }, {
+                    "startTime": "2021-05-07T22:46:55.331Z",
+                    "endTime": "2021-05-07T22:46:55.335Z",
+                    "description": "PreparingJob"
+                  }],
+                  "start": "2021-05-07T22:46:43.761Z"
+                }]
+              },
+              "outputs": {
+                "subsub.out": ["/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-0/subsub/66d9c797-242b-4c04-8dce-08f6361ed29e/call-t_subsub_1/shard-0/execution/t_subsub_1.1.0.0.out", "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-0/subsub/66d9c797-242b-4c04-8dce-08f6361ed29e/call-t_subsub_1/shard-1/execution/t_subsub_1.1.0.1.out"]
+              },
+              "workflowRoot": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c",
+              "id": "66d9c797-242b-4c04-8dce-08f6361ed29e",
+              "inputs": {
+                "j": 0,
+                "i": 1
+              },
+              "status": "Succeeded",
+              "parentWorkflowId": "99756173-6419-410b-9100-91edf311411a",
+              "end": "2021-05-07T22:47:06.192Z",
+              "start": "2021-05-07T22:46:39.663Z"
+            },
+            "shardIndex": 0,
+            "outputs": {
+              "out": ["/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-0/subsub/66d9c797-242b-4c04-8dce-08f6361ed29e/call-t_subsub_1/shard-0/execution/t_subsub_1.1.0.0.out", "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-0/subsub/66d9c797-242b-4c04-8dce-08f6361ed29e/call-t_subsub_1/shard-1/execution/t_subsub_1.1.0.1.out"]
+            },
+            "inputs": {
+              "j": 0,
+              "i": 1
+            },
+            "end": "2021-05-07T22:47:06.192Z",
+            "attempt": 1,
+            "executionEvents": [{
+              "startTime": "2021-05-07T22:46:39.679Z",
+              "description": "SubWorkflowRunningState",
+              "endTime": "2021-05-07T22:47:06.193Z"
+            }, {
+              "description": "SubWorkflowPendingState",
+              "startTime": "2021-05-07T22:46:39.662Z",
+              "endTime": "2021-05-07T22:46:39.663Z"
+            }, {
+              "endTime": "2021-05-07T22:46:39.663Z",
+              "description": "WaitingForValueStore",
+              "startTime": "2021-05-07T22:46:39.663Z"
+            }, {
+              "startTime": "2021-05-07T22:46:39.663Z",
+              "description": "SubWorkflowPreparingState",
+              "endTime": "2021-05-07T22:46:39.679Z"
+            }],
+            "start": "2021-05-07T22:46:39.662Z"
+          }, {
+            "executionStatus": "Done",
+            "subWorkflowMetadata": {
+              "workflowName": "subsub",
+              "rootWorkflowId": "19c73690-0da1-4111-a9e5-4db007d3e30c",
+              "calls": {
+                "subsub.t_subsub_1": [{
+                  "executionStatus": "Done",
+                  "stdout": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-1/subsub/23406bee-4e9c-4c50-9a70-aa82230b32c3/call-t_subsub_1/shard-0/execution/stdout",
+                  "backendStatus": "Done",
+                  "commandLine": "echo 1.1.0 > t_subsub_1.1.1.0.out",
+                  "shardIndex": 0,
+                  "outputs": {
+                    "out": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-1/subsub/23406bee-4e9c-4c50-9a70-aa82230b32c3/call-t_subsub_1/shard-0/execution/t_subsub_1.1.1.0.out"
+                  },
+                  "runtimeAttributes": {
+                    "maxRetries": "1",
+                    "failOnStderr": "false",
+                    "continueOnReturnCode": "0"
+                  },
+                  "callCaching": {
+                    "allowResultReuse": true,
+                    "hit": false,
+                    "result": "Cache Miss",
+                    "hashes": {
+                      "output count": "C4CA4238A0B923820DCC509A6F75849B",
+                      "runtime attribute": {
+                        "failOnStderr": "68934A3E9455FA72420237EB05902327",
+                        "docker": "N/A",
+                        "continueOnReturnCode": "CFCD208495D565EF66E7DFF9F98764DA"
+                      },
+                      "output expression": {
+                        "File out": "558798620DC147BDA7BF2B5E7CEB52AD"
+                      },
+                      "input count": "ECCBC87E4B5CE2FE28308FD9F2A7BAF3",
+                      "backend name": "509820290D57F333403F490DDE7316F4",
+                      "command template": "8FB83256E2BEBDC29C4B9B3E81568989",
+                      "input": {
+                        "Int i": "C4CA4238A0B923820DCC509A6F75849B",
+                        "Int k": "CFCD208495D565EF66E7DFF9F98764DA",
+                        "Int j": "C4CA4238A0B923820DCC509A6F75849B"
+                      }
+                    },
+                    "effectiveCallCachingMode": "ReadAndWriteCache"
+                  },
+                  "inputs": {
+                    "k": 0,
+                    "i": 1,
+                    "j": 1
+                  },
+                  "returnCode": 0,
+                  "jobId": "11851",
+                  "backend": "Local",
+                  "end": "2021-05-07T22:46:57.263Z",
+                  "stderr": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-1/subsub/23406bee-4e9c-4c50-9a70-aa82230b32c3/call-t_subsub_1/shard-0/execution/stderr",
+                  "callRoot": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-1/subsub/23406bee-4e9c-4c50-9a70-aa82230b32c3/call-t_subsub_1/shard-0",
+                  "attempt": 1,
+                  "executionEvents": [{
+                    "startTime": "2021-05-07T22:46:43.752Z",
+                    "description": "Pending",
+                    "endTime": "2021-05-07T22:46:43.752Z"
+                  }, {
+                    "description": "UpdatingJobStore",
+                    "endTime": "2021-05-07T22:46:57.262Z",
+                    "startTime": "2021-05-07T22:46:57.262Z"
+                  }, {
+                    "description": "RequestingExecutionToken",
+                    "startTime": "2021-05-07T22:46:43.752Z",
+                    "endTime": "2021-05-07T22:46:49.330Z"
+                  }, {
+                    "endTime": "2021-05-07T22:46:49.336Z",
+                    "startTime": "2021-05-07T22:46:49.331Z",
+                    "description": "PreparingJob"
+                  }, {
+                    "description": "CallCacheReading",
+                    "startTime": "2021-05-07T22:46:49.336Z",
+                    "endTime": "2021-05-07T22:46:49.342Z"
+                  }, {
+                    "startTime": "2021-05-07T22:46:49.330Z",
+                    "description": "WaitingForValueStore",
+                    "endTime": "2021-05-07T22:46:49.331Z"
+                  }, {
+                    "startTime": "2021-05-07T22:46:54.657Z",
+                    "description": "UpdatingCallCache",
+                    "endTime": "2021-05-07T22:46:57.262Z"
+                  }, {
+                    "startTime": "2021-05-07T22:46:49.342Z",
+                    "endTime": "2021-05-07T22:46:54.657Z",
+                    "description": "RunningJob"
+                  }],
+                  "start": "2021-05-07T22:46:43.751Z"
+                }, {
+                  "executionStatus": "Done",
+                  "stdout": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-1/subsub/23406bee-4e9c-4c50-9a70-aa82230b32c3/call-t_subsub_1/shard-1/execution/stdout",
+                  "backendStatus": "Done",
+                  "commandLine": "echo 1.1.1 > t_subsub_1.1.1.1.out",
+                  "shardIndex": 1,
+                  "outputs": {
+                    "out": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-1/subsub/23406bee-4e9c-4c50-9a70-aa82230b32c3/call-t_subsub_1/shard-1/execution/t_subsub_1.1.1.1.out"
+                  },
+                  "runtimeAttributes": {
+                    "maxRetries": "1",
+                    "failOnStderr": "false",
+                    "continueOnReturnCode": "0"
+                  },
+                  "callCaching": {
+                    "allowResultReuse": true,
+                    "hit": false,
+                    "result": "Cache Miss",
+                    "hashes": {
+                      "output count": "C4CA4238A0B923820DCC509A6F75849B",
+                      "runtime attribute": {
+                        "failOnStderr": "68934A3E9455FA72420237EB05902327",
+                        "continueOnReturnCode": "CFCD208495D565EF66E7DFF9F98764DA",
+                        "docker": "N/A"
+                      },
+                      "output expression": {
+                        "File out": "558798620DC147BDA7BF2B5E7CEB52AD"
+                      },
+                      "input count": "ECCBC87E4B5CE2FE28308FD9F2A7BAF3",
+                      "backend name": "509820290D57F333403F490DDE7316F4",
+                      "command template": "8FB83256E2BEBDC29C4B9B3E81568989",
+                      "input": {
+                        "Int j": "C4CA4238A0B923820DCC509A6F75849B",
+                        "Int i": "C4CA4238A0B923820DCC509A6F75849B",
+                        "Int k": "C4CA4238A0B923820DCC509A6F75849B"
+                      }
+                    },
+                    "effectiveCallCachingMode": "ReadAndWriteCache"
+                  },
+                  "inputs": {
+                    "k": 1,
+                    "i": 1,
+                    "j": 1
+                  },
+                  "returnCode": 0,
+                  "jobId": "11872",
+                  "backend": "Local",
+                  "end": "2021-05-07T22:46:57.262Z",
+                  "stderr": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-1/subsub/23406bee-4e9c-4c50-9a70-aa82230b32c3/call-t_subsub_1/shard-1/execution/stderr",
+                  "callRoot": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-1/subsub/23406bee-4e9c-4c50-9a70-aa82230b32c3/call-t_subsub_1/shard-1",
+                  "attempt": 1,
+                  "executionEvents": [{
+                    "startTime": "2021-05-07T22:46:51.332Z",
+                    "endTime": "2021-05-07T22:46:51.333Z",
+                    "description": "WaitingForValueStore"
+                  }, {
+                    "startTime": "2021-05-07T22:46:43.753Z",
+                    "endTime": "2021-05-07T22:46:51.332Z",
+                    "description": "RequestingExecutionToken"
+                  }, {
+                    "startTime": "2021-05-07T22:46:51.333Z",
+                    "endTime": "2021-05-07T22:46:51.340Z",
+                    "description": "PreparingJob"
+                  }, {
+                    "startTime": "2021-05-07T22:46:51.340Z",
+                    "endTime": "2021-05-07T22:46:51.348Z",
+                    "description": "CallCacheReading"
+                  }, {
+                    "description": "UpdatingJobStore",
+                    "endTime": "2021-05-07T22:46:57.262Z",
+                    "startTime": "2021-05-07T22:46:57.262Z"
+                  }, {
+                    "startTime": "2021-05-07T22:46:56.427Z",
+                    "endTime": "2021-05-07T22:46:57.262Z",
+                    "description": "UpdatingCallCache"
+                  }, {
+                    "startTime": "2021-05-07T22:46:43.752Z",
+                    "description": "Pending",
+                    "endTime": "2021-05-07T22:46:43.753Z"
+                  }, {
+                    "startTime": "2021-05-07T22:46:51.348Z",
+                    "endTime": "2021-05-07T22:46:56.427Z",
+                    "description": "RunningJob"
+                  }],
+                  "start": "2021-05-07T22:46:43.752Z"
+                }]
+              },
+              "outputs": {
+                "subsub.out": ["/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-1/subsub/23406bee-4e9c-4c50-9a70-aa82230b32c3/call-t_subsub_1/shard-0/execution/t_subsub_1.1.1.0.out", "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-1/subsub/23406bee-4e9c-4c50-9a70-aa82230b32c3/call-t_subsub_1/shard-1/execution/t_subsub_1.1.1.1.out"]
+              },
+              "workflowRoot": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c",
+              "id": "23406bee-4e9c-4c50-9a70-aa82230b32c3",
+              "inputs": {
+                "j": 1,
+                "i": 1
+              },
+              "status": "Succeeded",
+              "parentWorkflowId": "99756173-6419-410b-9100-91edf311411a",
+              "end": "2021-05-07T22:47:00.076Z",
+              "start": "2021-05-07T22:46:39.666Z"
+            },
+            "shardIndex": 1,
+            "outputs": {
+              "out": ["/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-1/subsub/23406bee-4e9c-4c50-9a70-aa82230b32c3/call-t_subsub_1/shard-0/execution/t_subsub_1.1.1.0.out", "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-1/subsub/23406bee-4e9c-4c50-9a70-aa82230b32c3/call-t_subsub_1/shard-1/execution/t_subsub_1.1.1.1.out"]
+            },
+            "inputs": {
+              "j": 1,
+              "i": 1
+            },
+            "end": "2021-05-07T22:47:00.076Z",
+            "attempt": 1,
+            "executionEvents": [{
+              "startTime": "2021-05-07T22:46:39.678Z",
+              "description": "SubWorkflowRunningState",
+              "endTime": "2021-05-07T22:47:00.076Z"
+            }, {
+              "startTime": "2021-05-07T22:46:39.663Z",
+              "endTime": "2021-05-07T22:46:39.667Z",
+              "description": "WaitingForValueStore"
+            }, {
+              "startTime": "2021-05-07T22:46:39.667Z",
+              "description": "SubWorkflowPreparingState",
+              "endTime": "2021-05-07T22:46:39.678Z"
+            }, {
+              "startTime": "2021-05-07T22:46:39.662Z",
+              "description": "SubWorkflowPendingState",
+              "endTime": "2021-05-07T22:46:39.663Z"
+            }],
+            "start": "2021-05-07T22:46:39.661Z"
+          }],
+          "sub.t_sub_1": [{
+            "executionStatus": "Done",
+            "stdout": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-t_sub_1/execution/stdout",
+            "backendStatus": "Done",
+            "commandLine": "echo 1 > t_sub_1.1.out",
+            "shardIndex": -1,
+            "outputs": {
+              "out": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-t_sub_1/execution/t_sub_1.1.out"
+            },
+            "runtimeAttributes": {
+              "maxRetries": "1",
+              "failOnStderr": "false",
+              "continueOnReturnCode": "0"
+            },
+            "callCaching": {
+              "allowResultReuse": true,
+              "hit": false,
+              "result": "Cache Miss",
+              "hashes": {
+                "output count": "C4CA4238A0B923820DCC509A6F75849B",
+                "runtime attribute": {
+                  "docker": "N/A",
+                  "continueOnReturnCode": "CFCD208495D565EF66E7DFF9F98764DA",
+                  "failOnStderr": "68934A3E9455FA72420237EB05902327"
+                },
+                "output expression": {
+                  "File out": "D20B10A8C3BCF4A07F0537C0E8DAA6AE"
+                },
+                "input count": "C4CA4238A0B923820DCC509A6F75849B",
+                "backend name": "509820290D57F333403F490DDE7316F4",
+                "command template": "6670CB2B2D7C7368CDE58755FD806DA0",
+                "input": {
+                  "Int i": "C4CA4238A0B923820DCC509A6F75849B"
+                }
+              },
+              "effectiveCallCachingMode": "ReadAndWriteCache"
+            },
+            "inputs": {
+              "i": 1
+            },
+            "returnCode": 0,
+            "jobId": "11807",
+            "backend": "Local",
+            "end": "2021-05-07T22:46:51.262Z",
+            "stderr": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-t_sub_1/execution/stderr",
+            "callRoot": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-t_sub_1",
+            "attempt": 1,
+            "executionEvents": [{
+              "description": "CallCacheReading",
+              "endTime": "2021-05-07T22:46:45.341Z",
+              "startTime": "2021-05-07T22:46:45.336Z"
+            }, {
+              "description": "Pending",
+              "endTime": "2021-05-07T22:46:37.623Z",
+              "startTime": "2021-05-07T22:46:37.622Z"
+            }, {
+              "startTime": "2021-05-07T22:46:45.331Z",
+              "endTime": "2021-05-07T22:46:45.336Z",
+              "description": "PreparingJob"
+            }, {
+              "startTime": "2021-05-07T22:46:45.341Z",
+              "endTime": "2021-05-07T22:46:50.868Z",
+              "description": "RunningJob"
+            }, {
+              "description": "UpdatingCallCache",
+              "startTime": "2021-05-07T22:46:50.868Z",
+              "endTime": "2021-05-07T22:46:51.262Z"
+            }, {
+              "startTime": "2021-05-07T22:46:45.330Z",
+              "description": "WaitingForValueStore",
+              "endTime": "2021-05-07T22:46:45.331Z"
+            }, {
+              "startTime": "2021-05-07T22:46:37.623Z",
+              "description": "RequestingExecutionToken",
+              "endTime": "2021-05-07T22:46:45.330Z"
+            }, {
+              "startTime": "2021-05-07T22:46:51.262Z",
+              "description": "UpdatingJobStore",
+              "endTime": "2021-05-07T22:46:51.262Z"
+            }],
+            "start": "2021-05-07T22:46:37.621Z"
+          }]
+        },
+        "outputs": {
+          "sub.out": [["/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-0/subsub/66d9c797-242b-4c04-8dce-08f6361ed29e/call-t_subsub_1/shard-0/execution/t_subsub_1.1.0.0.out", "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-0/subsub/66d9c797-242b-4c04-8dce-08f6361ed29e/call-t_subsub_1/shard-1/execution/t_subsub_1.1.0.1.out"], ["/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-1/subsub/23406bee-4e9c-4c50-9a70-aa82230b32c3/call-t_subsub_1/shard-0/execution/t_subsub_1.1.1.0.out", "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-1/subsub/23406bee-4e9c-4c50-9a70-aa82230b32c3/call-t_subsub_1/shard-1/execution/t_subsub_1.1.1.1.out"]]
+        },
+        "workflowRoot": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c",
+        "id": "99756173-6419-410b-9100-91edf311411a",
+        "inputs": {
+          "i": 1
+        },
+        "status": "Succeeded",
+        "parentWorkflowId": "19c73690-0da1-4111-a9e5-4db007d3e30c",
+        "end": "2021-05-07T22:47:09.252Z",
+        "start": "2021-05-07T22:46:35.552Z"
+      },
+      "shardIndex": 1,
+      "outputs": {
+        "out": [["/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-0/subsub/66d9c797-242b-4c04-8dce-08f6361ed29e/call-t_subsub_1/shard-0/execution/t_subsub_1.1.0.0.out", "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-0/subsub/66d9c797-242b-4c04-8dce-08f6361ed29e/call-t_subsub_1/shard-1/execution/t_subsub_1.1.0.1.out"], ["/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-1/subsub/23406bee-4e9c-4c50-9a70-aa82230b32c3/call-t_subsub_1/shard-0/execution/t_subsub_1.1.1.0.out", "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-1/subsub/23406bee-4e9c-4c50-9a70-aa82230b32c3/call-t_subsub_1/shard-1/execution/t_subsub_1.1.1.1.out"]]
+      },
+      "inputs": {
+        "i": 1
+      },
+      "end": "2021-05-07T22:47:09.252Z",
+      "attempt": 1,
+      "executionEvents": [{
+        "startTime": "2021-05-07T22:46:35.544Z",
+        "description": "SubWorkflowPendingState",
+        "endTime": "2021-05-07T22:46:35.545Z"
+      }, {
+        "startTime": "2021-05-07T22:46:35.554Z",
+        "endTime": "2021-05-07T22:46:35.586Z",
+        "description": "SubWorkflowPreparingState"
+      }, {
+        "description": "SubWorkflowRunningState",
+        "endTime": "2021-05-07T22:47:09.252Z",
+        "startTime": "2021-05-07T22:46:35.586Z"
+      }, {
+        "startTime": "2021-05-07T22:46:35.545Z",
+        "endTime": "2021-05-07T22:46:35.554Z",
+        "description": "WaitingForValueStore"
+      }],
+      "start": "2021-05-07T22:46:35.544Z"
+    }],
+    "main.sub2": [{
+      "executionStatus": "Done",
+      "subWorkflowMetadata": {
+        "workflowName": "sub2",
+        "rootWorkflowId": "19c73690-0da1-4111-a9e5-4db007d3e30c",
+        "calls": {
+          "sub2.t_sub2_1": [{
+            "executionStatus": "Done",
+            "stdout": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub2/sub2/191a163d-a855-41e8-b60a-b2e91a49eb59/call-t_sub2_1/execution/stdout",
+            "backendStatus": "Done",
+            "commandLine": "echo -1 > t_sub2_1.out",
+            "shardIndex": -1,
+            "outputs": {
+              "out": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub2/sub2/191a163d-a855-41e8-b60a-b2e91a49eb59/call-t_sub2_1/execution/t_sub2_1.out"
+            },
+            "runtimeAttributes": {
+              "maxRetries": "1",
+              "failOnStderr": "false",
+              "continueOnReturnCode": "0"
+            },
+            "callCaching": {
+              "allowResultReuse": true,
+              "hit": false,
+              "result": "Cache Miss",
+              "hashes": {
+                "output count": "C4CA4238A0B923820DCC509A6F75849B",
+                "runtime attribute": {
+                  "docker": "N/A",
+                  "continueOnReturnCode": "CFCD208495D565EF66E7DFF9F98764DA",
+                  "failOnStderr": "68934A3E9455FA72420237EB05902327"
+                },
+                "output expression": {
+                  "File out": "C4387729A8F7356122CAC2AE0C2E0CDA"
+                },
+                "input count": "CFCD208495D565EF66E7DFF9F98764DA",
+                "backend name": "509820290D57F333403F490DDE7316F4",
+                "command template": "F794EC8A0718CE6240841B028082E38C"
+              },
+              "effectiveCallCachingMode": "ReadAndWriteCache"
+            },
+            "inputs": {
+
+            },
+            "returnCode": 0,
+            "jobId": "11730",
+            "backend": "Local",
+            "end": "2021-05-07T22:46:45.271Z",
+            "stderr": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub2/sub2/191a163d-a855-41e8-b60a-b2e91a49eb59/call-t_sub2_1/execution/stderr",
+            "callRoot": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub2/sub2/191a163d-a855-41e8-b60a-b2e91a49eb59/call-t_sub2_1",
+            "attempt": 1,
+            "executionEvents": [{
+              "description": "UpdatingJobStore",
+              "startTime": "2021-05-07T22:46:45.271Z",
+              "endTime": "2021-05-07T22:46:45.271Z"
+            }, {
+              "startTime": "2021-05-07T22:46:37.338Z",
+              "description": "CallCacheReading",
+              "endTime": "2021-05-07T22:46:37.347Z"
+            }, {
+              "description": "UpdatingCallCache",
+              "startTime": "2021-05-07T22:46:43.355Z",
+              "endTime": "2021-05-07T22:46:45.271Z"
+            }, {
+              "description": "RequestingExecutionToken",
+              "startTime": "2021-05-07T22:46:33.541Z",
+              "endTime": "2021-05-07T22:46:37.331Z"
+            }, {
+              "startTime": "2021-05-07T22:46:37.347Z",
+              "description": "RunningJob",
+              "endTime": "2021-05-07T22:46:43.355Z"
+            }, {
+              "startTime": "2021-05-07T22:46:37.332Z",
+              "description": "PreparingJob",
+              "endTime": "2021-05-07T22:46:37.338Z"
+            }, {
+              "startTime": "2021-05-07T22:46:37.331Z",
+              "endTime": "2021-05-07T22:46:37.332Z",
+              "description": "WaitingForValueStore"
+            }, {
+              "startTime": "2021-05-07T22:46:33.522Z",
+              "description": "Pending",
+              "endTime": "2021-05-07T22:46:33.541Z"
+            }],
+            "start": "2021-05-07T22:46:33.500Z"
+          }]
+        },
+        "outputs": {
+          "sub2.out": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub2/sub2/191a163d-a855-41e8-b60a-b2e91a49eb59/call-t_sub2_1/execution/t_sub2_1.out"
+        },
+        "workflowRoot": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c",
+        "id": "191a163d-a855-41e8-b60a-b2e91a49eb59",
+        "inputs": {
+
+        },
+        "status": "Succeeded",
+        "parentWorkflowId": "19c73690-0da1-4111-a9e5-4db007d3e30c",
+        "end": "2021-05-07T22:46:46.761Z",
+        "start": "2021-05-07T22:46:32.427Z"
+      },
+      "shardIndex": -1,
+      "outputs": {
+        "out": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub2/sub2/191a163d-a855-41e8-b60a-b2e91a49eb59/call-t_sub2_1/execution/t_sub2_1.out"
+      },
+      "inputs": {
+
+      },
+      "end": "2021-05-07T22:46:46.761Z",
+      "attempt": 1,
+      "executionEvents": [{
+        "startTime": "2021-05-07T22:46:32.408Z",
+        "description": "WaitingForValueStore",
+        "endTime": "2021-05-07T22:46:32.428Z"
+      }, {
+        "startTime": "2021-05-07T22:46:32.438Z",
+        "endTime": "2021-05-07T22:46:46.761Z",
+        "description": "SubWorkflowRunningState"
+      }, {
+        "startTime": "2021-05-07T22:46:32.397Z",
+        "description": "SubWorkflowPendingState",
+        "endTime": "2021-05-07T22:46:32.408Z"
+      }, {
+        "startTime": "2021-05-07T22:46:32.428Z",
+        "endTime": "2021-05-07T22:46:32.438Z",
+        "description": "SubWorkflowPreparingState"
+      }],
+      "start": "2021-05-07T22:46:32.397Z"
+    }]
+  },
+  "outputs": {
+    "main.sub.out": [[["/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-0/subsub/401e9e77-32c2-4a39-9169-1df48212b688/call-t_subsub_1/shard-0/execution/t_subsub_1.0.0.0.out", "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-0/subsub/401e9e77-32c2-4a39-9169-1df48212b688/call-t_subsub_1/shard-1/execution/t_subsub_1.0.0.1.out"], ["/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-1/subsub/afe48722-2bf7-4c3d-b030-73a02f1f8c1b/call-t_subsub_1/shard-0/execution/t_subsub_1.0.1.0.out", "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-0/sub/ac45c74d-01d6-4b60-8d62-ae09ff4690d9/call-subsub/shard-1/subsub/afe48722-2bf7-4c3d-b030-73a02f1f8c1b/call-t_subsub_1/shard-1/execution/t_subsub_1.0.1.1.out"]], [["/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-0/subsub/66d9c797-242b-4c04-8dce-08f6361ed29e/call-t_subsub_1/shard-0/execution/t_subsub_1.1.0.0.out", "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-0/subsub/66d9c797-242b-4c04-8dce-08f6361ed29e/call-t_subsub_1/shard-1/execution/t_subsub_1.1.0.1.out"], ["/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-1/subsub/23406bee-4e9c-4c50-9a70-aa82230b32c3/call-t_subsub_1/shard-0/execution/t_subsub_1.1.1.0.out", "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub/shard-1/sub/99756173-6419-410b-9100-91edf311411a/call-subsub/shard-1/subsub/23406bee-4e9c-4c50-9a70-aa82230b32c3/call-t_subsub_1/shard-1/execution/t_subsub_1.1.1.1.out"]]],
+    "main.sub2.out": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub2/sub2/191a163d-a855-41e8-b60a-b2e91a49eb59/call-t_sub2_1/execution/t_sub2_1.out",
+    "main.t_main_1.out": ["/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-t_main_1/shard-0/execution/t_main_1.0.out", "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-t_main_1/shard-1/execution/t_main_1.1.out"],
+    "main.t_main_1_alias.out": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-t_main_1_alias/execution/t_main_1.-1.out",
+    "main.sub2_alias.out": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c/call-sub2_alias/sub2/854df8c1-cb97-4bf1-aad5-c72dda8ed681/call-t_sub2_1/execution/t_sub2_1.out"
+  },
+  "workflowRoot": "/mnt/data/scratch/leepc12/caper_out/main/19c73690-0da1-4111-a9e5-4db007d3e30c",
+  "actualWorkflowLanguage": "WDL",
+  "id": "19c73690-0da1-4111-a9e5-4db007d3e30c",
+  "inputs": {
+
+  },
+  "labels": {
+    "caper-user": "leepc12",
+    "cromwell-workflow-id": "cromwell-19c73690-0da1-4111-a9e5-4db007d3e30c",
+    "caper-backend": "Local"
+  },
+  "submission": "2021-05-07T22:46:27.416Z",
+  "status": "Succeeded",
+  "end": "2021-05-07T22:47:19.421Z",
+  "start": "2021-05-07T22:46:27.656Z"
+}
