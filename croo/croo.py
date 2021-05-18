@@ -11,7 +11,7 @@ from .croo_html_report import CrooHtmlReport
 logger = logging.getLogger(__name__)
 
 
-class Croo(object):
+class Croo:
     """Cromwell output organizer (croo)
 
     It parses Cromwell's metadata.json to get all information about outputs
